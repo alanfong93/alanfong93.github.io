@@ -60,6 +60,7 @@
   .hero .role { font-size: clamp(1.1rem, 2.5vw, 1.5rem); color: var(--accent); font-weight: 600; margin: 0 0 16px; }
   .hero .tagline { max-width: 680px; margin: 0 auto 12px; color: #cbd5e1; font-size: 1.05rem; }
   .hero .loc { color: #94a3b8; font-size: 0.95rem; margin-bottom: 28px; }
+  .hero .avatar { width: 132px; height: 132px; border-radius: 50%; object-fit: cover; display: block; margin: 0 auto 20px; border: 3px solid rgba(20,184,166,.6); box-shadow: 0 8px 28px rgba(0,0,0,.35); }
   .btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
   .btn { display: inline-block; padding: 11px 22px; border-radius: 999px; font-weight: 600; font-size: 0.95rem; transition: transform .15s ease; }
   .btn:hover { transform: translateY(-2px); text-decoration: none; }
@@ -142,7 +143,11 @@
   #resume-print { max-width: 720px; margin: 0 auto; color: #0f172a; line-height: 1.45;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  #resume-print .r-head { border-bottom: 3px solid #14b8a6; padding-bottom: 10px; margin-bottom: 14px; }
+  #resume-print .r-head { display: flex; align-items: center; gap: 16px; border-bottom: 3px solid #14b8a6; padding-bottom: 10px; margin-bottom: 14px; }
+  #resume-print .r-head .r-text { flex: 1; }
+  #resume-print .r-photo { width: 86px; height: 86px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+  /* RÉSUMÉ PHOTO TOGGLE — change 'block' to 'none' to hide the photo (e.g. for US / Europe applications) */
+  #resume-print .r-photo { display: block; }
   #resume-print h1 { font-size: 26px; margin: 0; letter-spacing: -0.01em; }
   #resume-print .r-title { font-size: 14px; font-weight: 700; color: #0d9488; margin: 3px 0 7px; }
   #resume-print .r-contact { font-size: 11px; color: #475569; margin: 0; }
@@ -195,6 +200,7 @@
   </nav>
 
   <header class="hero">
+    <img class="avatar" src="profile.jpg" alt="Alan Fong">
     <h1>Alan Fong</h1>
     <p class="role">DevOps &amp; Automation Engineer</p>
     <p class="tagline">I build and run the systems that keep a business operating — integrating AI into workflows so people have more time to focus on high-quality work.</p>
@@ -480,9 +486,12 @@ flowchart TD
 
   <section id="resume-print">
     <div class="r-head">
-      <h1>Alan Fong</h1>
-      <p class="r-title">DevOps &amp; Automation Engineer</p>
-      <p class="r-contact">Johor Bahru, Malaysia · alanfong93@gmail.com · linkedin.com/in/alan-fong · github.com/alanfong93 · alanfong93.github.io</p>
+      <div class="r-text">
+        <h1>Alan Fong</h1>
+        <p class="r-title">DevOps &amp; Automation Engineer</p>
+        <p class="r-contact">Johor Bahru, Malaysia · alanfong93@gmail.com · linkedin.com/in/alan-fong · github.com/alanfong93 · alanfong93.github.io</p>
+      </div>
+      <img class="r-photo" src="profile.jpg" alt="Alan Fong">
     </div>
 
     <h2>Summary</h2>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Alan Fong — DevOps &amp; Automation Engineer</title>
+<meta name="description" content="Alan Fong — DevOps & Automation Engineer based in Johor Bahru, Malaysia. Infrastructure, self-hosting, and AI-driven automation." />
+<style>
+  :root {
+    --bg: #0f172a;
+    --bg2: #1e293b;
+    --panel: #ffffff;
+    --ink: #0f172a;
+    --muted: #64748b;
+    --accent: #14b8a6;
+    --accent2: #6366f1;
+    --line: #e2e8f0;
+    --chip: #f1f5f9;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--ink);
+    background: #f8fafc;
+    line-height: 1.65;
+  }
+  a { color: var(--accent2); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* Hero */
+  header.hero {
+    background: radial-gradient(1200px 500px at 20% -10%, #1e293b 0%, var(--bg) 60%);
+    color: #e2e8f0;
+    padding: 80px 24px 64px;
+    text-align: center;
+  }
+  .hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); margin: 0 0 8px; letter-spacing: -0.02em; }
+  .hero .role { font-size: clamp(1.1rem, 2.5vw, 1.5rem); color: var(--accent); font-weight: 600; margin: 0 0 16px; }
+  .hero .tagline { max-width: 680px; margin: 0 auto 12px; color: #cbd5e1; font-size: 1.05rem; }
+  .hero .loc { color: #94a3b8; font-size: 0.95rem; margin-bottom: 28px; }
+  .btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .btn {
+    display: inline-block; padding: 11px 22px; border-radius: 999px; font-weight: 600;
+    font-size: 0.95rem; transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .btn:hover { transform: translateY(-2px); text-decoration: none; }
+  .btn.primary { background: var(--accent); color: #042f2e; }
+  .btn.ghost { background: transparent; color: #e2e8f0; border: 1px solid #475569; }
+
+  /* Layout */
+  main { max-width: 920px; margin: 0 auto; padding: 56px 24px; }
+  section { margin-bottom: 56px; }
+  h2 {
+    font-size: 1.5rem; margin: 0 0 20px; letter-spacing: -0.01em;
+    display: flex; align-items: center; gap: 10px;
+  }
+  h2::before { content: ""; width: 22px; height: 3px; background: var(--accent); border-radius: 2px; }
+  h3 { font-size: 1.15rem; margin: 0 0 6px; }
+
+  /* Tech grid */
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+  .card {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
+    padding: 20px 22px; box-shadow: 0 1px 2px rgba(15,23,42,.04);
+  }
+  .card .label { font-weight: 700; font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; color: var(--accent2); margin-bottom: 8px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 7px; }
+  .chip { background: var(--chip); color: #334155; border-radius: 8px; padding: 4px 10px; font-size: .85rem; }
+
+  /* Work */
+  .work { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 24px; margin-bottom: 20px; box-shadow: 0 1px 2px rgba(15,23,42,.04); }
+  .work p { color: #475569; margin: 6px 0 14px; }
+  .impact { border-left: 3px solid var(--accent); background: #f0fdfa; padding: 10px 14px; border-radius: 0 8px 8px 0; color: #134e4a; font-size: .95rem; margin: 0 0 16px; }
+  pre.mermaid { background: #f8fafc; border: 1px solid var(--line); border-radius: 10px; padding: 16px; overflow-x: auto; text-align: center; }
+
+  /* Projects table */
+  table { width: 100%; border-collapse: collapse; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+  th, td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--line); font-size: .92rem; }
+  th { background: #f1f5f9; font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; color: #475569; }
+  tr:last-child td { border-bottom: none; }
+
+  ul.practices { padding-left: 0; list-style: none; }
+  ul.practices li { padding: 8px 0 8px 28px; position: relative; color: #334155; }
+  ul.practices li::before { content: "▹"; position: absolute; left: 6px; color: var(--accent); font-weight: 700; }
+
+  footer { background: var(--bg2); color: #cbd5e1; text-align: center; padding: 40px 24px; }
+  footer a { color: var(--accent); }
+  .note { color: #94a3b8; font-size: .85rem; margin-top: 10px; }
+</style>
+</head>
+<body>
+  <header class="hero">
+    <h1>Alan Fong</h1>
+    <p class="role">DevOps &amp; Automation Engineer</p>
+    <p class="tagline">I build and run the systems that keep a business operating — then automate the parts that shouldn't need a human.</p>
+    <p class="loc">📍 Johor Bahru, Malaysia</p>
+    <div class="btns">
+      <a class="btn primary" href="https://www.linkedin.com/in/alan-fong">LinkedIn</a>
+      <a class="btn ghost" href="https://github.com/alanfong93">GitHub</a>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <h2>Tech Stack</h2>
+      <div class="grid">
+        <div class="card"><div class="label">Languages</div><div class="chips"><span class="chip">Python</span><span class="chip">PHP</span><span class="chip">JavaScript</span><span class="chip">PowerShell</span><span class="chip">Bash</span></div></div>
+        <div class="card"><div class="label">Containers &amp; Virtualization</div><div class="chips"><span class="chip">Docker</span><span class="chip">Docker Compose</span><span class="chip">Proxmox VE</span></div></div>
+        <div class="card"><div class="label">Cloud</div><div class="chips"><span class="chip">AWS</span><span class="chip">Google Cloud</span><span class="chip">Google Workspace</span></div></div>
+        <div class="card"><div class="label">Automation / AI</div><div class="chips"><span class="chip">n8n</span><span class="chip">LLM agents</span><span class="chip">Telegram Bot API</span></div></div>
+        <div class="card"><div class="label">Networking</div><div class="chips"><span class="chip">OpenWRT</span><span class="chip">pfSense</span><span class="chip">multi-WAN</span><span class="chip">VPN</span></div></div>
+        <div class="card"><div class="label">Infra / DevOps</div><div class="chips"><span class="chip">Traefik</span><span class="chip">Ansible</span><span class="chip">CI/CD</span><span class="chip">Uptime Kuma</span></div></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Featured Work</h2>
+
+      <div class="work">
+        <h3>AI-Powered IT Support Bot</h3>
+        <p>An LLM-backed Telegram bot that automates first-line (L1) IT support end-to-end: users submit tickets in chat, the bot checks them against an FAQ/SOP/solutions knowledge base, guides users through known fixes, and escalates only what truly needs a human — with common remediations (e.g. automated VM restarts) wired straight into the flow.</p>
+        <p class="impact"><b>Impact:</b> effectively replaced the L1 support tier — a departing L1 role did not need to be backfilled.</p>
+        <pre class="mermaid">
+flowchart TD
+    A[User submits ticket<br>via Telegram] --> B{AI checks FAQ /<br>SOP / solutions DB}
+    B -->|Match found| C[Bot guides user<br>through the fix]
+    C --> D{Resolved?}
+    D -->|Yes| E[Auto-close ticket]
+    D -->|No| F[Escalate to<br>human engineer]
+    B -->|No match| F
+    F --> G[Automated remediation<br>e.g. VM restart]
+    style A fill:#cce5ff,color:#000
+    style E fill:#d4edda,color:#000
+    style F fill:#fff3cd,color:#000
+    style G fill:#cce5ff,color:#000
+        </pre>
+      </div>
+
+      <div class="work">
+        <h3>Self-Hosted IT Infrastructure (built from scratch)</h3>
+        <p>As the first IT hire at an SME, I designed and built the entire IT function from zero — network edge, virtualization, self-hosted services, backups, and security — and run it hands-on as it scales.</p>
+        <pre class="mermaid">
+flowchart LR
+    subgraph Edge[Network Edge]
+        WAN[5x WAN lines] --> RTR[OpenWRT Router<br>multi-WAN failover]
+        RTR --> AP[Managed APs<br>+ controller]
+    end
+    subgraph Virt[Virtualization]
+        PVE[Proxmox VE] --> VDI[Virtual desktops]
+        PVE --> DOCK[Docker host]
+    end
+    subgraph Svc[Self-Hosted Services]
+        DOCK --> RP[Traefik<br>reverse proxy]
+        DOCK --> N8N[n8n automation]
+        DOCK --> MON[Uptime Kuma]
+    end
+    RTR --> PVE
+    style PVE fill:#cce5ff,color:#000
+    style DOCK fill:#cce5ff,color:#000
+    style N8N fill:#d4edda,color:#000
+    style RP fill:#cce5ff,color:#000
+        </pre>
+      </div>
+
+      <div class="work">
+        <h3>n8n Automation Platform</h3>
+        <p>A self-hosted <b>n8n</b> platform that turns repetitive operational work into reliable, observable pipelines — from business workflows (automated order creation, a tap-card HR/attendance system) to a personal AI-assistant suite wired to local and cloud LLMs.</p>
+        <pre class="mermaid">
+flowchart LR
+    TRIG[Triggers<br>webhook / schedule / chat] --> N8N[n8n<br>orchestration]
+    N8N --> BIZ[Business ops<br>orders / HR / attendance]
+    N8N --> AI[LLM steps<br>local + cloud]
+    N8N --> INT[Integrations<br>Calendar / Gmail / Drive]
+    style N8N fill:#cce5ff,color:#000
+    style AI fill:#d4edda,color:#000
+        </pre>
+      </div>
+    </section>
+
+    <section>
+      <h2>Selected Projects</h2>
+      <table>
+        <tr><th>Project</th><th>What it is</th><th>Stack</th></tr>
+        <tr><td><b>KupuPost</b></td><td>Notification delivery system — multi-recipient messaging, testable design</td><td>Python</td></tr>
+        <tr><td><b>telegrambots</b></td><td>Reusable Telegram bot framework — Dockerized, documented API</td><td>Python · Docker</td></tr>
+        <tr><td><b>database-sensei</b></td><td>Multi-driver database tool (SQLAlchemy 2.0+) with a full-stack UI</td><td>Python</td></tr>
+        <tr><td><b>WindowsOptimizationsScript</b></td><td>Windows debloat/optimization — registry &amp; VM tuning</td><td>PowerShell</td></tr>
+        <tr><td><b>screenRuler</b></td><td>On-screen measurement utility, cross-implemented in two languages</td><td>Python · C#</td></tr>
+      </table>
+    </section>
+
+    <section>
+      <h2>How I Work</h2>
+      <ul class="practices">
+        <li><b>Conventional Commits</b> and <b>branch-based PRs</b> with CI-based automated code review</li>
+        <li><b>Docs-first</b> — architecture/flow docs and Mermaid diagrams in each repo</li>
+        <li><b>Automation-first</b> — if a task is repetitive, it gets a pipeline</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div>
+      <a href="https://www.linkedin.com/in/alan-fong">LinkedIn</a> &nbsp;·&nbsp;
+      <a href="https://github.com/alanfong93">GitHub</a>
+    </div>
+    <p class="note">Most implementation code lives in private repositories — this site highlights architecture, decisions, and outcomes.</p>
+  </footer>
+
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'default', securityLevel: 'loose' });
+  </script>
+</body>
+</html>

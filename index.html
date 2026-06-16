@@ -188,6 +188,69 @@
       <h2>Featured Work</h2>
 
       <div class="work">
+        <h3>Distributed Print-Fleet Service</h3>
+        <p>A self-hosted platform that turns USB thermal printers into a managed, multi-site network resource. <b>Raspberry Pi edge agents</b> expose printers over an authenticated HTTP API with idempotent, reboot-safe job queues; a <b>central control plane</b> handles terminal enrollment, token-scoped auth, job dispatch, webhook callbacks, and over-the-air fleet updates — with a web dashboard and hardened systemd deployment.</p>
+        <div class="tags"><span class="chip">Python</span><span class="chip">FastAPI</span><span class="chip">Distributed systems</span><span class="chip">Raspberry Pi</span><span class="chip">SQLite/Postgres</span><span class="chip">Docker</span><span class="chip">OTA</span></div>
+        <details class="arch"><summary>Show architecture</summary>
+        <pre class="mermaid">
+flowchart LR
+    subgraph Sites[Physical sites]
+        PI1[Pi edge agent<br>FastAPI · queue] --> PR1[(Thermal<br>printers)]
+        PI2[Pi edge agent<br>FastAPI · queue] --> PR2[(Thermal<br>printers)]
+    end
+    CENTRAL[Central control plane<br>enroll · auth · dispatch · OTA] <--> PI1
+    CENTRAL <--> PI2
+    DASH[Web dashboard] --> CENTRAL
+    CENTRAL --> HOOK[Webhook callbacks]
+    style CENTRAL fill:#cce5ff,color:#000
+    style PI1 fill:#d4edda,color:#000
+    style PI2 fill:#d4edda,color:#000
+    style DASH fill:#fff3cd,color:#000
+        </pre>
+        </details>
+      </div>
+
+      <div class="work">
+        <h3>Package Optimization Service</h3>
+        <p>A <b>FastAPI</b> microservice that recommends the optimal shipping box for an order using <b>3D bin-packing</b> (Google OR-Tools CP-SAT). Packing runs as <b>async background jobs</b> with progress polling; the solver enforces fragility, weight-stacking and rotation constraints, caches recurring scenarios, and runs in <b>isolated worker processes</b> so a native solver fault degrades a single box instead of the whole API. 200+ tests, Dockerized.</p>
+        <p class="impact"><b>Origin:</b> rebuilt from a flawed AI-generated prototype into a production-grade service.</p>
+        <div class="tags"><span class="chip">Python</span><span class="chip">FastAPI</span><span class="chip">OR-Tools (CP-SAT)</span><span class="chip">Async jobs</span><span class="chip">Optimization</span><span class="chip">Docker</span></div>
+        <details class="arch"><summary>Show architecture</summary>
+        <pre class="mermaid">
+flowchart LR
+    REQ[POST /jobs/recommend] --> Q[Async job queue]
+    POLL[Client polls status] --> Q
+    Q --> SOLVE[CP-SAT solver<br>isolated worker process]
+    SOLVE --> BLF[BLF warm-start<br>+ 3D bin-packing]
+    SOLVE --> CACHE[(Packing cache)]
+    SOLVE --> RESULT[Top-5 labelled<br>box recommendations]
+    style Q fill:#cce5ff,color:#000
+    style SOLVE fill:#d4edda,color:#000
+    style RESULT fill:#fff3cd,color:#000
+        </pre>
+        </details>
+      </div>
+
+      <div class="work">
+        <h3>Scheduled Broadcast Automation</h3>
+        <p>A Python service that automates scheduled audio/radio playback across a site — time- and season-aware playlist switching, browser orchestration with automatic recovery, and a <b>REST control + metrics API</b>. Reliability-first: <b>circuit breakers</b>, timeout management, Pydantic-validated config with hot reload, and 118+ tests.</p>
+        <div class="tags"><span class="chip">Python</span><span class="chip">REST API</span><span class="chip">Pydantic</span><span class="chip">Circuit breaker</span><span class="chip">Scheduling</span><span class="chip">118+ tests</span></div>
+        <details class="arch"><summary>Show architecture</summary>
+        <pre class="mermaid">
+flowchart LR
+    SCHED[Scheduler<br>season + daily playlists] --> CTRL[Playback controller]
+    CB[Circuit breaker<br>+ timeouts] --> CTRL
+    API[REST control + metrics] --> CTRL
+    CTRL --> BROW[Browser orchestration<br>auto-recovery]
+    BROW --> AUDIO[(Audio sources)]
+    style CTRL fill:#cce5ff,color:#000
+    style CB fill:#d4edda,color:#000
+    style API fill:#fff3cd,color:#000
+        </pre>
+        </details>
+      </div>
+
+      <div class="work">
         <h3>AI-Powered IT Support Bot</h3>
         <p>An LLM-backed Telegram bot that automates first-line (L1) IT support end-to-end: tickets are checked against an FAQ/SOP/solutions knowledge base, the bot guides users through known fixes, and escalates only what needs a human — with common remediations (e.g. automated VM restarts) wired into the flow.</p>
         <p class="impact"><b>Impact:</b> handles routine L1 tickets end-to-end, freeing the IT team to focus on higher-value engineering instead of repetitive support.</p>
@@ -294,7 +357,9 @@ flowchart LR
           <li><b>HR &amp; attendance</b> — in-house card-tap system replacing an off-the-shelf biometric solution</li>
           <li><b>IT ticketing &amp; asset/stock management</b> — internal tools for requests and hardware</li>
           <li><b>Order automation</b> — automated sales/delivery order generation, removing manual data entry</li>
-          <li><b>Automated reporting</b> — scheduled weekly reports compiled and delivered hands-free</li>
+          <li><b>Warehouse management</b> — multi-courier dispatch, consignment notes and stock tracking (maintained &amp; extended)</li>
+          <li><b>Order follow-up &amp; automated reporting</b> — internal follow-up system plus scheduled reports delivered hands-free</li>
+          <li><b>Team development</b> — mentored a colleague with little programming background to design and ship an OCR-driven automation end-to-end, turning a non-developer into the project's primary author</li>
         </ul>
         <details class="arch"><summary>Show architecture</summary>
         <pre class="mermaid">
@@ -336,7 +401,7 @@ flowchart TD
       <div class="work">
         <h3>IT Manager — Modern Zone Marketing Sdn Bhd</h3>
         <p class="meta">Jun 2020 – Present · Johor Bahru</p>
-        <p>First IT hire — built and now lead the entire IT function: infrastructure, networking, support, and a small engineering team. Drove automation, self-hosting, and AI tooling across the business.</p>
+        <p>First IT hire — built and now lead the entire IT function: infrastructure, networking, support, and a small engineering team. Drove automation, self-hosting, and AI tooling across the business — and mentored team members, including growing a non-developer into a shipping contributor.</p>
       </div>
       <div class="work">
         <h3>Chief / Senior Technician — Meadow Computer &amp; System Sdn Bhd</h3>

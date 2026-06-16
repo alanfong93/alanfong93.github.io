@@ -159,11 +159,11 @@
           <h2>Tech Stack</h2>
           <div class="grid">
             <div class="card"><div class="label">Languages</div><div class="chips"><span class="chip">Python</span><span class="chip">PHP</span><span class="chip">JavaScript</span><span class="chip">PowerShell</span><span class="chip">Bash</span></div></div>
-            <div class="card"><div class="label">Containers &amp; Virtualization</div><div class="chips"><span class="chip">Docker</span><span class="chip">Compose</span><span class="chip">Proxmox VE</span></div></div>
+            <div class="card"><div class="label">Containers &amp; Virtualization</div><div class="chips"><span class="chip">Docker</span><span class="chip">Compose</span><span class="chip">Hyper-V</span><span class="chip">Proxmox VE</span></div></div>
             <div class="card"><div class="label">Cloud</div><div class="chips"><span class="chip">AWS</span><span class="chip">GCP</span><span class="chip">Google Workspace</span></div></div>
             <div class="card"><div class="label">Automation / AI</div><div class="chips"><span class="chip">n8n</span><span class="chip">Claude Code</span><span class="chip">LLM agents</span><span class="chip">Whisper</span></div></div>
-            <div class="card"><div class="label">Networking</div><div class="chips"><span class="chip">OpenWRT</span><span class="chip">pfSense</span><span class="chip">multi-WAN</span><span class="chip">VPN</span></div></div>
-            <div class="card"><div class="label">Infra / DevOps</div><div class="chips"><span class="chip">Traefik</span><span class="chip">CI/CD</span><span class="chip">Uptime Kuma</span></div></div>
+            <div class="card"><div class="label">Networking</div><div class="chips"><span class="chip">OpenWRT</span><span class="chip">pfSense</span><span class="chip">multi-WAN</span><span class="chip">VPN</span><span class="chip">Cloudflare Tunnel</span></div></div>
+            <div class="card"><div class="label">Infra / DevOps</div><div class="chips"><span class="chip">Nginx</span><span class="chip">CI/CD</span><span class="chip">Uptime Kuma</span></div></div>
             <div class="card"><div class="label">Storage / NAS</div><div class="chips"><span class="chip">Synology DSM</span><span class="chip">SHR / RAID</span><span class="chip">Backups</span></div></div>
             <div class="card"><div class="label">Security</div><div class="chips"><span class="chip">YubiKey</span><span class="chip">Action1</span></div></div>
           </div>
@@ -283,11 +283,11 @@ flowchart LR
         RTR --> AP[Managed APs]
     end
     subgraph Virt[Virtualization]
-        PVE[Proxmox VE] --> VDI[Virtual desktops]
+        PVE[Windows Hyper-V] --> VDI[Virtual desktops]
         PVE --> DOCK[Docker host]
     end
     subgraph Svc[Self-Hosted Services]
-        DOCK --> RP[Traefik<br>reverse proxy]
+        DOCK --> RP[Nginx<br>reverse proxy]
         DOCK --> N8N[n8n automation]
         DOCK --> MON[Uptime Kuma]
     end

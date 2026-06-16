@@ -137,23 +137,29 @@
     .nav details.menu .menu-panel a { color: #e2e8f0; padding: 9px 12px; border-radius: 6px; font-size: .92rem; }
     .nav details.menu .menu-panel a:hover { background: #334155; text-decoration: none; }
   }
-  /* Print-only résumé */
+  /* Résumé — branded, but real selectable text (ATS-friendly). Only visibility is print-gated. */
   #resume-print { display: none; }
+  #resume-print { max-width: 720px; margin: 0 auto; color: #0f172a; line-height: 1.45;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  #resume-print .r-head { border-bottom: 3px solid #14b8a6; padding-bottom: 10px; margin-bottom: 14px; }
+  #resume-print h1 { font-size: 26px; margin: 0; letter-spacing: -0.01em; }
+  #resume-print .r-title { font-size: 14px; font-weight: 700; color: #0d9488; margin: 3px 0 7px; }
+  #resume-print .r-contact { font-size: 11px; color: #475569; margin: 0; }
+  #resume-print h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; margin: 16px 0 8px; padding-left: 10px; border-left: 4px solid #14b8a6; }
+  #resume-print h3 { font-size: 14px; margin: 10px 0 0; }
+  #resume-print .r-meta { font-size: 11px; color: #6366f1; font-weight: 600; margin: 1px 0 4px; }
+  #resume-print p { font-size: 12px; margin: 4px 0; color: #334155; }
+  #resume-print ul { margin: 4px 0 0; padding-left: 18px; }
+  #resume-print li { font-size: 12px; margin: 3px 0; color: #334155; }
+  #resume-print .r-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  #resume-print .r-chip { background: #f1f5f9; color: #0f172a; border-radius: 6px; padding: 3px 9px; font-size: 11px; }
+  #resume-print .r-job { margin-bottom: 11px; page-break-inside: avoid; }
   @media print {
     .nav, header.hero, main, footer { display: none !important; }
     body { background: #fff !important; }
-    #resume-print { display: block !important; color: #000; font-size: 11pt; line-height: 1.4; }
-    #resume-print h1 { font-size: 20pt; margin: 0; }
-    #resume-print .r-title { font-size: 12pt; color: #333; font-weight: 600; margin: 2px 0 4px; }
-    #resume-print .r-contact { font-size: 9.5pt; color: #333; margin: 0 0 10px; }
-    #resume-print h2 { font-size: 12pt; border-bottom: 1px solid #999; padding-bottom: 2px; margin: 12px 0 6px; text-transform: uppercase; letter-spacing: .04em; }
-    #resume-print h3 { font-size: 11pt; margin: 8px 0 0; }
-    #resume-print .r-meta { font-size: 9.5pt; color: #555; margin: 0 0 3px; }
-    #resume-print p { margin: 3px 0; }
-    #resume-print ul { margin: 3px 0 0; padding-left: 16px; }
-    #resume-print li { margin: 2px 0; }
-    #resume-print .r-job { margin-bottom: 8px; page-break-inside: avoid; }
-    @page { margin: 14mm; }
+    #resume-print { display: block !important; }
+    @page { margin: 13mm; }
   }
 </style>
 <script>
@@ -473,15 +479,19 @@ flowchart TD
   </footer>
 
   <section id="resume-print">
-    <h1>Alan Fong</h1>
-    <p class="r-title">DevOps &amp; Automation Engineer</p>
-    <p class="r-contact">Johor Bahru, Malaysia · alanfong93@gmail.com · linkedin.com/in/alan-fong · github.com/alanfong93 · alanfong93.github.io</p>
+    <div class="r-head">
+      <h1>Alan Fong</h1>
+      <p class="r-title">DevOps &amp; Automation Engineer</p>
+      <p class="r-contact">Johor Bahru, Malaysia · alanfong93@gmail.com · linkedin.com/in/alan-fong · github.com/alanfong93 · alanfong93.github.io</p>
+    </div>
 
     <h2>Summary</h2>
     <p>DevOps &amp; Automation Engineer who builds and runs the systems that keep a business operating, with AI woven into the workflows. As the first IT hire at an SME, built the entire IT function from zero — networking, virtualization, infrastructure and security — and grew from sole engineer to leading a small team while staying hands-on.</p>
 
     <h2>Core Skills</h2>
-    <p>Docker · Windows Hyper-V · Proxmox · Linux · Nginx · Python · PHP · JavaScript · PowerShell · Bash · AWS · GCP · n8n · CI/CD (GitHub Actions) · Cloudflare Tunnel · Computer Networking (multi-WAN, OpenWRT, pfSense) · LLM / agent automation (Claude Code, MCP) · Uptime Kuma · YubiKey · Synology NAS</p>
+    <div class="r-chips">
+      <span class="r-chip">Docker</span><span class="r-chip">Windows Hyper-V</span><span class="r-chip">Proxmox</span><span class="r-chip">Linux</span><span class="r-chip">Nginx</span><span class="r-chip">Python</span><span class="r-chip">PHP</span><span class="r-chip">JavaScript</span><span class="r-chip">PowerShell</span><span class="r-chip">Bash</span><span class="r-chip">AWS</span><span class="r-chip">GCP</span><span class="r-chip">n8n</span><span class="r-chip">CI/CD (GitHub Actions)</span><span class="r-chip">Cloudflare Tunnel</span><span class="r-chip">Multi-WAN · OpenWRT · pfSense</span><span class="r-chip">LLM &amp; agent automation</span><span class="r-chip">Uptime Kuma</span><span class="r-chip">YubiKey</span><span class="r-chip">Synology NAS</span>
+    </div>
 
     <h2>Experience</h2>
     <div class="r-job">

@@ -14,10 +14,33 @@
   :root {
     --bg: #0f172a; --bg2: #1e293b; --panel: #ffffff; --ink: #0f172a;
     --muted: #64748b; --accent: #14b8a6; --accent2: #6366f1; --line: #e2e8f0; --chip: #f1f5f9;
+    --page: #f8fafc;
   }
+  html[data-theme="dark"] {
+    --panel: #1e293b; --ink: #e2e8f0; --muted: #94a3b8; --line: #334155; --chip: #334155; --page: #0b1220;
+  }
+  html[data-theme="dark"] a { color: #a5b4fc; }
+  html[data-theme="dark"] .chip { color: #cbd5e1; }
+  html[data-theme="dark"] .card .label,
+  html[data-theme="dark"] .work .meta,
+  html[data-theme="dark"] td::before { color: #a5b4fc; }
+  html[data-theme="dark"] .work p,
+  html[data-theme="dark"] ul.bullets,
+  html[data-theme="dark"] .step { color: #94a3b8; }
+  html[data-theme="dark"] .step { background: #0f2e2a; }
+  html[data-theme="dark"] .impact { background: #0f2e2a; color: #99f6e4; }
+  html[data-theme="dark"] .badge,
+  html[data-theme="dark"] details.arch > summary { background: #312e81; color: #c7d2fe; }
+  html[data-theme="dark"] details.arch > summary:hover { background: #3730a3; }
+  html[data-theme="dark"] th { background: #0f172a; color: #94a3b8; }
+
+  /* Theme toggle */
+  .nav .nav-right { display: flex; align-items: center; gap: 12px; }
+  .theme-toggle { background: transparent; border: 1px solid #475569; color: #e2e8f0; border-radius: 999px; width: 34px; height: 34px; font-size: 1rem; line-height: 1; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; padding: 0; flex-shrink: 0; }
+  .theme-toggle:hover { border-color: var(--accent); }
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
-  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: var(--ink); background: #f8fafc; line-height: 1.65; overflow-x: hidden; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: var(--ink); background: var(--page); line-height: 1.65; overflow-x: hidden; }
   a { color: var(--accent2); text-decoration: none; }
   a:hover { text-decoration: underline; }
   section[id] { scroll-margin-top: 68px; }
@@ -114,7 +137,28 @@
     .nav details.menu .menu-panel a { color: #e2e8f0; padding: 9px 12px; border-radius: 6px; font-size: .92rem; }
     .nav details.menu .menu-panel a:hover { background: #334155; text-decoration: none; }
   }
+  /* Print-only résumé */
+  #resume-print { display: none; }
+  @media print {
+    .nav, header.hero, main, footer { display: none !important; }
+    body { background: #fff !important; }
+    #resume-print { display: block !important; color: #000; font-size: 11pt; line-height: 1.4; }
+    #resume-print h1 { font-size: 20pt; margin: 0; }
+    #resume-print .r-title { font-size: 12pt; color: #333; font-weight: 600; margin: 2px 0 4px; }
+    #resume-print .r-contact { font-size: 9.5pt; color: #333; margin: 0 0 10px; }
+    #resume-print h2 { font-size: 12pt; border-bottom: 1px solid #999; padding-bottom: 2px; margin: 12px 0 6px; text-transform: uppercase; letter-spacing: .04em; }
+    #resume-print h3 { font-size: 11pt; margin: 8px 0 0; }
+    #resume-print .r-meta { font-size: 9.5pt; color: #555; margin: 0 0 3px; }
+    #resume-print p { margin: 3px 0; }
+    #resume-print ul { margin: 3px 0 0; padding-left: 16px; }
+    #resume-print li { margin: 2px 0; }
+    #resume-print .r-job { margin-bottom: 8px; page-break-inside: avoid; }
+    @page { margin: 14mm; }
+  }
 </style>
+<script>
+  (function(){ try { var s = localStorage.getItem('theme'); var d = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches; document.documentElement.setAttribute('data-theme', s || (d ? 'dark' : 'light')); } catch(e){} })();
+</script>
 </head>
 <body id="top">
   <nav class="nav">
@@ -127,17 +171,20 @@
         <a href="#experience">Experience</a>
         <a href="#education">Education</a>
       </div>
-      <details class="menu">
-        <summary>☰ Menu</summary>
-        <div class="menu-panel">
-          <a href="#skills">Skills</a>
-          <a href="#projects">Projects</a>
-          <a href="#ai">AI Projects</a>
-          <a href="#experience">Experience</a>
-          <a href="#education">Education</a>
-          <a href="#contact">Contact</a>
-        </div>
-      </details>
+      <div class="nav-right">
+        <button class="theme-toggle" id="theme-toggle" type="button" onclick="toggleTheme()" aria-label="Toggle dark mode">🌙</button>
+        <details class="menu">
+          <summary>☰ Menu</summary>
+          <div class="menu-panel">
+            <a href="#skills">Skills</a>
+            <a href="#projects">Projects</a>
+            <a href="#ai">AI Projects</a>
+            <a href="#experience">Experience</a>
+            <a href="#education">Education</a>
+            <a href="#contact">Contact</a>
+          </div>
+        </details>
+      </div>
     </div>
   </nav>
 
@@ -147,7 +194,8 @@
     <p class="tagline">I build and run the systems that keep a business operating — integrating AI into workflows so people have more time to focus on high-quality work.</p>
     <p class="loc">📍 Johor Bahru, Malaysia</p>
     <div class="btns">
-      <a class="btn primary" href="https://www.linkedin.com/in/alan-fong">LinkedIn</a>
+      <button class="btn primary" type="button" onclick="window.print()">⬇ Résumé (PDF)</button>
+      <a class="btn ghost" href="https://www.linkedin.com/in/alan-fong">LinkedIn</a>
       <a class="btn ghost" href="https://github.com/alanfong93">GitHub</a>
     </div>
   </header>
@@ -424,6 +472,51 @@ flowchart TD
     <p style="color:#94a3b8;font-size:.85rem;margin-top:10px">Most implementation code lives in private repositories — this site highlights architecture, decisions, and outcomes.</p>
   </footer>
 
+  <section id="resume-print">
+    <h1>Alan Fong</h1>
+    <p class="r-title">DevOps &amp; Automation Engineer</p>
+    <p class="r-contact">Johor Bahru, Malaysia · alanfong93@gmail.com · linkedin.com/in/alan-fong · github.com/alanfong93 · alanfong93.github.io</p>
+
+    <h2>Summary</h2>
+    <p>DevOps &amp; Automation Engineer who builds and runs the systems that keep a business operating, with AI woven into the workflows. As the first IT hire at an SME, built the entire IT function from zero — networking, virtualization, infrastructure and security — and grew from sole engineer to leading a small team while staying hands-on.</p>
+
+    <h2>Core Skills</h2>
+    <p>Docker · Windows Hyper-V · Proxmox · Linux · Nginx · Python · PHP · JavaScript · PowerShell · Bash · AWS · GCP · n8n · CI/CD (GitHub Actions) · Cloudflare Tunnel · Computer Networking (multi-WAN, OpenWRT, pfSense) · LLM / agent automation (Claude Code, MCP) · Uptime Kuma · YubiKey · Synology NAS</p>
+
+    <h2>Experience</h2>
+    <div class="r-job">
+      <h3>IT Manager — Modern Zone Marketing Sdn Bhd</h3>
+      <p class="r-meta">Jun 2020 – Present · Johor Bahru, Malaysia</p>
+      <ul>
+        <li>Built the company's IT infrastructure from scratch as the first IT hire — Windows Hyper-V virtualization, Docker hosts, Nginx reverse proxy, multi-WAN networking (5 lines), and automated file-server backups (Synology DS920+).</li>
+        <li>Designed and shipped an AI/LLM-powered Telegram IT-support bot (FAQ/SOP retrieval + automated VM restart) that resolves routine L1 tickets end-to-end — freeing the team for higher-value engineering.</li>
+        <li>Built an n8n automation platform; automated sales/delivery order creation and a tap-card HR/attendance system, removing recurring manual work.</li>
+        <li>Hardened security org-wide — YubiKey deployment, Action1 patch management, VPN access.</li>
+        <li>Drove engineering practices team-wide: branch-based Git workflow, pull-request reviews, CI-based automated code review, and a docs standard for every repo.</li>
+        <li>Grew and led the IT team (solo to 7 engineers); mentored a colleague with little programming background into the primary author of a shipped internal automation.</li>
+      </ul>
+    </div>
+    <div class="r-job">
+      <h3>Chief / Senior Technician — Meadow Computer &amp; System Sdn Bhd</h3>
+      <p class="r-meta">2013 – 2020 · Johor Bahru, Malaysia</p>
+      <ul>
+        <li>Progressed from technician to chief technician; managed up to four technicians and ran after-sales services.</li>
+        <li>Built and maintained internal systems and scripts (warranty management, automated software deployment) and a technical knowledge base.</li>
+      </ul>
+    </div>
+    <div class="r-job">
+      <h3>Software Engineer Intern — GNey Software</h3>
+      <p class="r-meta">2018 · Johor Bahru, Malaysia</p>
+      <ul>
+        <li>Built project scaffolding and maintained client websites; supported testing and documentation.</li>
+      </ul>
+    </div>
+
+    <h2>Education &amp; Certifications</h2>
+    <p><b>Bachelor's Degree, Information Technology (Software Engineering)</b> — Southern University College · 2014–2018</p>
+    <p><b>Google IT Support Professional Certificate</b> — 2024</p>
+  </section>
+
   <script type="module">
     import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
     mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
@@ -435,6 +528,17 @@ flowchart TD
     renderVisible();
     document.querySelectorAll('details.arch').forEach(d =>
       d.addEventListener('toggle', () => { if (d.open) renderVisible(); }));
+  </script>
+  <script>
+    function toggleTheme(){
+      var root = document.documentElement;
+      var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('theme', next); } catch(e){}
+      var b = document.getElementById('theme-toggle');
+      if (b) b.textContent = next === 'dark' ? '☀️' : '🌙';
+    }
+    (function(){ var b = document.getElementById('theme-toggle'); if (b) b.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙'; })();
   </script>
 </body>
 </html>

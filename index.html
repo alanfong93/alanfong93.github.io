@@ -422,7 +422,7 @@ flowchart LR
       <div class="work">
         <h3>Hermes — Self-Hosted Speech-to-Text <span class="badge personal">Personal</span></h3>
         <p><b>What it does:</b> turns voice messages into text — running entirely on my own hardware, so there's no per-use cloud fee and nothing leaves the network.</p>
-        <p>A containerized speech-to-text service built on <b>Whisper</b> (faster-whisper), wired into the automation pipelines so any voice note can be transcribed automatically.</p>
+        <p>A containerized speech-to-text service built on <b>Whisper</b> (faster-whisper), originally built to give JoJo voice-message transcription and now reused across other automation pipelines.</p>
         <div class="tags"><span class="chip">Whisper</span><span class="chip">Docker</span><span class="chip">Python</span><span class="chip">Self-hosted</span></div>
       </div>
 
@@ -432,7 +432,6 @@ flowchart LR
         <ul class="bullets">
           <li><b>HR &amp; attendance</b> — in-house card-tap system replacing an off-the-shelf biometric solution</li>
           <li><b>IT ticketing &amp; asset/stock management</b> — internal tools for requests and hardware</li>
-          <li><b>Order automation</b> — automated sales/delivery order generation, removing manual data entry</li>
           <li><b>Warehouse management</b> — multi-courier dispatch, consignment notes and stock tracking (maintained &amp; extended)</li>
           <li><b>Order follow-up &amp; automated reporting</b> — internal follow-up system plus scheduled reports delivered hands-free</li>
           <li><b>Team development</b> — mentored a colleague with little programming background to design and ship an OCR-driven automation end-to-end, turning a non-developer into the project's primary author</li>
@@ -457,16 +456,15 @@ flowchart TD
     </section>
 
     <section id="opensource">
-      <h2>Selected Open-Source Projects</h2>
+      <h2>Other Personal Projects</h2>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Project</th><th>What it is</th><th>Stack</th></tr></thead>
           <tbody>
-            <tr><td data-label="Project"><b>KupuPost</b></td><td data-label="What it is">Notification delivery system — multi-recipient messaging, testable design</td><td data-label="Stack">Python</td></tr>
-            <tr><td data-label="Project"><b>telegrambots</b></td><td data-label="What it is">Reusable Telegram bot framework — Dockerized, documented API</td><td data-label="Stack">Python · Docker</td></tr>
-            <tr><td data-label="Project"><b>database-sensei</b></td><td data-label="What it is">Multi-driver database tool (SQLAlchemy 2.0+) with a full-stack UI</td><td data-label="Stack">Python</td></tr>
-            <tr><td data-label="Project"><b>WindowsOptimizationsScript</b></td><td data-label="What it is">Windows debloat/optimization — registry &amp; VM tuning</td><td data-label="Stack">PowerShell</td></tr>
-            <tr><td data-label="Project"><b>screenRuler</b></td><td data-label="What it is">On-screen measurement utility, cross-implemented in two languages</td><td data-label="Stack">Python · C#</td></tr>
+            <tr><td data-label="Project"><b>KupuPost</b></td><td data-label="What it is">Unified messaging API — send to one or many recipients across WhatsApp &amp; Telegram from a single endpoint, with WhatsApp session management</td><td data-label="Stack">Python · FastAPI · Docker</td></tr>
+            <tr><td data-label="Project"><b>telegrambots</b></td><td data-label="What it is">FastAPI REST service for sending Telegram messages — text, replies, HTML formatting — with OpenAPI docs and Docker deployment</td><td data-label="Stack">Python · FastAPI · Docker</td></tr>
+            <tr><td data-label="Project"><b>database-sensei</b></td><td data-label="What it is">Turns plain-English requests into SQL from a database's schema using AI (Google Gemini) — FastAPI backend + web UI, multi-database (PostgreSQL / MySQL / SQLite / SQL Server) via SQLAlchemy</td><td data-label="Stack">Python · FastAPI · JavaScript · SQLAlchemy · Docker</td></tr>
+            <tr><td data-label="Project"><b>WindowsOptimizationsScript</b></td><td data-label="What it is">Windows debloat &amp; optimization — automated system tweaks and cleanup</td><td data-label="Stack">PowerShell</td></tr>
           </tbody>
         </table>
       </div>

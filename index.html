@@ -21,6 +21,7 @@
   }
   html[data-theme="dark"] a { color: #a5b4fc; }
   html[data-theme="dark"] .chip { color: #cbd5e1; }
+  html[data-theme="dark"] .tags .chip.ai { background: #4c1d95; color: #ede9fe; }
   html[data-theme="dark"] .card .label,
   html[data-theme="dark"] .work .meta,
   html[data-theme="dark"] td::before { color: #a5b4fc; }
@@ -100,6 +101,9 @@
   .impact { border-left: 3px solid var(--accent); background: #f0fdfa; padding: 10px 14px; border-radius: 0 8px 8px 0; color: #134e4a; font-size: .95rem; margin: 0 0 14px; }
   .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
   .tags .chip { font-size: .8rem; }
+  .tags .chip.ai { background: #f5f3ff; color: #6d28d9; font-weight: 700; }
+  h3.tier { font-size: .8rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 700; margin: 4px 0 18px; }
+  h3.tier.second { margin-top: 40px; }
   .note { color: var(--muted); font-size: .9rem; font-style: italic; margin: 0 0 14px; }
   ul.bullets { padding-left: 18px; color: #475569; margin: 6px 0 0; }
   ul.bullets li { margin: 4px 0; }
@@ -186,7 +190,6 @@
       <div class="links">
         <a href="#skills">Skills</a>
         <a href="#projects">Projects</a>
-        <a href="#ai">AI</a>
         <a href="#experience">Experience</a>
         <a href="#education">Education</a>
         <a href="#contact">Contact</a>
@@ -198,7 +201,6 @@
           <div class="menu-panel">
             <a href="#skills">Skills</a>
             <a href="#projects">Projects</a>
-            <a href="#ai">AI Projects</a>
             <a href="#experience">Experience</a>
             <a href="#education">Education</a>
             <a href="#contact">Contact</a>
@@ -254,7 +256,8 @@
     </section>
 
     <section id="projects">
-      <h2>Featured Work</h2>
+      <h2>Projects</h2>
+      <h3 class="tier">Featured</h3>
 
       <div class="work">
         <h3>Distributed Print-Fleet Service <span class="badge">Work</span></h3>
@@ -327,6 +330,7 @@ flowchart LR
         <p><b>What it does:</b> a Telegram chatbot that handles everyday IT requests from staff — answering common questions and walking people through fixes — so the team is only pulled in for the issues that genuinely need a human.</p>
         <p>An AI/LLM-backed bot that automates first-line ("L1" — the routine front-desk tier) IT support end-to-end: tickets are checked against an FAQ/SOP/solutions knowledge base, the bot guides users through known fixes, and escalates only what needs a person — with common remediations (e.g. automatically restarting a stuck virtual machine) wired into the flow.</p>
         <p class="impact"><b>Impact:</b> handles routine L1 tickets end-to-end, freeing the IT team to focus on higher-value engineering instead of repetitive support.</p>
+        <div class="tags"><span class="chip ai">AI</span><span class="chip">LLM</span><span class="chip">Telegram</span><span class="chip">Knowledge base</span></div>
         <details class="arch"><summary>Show architecture</summary>
         <pre class="mermaid">
 flowchart TD
@@ -394,16 +398,12 @@ flowchart LR
         </pre>
         </details>
       </div>
-    </section>
-
-    <section id="ai">
-      <h2>AI Projects</h2>
 
       <div class="work">
         <h3>JoJo — Personal AI Assistant <span class="badge personal">Personal</span></h3>
         <p><b>What it does:</b> a personal AI assistant I talk to over Telegram, by text or voice — it manages my calendar, email, notes and files, runs automations, browses the web for me, and remembers context from one conversation to the next.</p>
         <p>An agentic assistant built on <b>Claude Code</b>. Under the hood it runs automations through n8n, drives a real browser for research, and keeps <b>persistent cross-session memory</b> via custom MCP (Model Context Protocol) servers — the open standard that lets an AI assistant plug into external tools and data. Voice messages are handled by a <b>self-hosted Whisper</b> (faster-whisper) service running on my own hardware, so I can just talk to it with no per-use cloud cost.</p>
-        <div class="tags"><span class="chip">Claude Code</span><span class="chip">MCP servers</span><span class="chip">Telegram</span><span class="chip">n8n</span><span class="chip">Whisper</span><span class="chip">Semantic memory</span></div>
+        <div class="tags"><span class="chip ai">AI</span><span class="chip">Claude Code</span><span class="chip">MCP servers</span><span class="chip">Telegram</span><span class="chip">n8n</span><span class="chip">Whisper</span><span class="chip">Semantic memory</span></div>
         <details class="arch"><summary>Show architecture</summary>
         <pre class="mermaid">
 flowchart LR
@@ -449,17 +449,15 @@ flowchart TD
         </pre>
         </details>
       </div>
-    </section>
 
-    <section id="opensource">
-      <h2>Other Personal Projects</h2>
+      <h3 class="tier second">Utilities &amp; Tools</h3>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Project</th><th>What it is</th><th>Stack</th></tr></thead>
           <tbody>
             <tr><td data-label="Project"><b>KupuPost</b></td><td data-label="What it is">Unified messaging API — send to one or many recipients across WhatsApp &amp; Telegram from a single endpoint, with WhatsApp session management</td><td data-label="Stack">Python · FastAPI · Docker</td></tr>
             <tr><td data-label="Project"><b>telegrambots</b></td><td data-label="What it is">FastAPI REST service for sending Telegram messages — text, replies, HTML formatting — with OpenAPI docs and Docker deployment</td><td data-label="Stack">Python · FastAPI · Docker</td></tr>
-            <tr><td data-label="Project"><b>database-sensei</b></td><td data-label="What it is">Turns plain-English requests into SQL from a database's schema using AI (Google Gemini) — FastAPI backend + web UI, multi-database (PostgreSQL / MySQL / SQLite / SQL Server) via SQLAlchemy</td><td data-label="Stack">Python · FastAPI · JavaScript · SQLAlchemy · Docker</td></tr>
+            <tr><td data-label="Project"><b>database-sensei</b></td><td data-label="What it is">Turns plain-English requests into SQL from a database's schema using AI (Google Gemini) — FastAPI backend + web UI, multi-database (PostgreSQL / MySQL / SQLite / SQL Server) via SQLAlchemy</td><td data-label="Stack">Python · FastAPI · JavaScript · SQLAlchemy · Gemini · Docker</td></tr>
             <tr><td data-label="Project"><b>WindowsOptimizationsScript</b></td><td data-label="What it is">Windows debloat &amp; optimization — automated system tweaks and cleanup</td><td data-label="Stack">PowerShell</td></tr>
           </tbody>
         </table>

@@ -31,6 +31,7 @@
   html[data-theme="dark"] .impact { background: #0f2e2a; color: #99f6e4; }
   html[data-theme="dark"] .badge,
   html[data-theme="dark"] details.arch > summary { background: #312e81; color: #c7d2fe; }
+  html[data-theme="dark"] .badge.personal { background: #334155; color: #cbd5e1; }
   html[data-theme="dark"] details.arch > summary:hover { background: #3730a3; }
   html[data-theme="dark"] th { background: #0f172a; color: #94a3b8; }
 
@@ -95,6 +96,7 @@
   .work p { color: #475569; margin: 6px 0 12px; }
   .work .meta { color: var(--accent2); font-weight: 600; font-size: .85rem; margin: 0 0 10px; }
   .badge { display: inline-block; background: #eef2ff; color: var(--accent2); font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; padding: 3px 9px; border-radius: 999px; vertical-align: middle; margin-left: 8px; }
+  .badge.personal { background: #f1f5f9; color: #475569; }
   .impact { border-left: 3px solid var(--accent); background: #f0fdfa; padding: 10px 14px; border-radius: 0 8px 8px 0; color: #134e4a; font-size: .95rem; margin: 0 0 14px; }
   .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
   .tags .chip { font-size: .8rem; }
@@ -187,6 +189,7 @@
         <a href="#ai">AI</a>
         <a href="#experience">Experience</a>
         <a href="#education">Education</a>
+        <a href="#contact">Contact</a>
       </div>
       <div class="nav-right">
         <button class="theme-toggle" id="theme-toggle" type="button" onclick="toggleTheme()" aria-label="Toggle dark mode">🌙</button>
@@ -254,8 +257,9 @@
       <h2>Featured Work</h2>
 
       <div class="work">
-        <h3>Distributed Print-Fleet Service</h3>
-        <p>A self-hosted platform that turns USB thermal printers into a managed, multi-site network resource. <b>Raspberry Pi edge agents</b> expose printers over an authenticated HTTP API with idempotent, reboot-safe job queues; a <b>central control plane</b> handles terminal enrollment, token-scoped auth, job dispatch, webhook callbacks, and over-the-air fleet updates — with a web dashboard and hardened systemd deployment.</p>
+        <h3>Distributed Print-Fleet Service <span class="badge">Work</span></h3>
+        <p><b>What it does:</b> lets several sites (offices, branches, shop floors) share and manage their receipt/label printers from one central dashboard — instead of setting up and troubleshooting each printer machine-by-machine, on site.</p>
+        <p>A self-hosted platform that turns USB thermal printers into a managed, multi-site network resource. <b>Raspberry Pi edge agents</b> expose printers over an authenticated HTTP API with reboot-safe job queues — so a print job is never lost or double-printed if a device restarts. A <b>central control plane</b> handles device enrollment, access tokens, job dispatch, status callbacks, and over-the-air (OTA) updates to the whole fleet — with a web dashboard and hardened deployment.</p>
         <div class="tags"><span class="chip">Python</span><span class="chip">FastAPI</span><span class="chip">Distributed systems</span><span class="chip">Raspberry Pi</span><span class="chip">SQLite/Postgres</span><span class="chip">Docker</span><span class="chip">OTA</span></div>
         <details class="arch"><summary>Show architecture</summary>
         <pre class="mermaid">
@@ -277,8 +281,9 @@ flowchart LR
       </div>
 
       <div class="work">
-        <h3>Package Optimization Service</h3>
-        <p>A <b>FastAPI</b> microservice that recommends the optimal shipping box for an order using <b>3D bin-packing</b> (Google OR-Tools CP-SAT). Packing runs as <b>async background jobs</b> with progress polling; the solver enforces fragility, weight-stacking and rotation constraints, caches recurring scenarios, and runs in <b>isolated worker processes</b> so a native solver fault degrades a single box instead of the whole API. 200+ tests, Dockerized.</p>
+        <h3>Package Optimization Service <span class="badge">Work</span></h3>
+        <p><b>What it does:</b> automatically tells warehouse staff the best-fit shipping box for each order — cutting wasted space, packaging cost, and the guesswork of picking a box by eye.</p>
+        <p>A <b>FastAPI</b> microservice that recommends the optimal shipping box using <b>3D bin-packing</b> — a packing algorithm (Google OR-Tools CP-SAT) that fits items in three dimensions while respecting fragility, weight-stacking and rotation rules. Packing runs as <b>background jobs</b> the caller can poll for progress, caches recurring scenarios, and runs in <b>isolated worker processes</b> so a solver crash degrades a single recommendation instead of taking down the whole service. 200+ tests, Dockerized.</p>
         <p class="impact"><b>Origin:</b> rebuilt from a flawed AI-generated prototype into a production-grade service.</p>
         <div class="tags"><span class="chip">Python</span><span class="chip">FastAPI</span><span class="chip">OR-Tools (CP-SAT)</span><span class="chip">Async jobs</span><span class="chip">Optimization</span><span class="chip">Docker</span></div>
         <details class="arch"><summary>Show architecture</summary>
@@ -298,8 +303,9 @@ flowchart LR
       </div>
 
       <div class="work">
-        <h3>Scheduled Broadcast Automation</h3>
-        <p>A Python service that automates scheduled audio/radio playback across a site — time- and season-aware playlist switching, browser orchestration with automatic recovery, and a <b>REST control + metrics API</b>. Reliability-first: <b>circuit breakers</b>, timeout management, Pydantic-validated config with hot reload, and 118+ tests.</p>
+        <h3>Scheduled Broadcast Automation <span class="badge">Work</span></h3>
+        <p><b>What it does:</b> plays the right scheduled audio and announcements across a site automatically — switching playlists by time of day and season — and quietly recovers on its own if playback ever stalls.</p>
+        <p>A Python service driving the playback, with a <b>REST control + metrics API</b>. Built reliability-first: <b>circuit breakers</b> (it backs off and self-heals instead of hammering a component that's failing), timeout management, config that is validated on load and can be changed without a restart, and 118+ tests.</p>
         <div class="tags"><span class="chip">Python</span><span class="chip">REST API</span><span class="chip">Pydantic</span><span class="chip">Circuit breaker</span><span class="chip">Scheduling</span><span class="chip">118+ tests</span></div>
         <details class="arch"><summary>Show architecture</summary>
         <pre class="mermaid">
@@ -317,8 +323,9 @@ flowchart LR
       </div>
 
       <div class="work">
-        <h3>AI-Powered IT Support Bot</h3>
-        <p>An LLM-backed Telegram bot that automates first-line (L1) IT support end-to-end: tickets are checked against an FAQ/SOP/solutions knowledge base, the bot guides users through known fixes, and escalates only what needs a human — with common remediations (e.g. automated VM restarts) wired into the flow.</p>
+        <h3>AI-Powered IT Support Bot <span class="badge">Work</span></h3>
+        <p><b>What it does:</b> a Telegram chatbot that handles everyday IT requests from staff — answering common questions and walking people through fixes — so the team is only pulled in for the issues that genuinely need a human.</p>
+        <p>An AI/LLM-backed bot that automates first-line ("L1" — the routine front-desk tier) IT support end-to-end: tickets are checked against an FAQ/SOP/solutions knowledge base, the bot guides users through known fixes, and escalates only what needs a person — with common remediations (e.g. automatically restarting a stuck virtual machine) wired into the flow.</p>
         <p class="impact"><b>Impact:</b> handles routine L1 tickets end-to-end, freeing the IT team to focus on higher-value engineering instead of repetitive support.</p>
         <details class="arch"><summary>Show architecture</summary>
         <pre class="mermaid">
@@ -339,8 +346,8 @@ flowchart TD
       </div>
 
       <div class="work">
-        <h3>Self-Hosted IT Infrastructure <span class="badge">Enterprise</span></h3>
-        <p>As the first IT hire at an SME, I designed and built the entire IT function from zero — network edge, virtualization, self-hosted services, central storage, backups, and security. File storage runs on a <b>Synology DS920+</b> (SHR), replicated to a dedicated Synology DS120 backup target.</p>
+        <h3>Self-Hosted IT Infrastructure <span class="badge">Work</span></h3>
+        <p>As the first IT hire at an SME, I designed and built the entire IT function from zero — the office network, servers, self-hosted apps, central file storage, backups, and security. File storage runs on a <b>Synology DS920+</b> NAS (SHR redundant storage), automatically replicated to a separate Synology DS120 as an off-box backup.</p>
         <details class="arch"><summary>Show architecture</summary>
         <pre class="mermaid">
 flowchart LR
@@ -372,8 +379,9 @@ flowchart LR
       </div>
 
       <div class="work">
-        <h3>n8n Automation Platform</h3>
-        <p>A self-hosted <b>n8n</b> platform that turns repetitive operational work into reliable, observable pipelines — from business workflows to a personal AI-assistant suite wired to local and cloud LLMs.</p>
+        <h3>n8n Automation Platform <span class="badge">Work</span></h3>
+        <p><b>What it does:</b> takes repetitive day-to-day tasks — the kind people would otherwise do by hand — and runs them automatically and reliably, with full visibility into every run.</p>
+        <p>A self-hosted <b>n8n</b> platform spanning everything from business workflows to a personal AI-assistant suite, wired to both local and cloud AI models (LLMs).</p>
         <details class="arch"><summary>Show architecture</summary>
         <pre class="mermaid">
 flowchart LR
@@ -392,8 +400,9 @@ flowchart LR
       <h2>AI Projects</h2>
 
       <div class="work">
-        <h3>JoJo — Personal AI Assistant</h3>
-        <p>An agentic assistant built on <b>Claude Code</b>, reachable over Telegram. It manages calendar, email, notes and files, runs automations through n8n, drives a browser for research, and keeps <b>persistent cross-session memory</b> via custom MCP (Model Context Protocol) servers.</p>
+        <h3>JoJo — Personal AI Assistant <span class="badge personal">Personal</span></h3>
+        <p><b>What it does:</b> a personal AI assistant I talk to over Telegram — it manages my calendar, email, notes and files, runs automations, browses the web for me, and remembers context from one conversation to the next.</p>
+        <p>An agentic assistant built on <b>Claude Code</b>. Under the hood it runs automations through n8n, drives a real browser for research, and keeps <b>persistent cross-session memory</b> via custom MCP (Model Context Protocol) servers — the open standard that lets an AI assistant plug into external tools and data.</p>
         <div class="tags"><span class="chip">Claude Code</span><span class="chip">MCP servers</span><span class="chip">Telegram</span><span class="chip">n8n</span><span class="chip">Semantic memory</span></div>
         <details class="arch"><summary>Show architecture</summary>
         <pre class="mermaid">
@@ -411,13 +420,14 @@ flowchart LR
       </div>
 
       <div class="work">
-        <h3>Hermes — Self-Hosted Speech-to-Text</h3>
-        <p>A containerized <b>Whisper</b> (faster-whisper) transcription service running fully local with zero per-call API cost — powering voice-message transcription inside automation pipelines.</p>
+        <h3>Hermes — Self-Hosted Speech-to-Text <span class="badge personal">Personal</span></h3>
+        <p><b>What it does:</b> turns voice messages into text — running entirely on my own hardware, so there's no per-use cloud fee and nothing leaves the network.</p>
+        <p>A containerized speech-to-text service built on <b>Whisper</b> (faster-whisper), wired into the automation pipelines so any voice note can be transcribed automatically.</p>
         <div class="tags"><span class="chip">Whisper</span><span class="chip">Docker</span><span class="chip">Python</span><span class="chip">Self-hosted</span></div>
       </div>
 
       <div class="work">
-        <h3>Enterprise Systems — Current Role <span class="badge">Enterprise</span></h3>
+        <h3>Enterprise Systems — Current Role <span class="badge">Work</span></h3>
         <p class="note">Built for an SME; kept high-level to respect confidentiality.</p>
         <ul class="bullets">
           <li><b>HR &amp; attendance</b> — in-house card-tap system replacing an off-the-shelf biometric solution</li>
@@ -467,7 +477,8 @@ flowchart TD
       <div class="work">
         <h3>IT Manager — Modern Zone Marketing Sdn Bhd</h3>
         <p class="meta">Jun 2020 – Present · Johor Bahru</p>
-        <p>First IT hire — built and now lead the entire IT function: infrastructure, networking, support, and a small engineering team. Drove automation, self-hosting, and AI tooling across the business — and mentored team members, including growing a non-developer into a shipping contributor.</p>
+        <p>First IT hire — built and now lead the entire IT function: infrastructure, networking, support, and an engineering team I grew from just me to 7. Drove automation, self-hosting, and AI tooling across the business — and mentored team members, including growing a non-developer into a shipping contributor.</p>
+        <p style="margin-top:10px">Flagship builds from this role — the <b>AI IT-support bot</b>, <b>n8n automation platform</b>, and the <b>self-hosted IT infrastructure</b> — are detailed in the work above.</p>
       </div>
       <div class="work">
         <h3>Chief / Senior Technician — Meadow Computer &amp; System Sdn Bhd</h3>

@@ -401,13 +401,15 @@ flowchart LR
 
       <div class="work">
         <h3>JoJo — Personal AI Assistant <span class="badge personal">Personal</span></h3>
-        <p><b>What it does:</b> a personal AI assistant I talk to over Telegram — it manages my calendar, email, notes and files, runs automations, browses the web for me, and remembers context from one conversation to the next.</p>
-        <p>An agentic assistant built on <b>Claude Code</b>. Under the hood it runs automations through n8n, drives a real browser for research, and keeps <b>persistent cross-session memory</b> via custom MCP (Model Context Protocol) servers — the open standard that lets an AI assistant plug into external tools and data.</p>
-        <div class="tags"><span class="chip">Claude Code</span><span class="chip">MCP servers</span><span class="chip">Telegram</span><span class="chip">n8n</span><span class="chip">Semantic memory</span></div>
+        <p><b>What it does:</b> a personal AI assistant I talk to over Telegram, by text or voice — it manages my calendar, email, notes and files, runs automations, browses the web for me, and remembers context from one conversation to the next.</p>
+        <p>An agentic assistant built on <b>Claude Code</b>. Under the hood it runs automations through n8n, drives a real browser for research, and keeps <b>persistent cross-session memory</b> via custom MCP (Model Context Protocol) servers — the open standard that lets an AI assistant plug into external tools and data. Voice messages are handled by a <b>self-hosted Whisper</b> (faster-whisper) service running on my own hardware, so I can just talk to it with no per-use cloud cost.</p>
+        <div class="tags"><span class="chip">Claude Code</span><span class="chip">MCP servers</span><span class="chip">Telegram</span><span class="chip">n8n</span><span class="chip">Whisper</span><span class="chip">Semantic memory</span></div>
         <details class="arch"><summary>Show architecture</summary>
         <pre class="mermaid">
 flowchart LR
     TG[Telegram] <--> AGENT[Claude Code agent]
+    VOICE[Voice message] --> STT[Self-hosted Whisper<br>speech-to-text]
+    STT --> AGENT
     AGENT --> MCP[MCP tools<br>memory / browser / search]
     AGENT --> N8N[n8n workflows]
     N8N --> SVC[Calendar / Email<br>Drive / News]
@@ -415,15 +417,9 @@ flowchart LR
     style AGENT fill:#cce5ff,color:#000
     style MEM fill:#d4edda,color:#000
     style N8N fill:#d4edda,color:#000
+    style STT fill:#fff3cd,color:#000
         </pre>
         </details>
-      </div>
-
-      <div class="work">
-        <h3>Hermes — Self-Hosted Speech-to-Text <span class="badge personal">Personal</span></h3>
-        <p><b>What it does:</b> turns voice messages into text — running entirely on my own hardware, so there's no per-use cloud fee and nothing leaves the network.</p>
-        <p>A containerized speech-to-text service built on <b>Whisper</b> (faster-whisper), originally built to give JoJo voice-message transcription and now reused across other automation pipelines.</p>
-        <div class="tags"><span class="chip">Whisper</span><span class="chip">Docker</span><span class="chip">Python</span><span class="chip">Self-hosted</span></div>
       </div>
 
       <div class="work">

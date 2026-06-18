@@ -176,7 +176,10 @@
     .nav, header.hero, main, footer { display: none !important; }
     body { background: #fff !important; }
     #resume-print { display: block !important; }
-    @page { margin: 13mm; }
+    /* margin:0 removes the page-margin strip the browser fills with the print date + URL;
+       re-create the margins as padding so the résumé looks identical, just clean. */
+    @page { margin: 0; }
+    #resume-print { max-width: none; margin: 0; padding: 13mm 16mm; }
   }
 </style>
 <script>

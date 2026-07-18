@@ -22,6 +22,7 @@
   html[data-theme="dark"] a { color: #a5b4fc; }
   html[data-theme="dark"] .chip { color: #cbd5e1; }
   html[data-theme="dark"] .badge.ai { background: #4c1d95; color: #ede9fe; }
+  html[data-theme="dark"] .badge.wip { background: #78350f; color: #fde68a; }
   html[data-theme="dark"] .card .label,
   html[data-theme="dark"] .work .meta,
   html[data-theme="dark"] td::before { color: #a5b4fc; }
@@ -102,6 +103,7 @@
   .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
   .tags .chip { font-size: .8rem; }
   .badge.ai { background: #f5f3ff; color: #6d28d9; }
+  .badge.wip { background: #fef3c7; color: #b45309; }
   h3.tier { font-size: .8rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 700; margin: 4px 0 18px; }
   h3.tier.second { margin-top: 40px; }
   .note { color: var(--muted); font-size: .9rem; font-style: italic; margin: 0 0 14px; }
@@ -426,6 +428,25 @@ flowchart LR
       </div>
 
       <div class="work">
+        <h3>AI Eyes — Vision Assistant <span class="badge personal">Personal</span> <span class="badge ai">AI</span> <span class="badge wip">In Progress</span></h3>
+        <p><b>What it does:</b> point a camera at the world and get a real-time AI overlay — a DIY take on the HoloLens idea. Three modes: <b>Identify</b> (names and describes the object in view), <b>How-to</b> (generates a step-by-step repair/usage guide for what it sees), and <b>Translate</b> (reads on-screen text via OCR and translates it).</p>
+        <p>All three modes run on a single multimodal call to <b>Google Gemini Flash 3</b>. A <b>FastAPI</b> backend serves a web HUD and exposes one <code>/api/analyze</code> endpoint; the display layer never talks to the model directly — it only sends a captured frame plus the selected mode and renders the normalized <b>overlay JSON</b> it gets back. That stable contract is the whole point: Phase&nbsp;1 proves the loop on an ordinary monitor, so Phase&nbsp;2 can swap in AR glasses or a hologram <i>without rewriting the core</i>. Includes live object boxes and hand-tracking point-to-select, with unit-tested selection logic.</p>
+        <div class="tags"><span class="chip">Gemini Flash 3</span><span class="chip">Multimodal VLM</span><span class="chip">FastAPI</span><span class="chip">Computer Vision</span><span class="chip">Python</span><span class="chip">JavaScript</span></div>
+        <details class="arch"><summary>Show architecture</summary>
+        <pre class="mermaid">
+flowchart LR
+    A[Camera + web HUD] -->|frame + mode| B[FastAPI backend]
+    B --> C[vlm.py<br>Gemini Flash 3]
+    C -->|overlay JSON| B
+    B -->|title / body / steps| A
+    style A fill:#cce5ff,color:#000
+    style B fill:#d4edda,color:#000
+    style C fill:#fff3cd,color:#000
+        </pre>
+        </details>
+      </div>
+
+      <div class="work">
         <h3>Enterprise Systems — Current Role <span class="badge">Work</span></h3>
         <p class="note">Built for an SME; kept high-level to respect confidentiality.</p>
         <ul class="bullets">
@@ -458,6 +479,7 @@ flowchart TD
         <table>
           <thead><tr><th>Project</th><th>What it is</th><th>Stack</th></tr></thead>
           <tbody>
+            <tr><td data-label="Project"><b>Agentic Coding Scaffold</b></td><td data-label="What it is">Reusable Claude Code skill framework — 22 modular skills, persistent cross-session memory scaffolds, permission/safety policies, and multi-model (Gemini) fallback routing. Configuration-as-code, actively maintained.</td><td data-label="Stack">Python · Claude Code · MCP</td></tr>
             <tr><td data-label="Project"><b>KupuPost</b></td><td data-label="What it is">Unified messaging API — send to one or many recipients across WhatsApp &amp; Telegram from a single endpoint, with WhatsApp session management</td><td data-label="Stack">Python · FastAPI · Docker</td></tr>
             <tr><td data-label="Project"><b>telegrambots</b></td><td data-label="What it is">FastAPI REST service for sending Telegram messages — text, replies, HTML formatting — with OpenAPI docs and Docker deployment</td><td data-label="Stack">Python · FastAPI · Docker</td></tr>
             <tr><td data-label="Project"><b>database-sensei</b></td><td data-label="What it is">Turns plain-English requests into SQL from a database's schema using AI (Google Gemini) — FastAPI backend + web UI, multi-database (PostgreSQL / MySQL / SQLite / SQL Server) via SQLAlchemy</td><td data-label="Stack">Python · FastAPI · JavaScript · SQLAlchemy · Gemini · Docker</td></tr>

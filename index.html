@@ -356,12 +356,12 @@ flowchart TD
 
       <div class="work">
         <h3>Self-Hosted IT Infrastructure <span class="badge">Work</span></h3>
-        <p>As the first IT hire at an SME, I designed and built the entire IT function from zero — the office network, servers, self-hosted apps, central file storage, backups, and security. File storage runs on a <b>Synology DS920+</b> NAS (SHR redundant storage), automatically replicated to a separate Synology DS120 as an off-box backup.</p>
+        <p>As the first IT hire at an SME, I designed and built the entire IT function from zero — the office network, servers, self-hosted apps, central file storage, backups, and security. File storage runs on a <b>Synology NAS</b> with SHR redundant storage, automatically replicated to a separate NAS as an off-box backup target.</p>
         <details class="arch"><summary>Show architecture</summary>
         <pre class="mermaid">
 flowchart LR
     subgraph Edge[Network Edge]
-        WAN[5x WAN lines] --> RTR[OpenWRT Router<br>multi-WAN failover]
+        WAN[Multiple WAN lines] --> RTR[OpenWRT Router<br>multi-WAN failover]
         RTR --> AP[Managed APs]
     end
     subgraph Virt[Virtualization]
@@ -374,7 +374,7 @@ flowchart LR
         DOCK --> MON[Uptime Kuma]
     end
     subgraph Store[Storage]
-        NAS[Synology DS920+<br>file server · SHR] --> BAK[Synology DS120<br>backup target]
+        NAS[Synology NAS<br>file server · SHR] --> BAK[Secondary NAS<br>backup target]
     end
     RTR --> PVE
     PVE --> NAS
@@ -492,19 +492,19 @@ flowchart TD
     <section id="experience">
       <h2>Experience</h2>
       <div class="work">
-        <h3>IT Manager — Modern Zone Marketing Sdn Bhd</h3>
-        <p class="meta">Jun 2020 – Present · Johor Bahru</p>
+        <h3>IT Manager | Platform Engineering, Infrastructure Automation &amp; Reliability</h3>
+        <p class="meta">Modern Zone Marketing Sdn Bhd · Jun 2020 – Present · Johor Bahru</p>
         <p>First IT hire — built and now lead the entire IT function: infrastructure, networking, support, and an engineering team I grew from just me to 7. Drove automation, self-hosting, and AI tooling across the business — and mentored team members, including growing a non-developer into a shipping contributor.</p>
         <p style="margin-top:10px">Flagship builds from this role — the <b>AI IT-support bot</b>, <b>n8n automation platform</b>, and the <b>self-hosted IT infrastructure</b> — are detailed in the work above.</p>
       </div>
       <div class="work">
-        <h3>Chief / Senior Technician — Meadow Computer &amp; System Sdn Bhd</h3>
-        <p class="meta">2013 – 2020 · Johor Bahru</p>
+        <h3>Chief / Senior Technician</h3>
+        <p class="meta">Meadow Computer &amp; System Sdn Bhd · 2013 – 2020 · Johor Bahru</p>
         <p>Progressed from technician to chief technician; managed up to four technicians, ran after-sales services, automated manual workflows, and maintained an in-house service/warranty management system.</p>
       </div>
       <div class="work">
-        <h3>Software Engineer Intern — GNey Software</h3>
-        <p class="meta">2018 · Johor Bahru</p>
+        <h3>Software Engineer Intern</h3>
+        <p class="meta">GNey Software · 2018 · Johor Bahru</p>
         <p>Software development internship building internal applications.</p>
       </div>
     </section>
@@ -538,10 +538,10 @@ flowchart TD
 
     <h2>Experience</h2>
     <div class="r-job">
-      <h3>IT Manager — Modern Zone Marketing Sdn Bhd</h3>
-      <p class="r-meta">Jun 2020 – Present · Johor Bahru, Malaysia</p>
+      <h3>IT Manager | Platform Engineering, Infrastructure Automation &amp; Reliability</h3>
+      <p class="r-meta">Modern Zone Marketing Sdn Bhd · Jun 2020 – Present · Johor Bahru, Malaysia</p>
       <ul>
-        <li>Built the company's IT infrastructure from scratch as the first IT hire — Windows Hyper-V virtualization, Docker hosts, Nginx reverse proxy, multi-WAN networking (5 lines), and automated file-server backups (Synology DS920+).</li>
+        <li>Built the company's IT infrastructure from scratch as the first IT hire — Windows Hyper-V virtualization, Docker hosts, Nginx reverse proxy, multi-WAN networking with automatic failover, and automated file-server backups to a separate NAS.</li>
         <li>Designed and shipped an AI/LLM-powered Telegram IT-support bot (FAQ/SOP retrieval + automated VM restart) that resolves routine L1 tickets end-to-end — freeing the team for higher-value engineering.</li>
         <li>Built an n8n automation platform; automated sales/delivery order creation and a tap-card HR/attendance system, removing recurring manual work.</li>
         <li>Hardened security org-wide — YubiKey deployment, Action1 patch management, VPN access.</li>
@@ -550,16 +550,16 @@ flowchart TD
       </ul>
     </div>
     <div class="r-job">
-      <h3>Chief / Senior Technician — Meadow Computer &amp; System Sdn Bhd</h3>
-      <p class="r-meta">2013 – 2020 · Johor Bahru, Malaysia</p>
+      <h3>Chief / Senior Technician</h3>
+      <p class="r-meta">Meadow Computer &amp; System Sdn Bhd · 2013 – 2020 · Johor Bahru, Malaysia</p>
       <ul>
         <li>Progressed from technician to chief technician; managed up to four technicians and ran after-sales services.</li>
         <li>Built and maintained internal systems and scripts (warranty management, automated software deployment) and a technical knowledge base.</li>
       </ul>
     </div>
     <div class="r-job">
-      <h3>Software Engineer Intern — GNey Software</h3>
-      <p class="r-meta">2018 · Johor Bahru, Malaysia</p>
+      <h3>Software Engineer Intern</h3>
+      <p class="r-meta">GNey Software · 2018 · Johor Bahru, Malaysia</p>
       <ul>
         <li>Built project scaffolding and maintained client websites; supported testing and documentation.</li>
       </ul>

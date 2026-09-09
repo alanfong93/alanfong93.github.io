@@ -35,6 +35,7 @@
   html[data-theme="dark"] details.arch > summary { background: #312e81; color: #c7d2fe; }
   html[data-theme="dark"] .badge.personal { background: #334155; color: #cbd5e1; }
   html[data-theme="dark"] details.arch > summary:hover { background: #3730a3; }
+  html[data-theme="dark"] .btn-card.ghost { color: #c7d2fe; border-color: #475569; }
   html[data-theme="dark"] th { background: #0f172a; color: #94a3b8; }
 
   /* Theme toggle */
@@ -111,6 +112,13 @@
   ul.bullets li { margin: 4px 0; }
 
   /* Collapsible architecture diagrams */
+  .card-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 14px; }
+  .btn-card { display: inline-flex; align-items: center; justify-content: center; padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: .88rem; }
+  .btn-card.primary { background: var(--accent); color: #042f2e; }
+  .btn-card.primary:hover { text-decoration: none; filter: brightness(1.08); }
+  .btn-card.ghost { background: transparent; color: var(--accent2); border: 1px solid var(--line); }
+  .btn-card.ghost:hover { text-decoration: none; border-color: var(--accent2); }
+  .card-actions details.arch { margin-top: 0; }
   details.arch { margin-top: 6px; }
   details.arch > summary { cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: .88rem; color: var(--accent2); background: #eef2ff; padding: 8px 14px; border-radius: 8px; user-select: none; }
   details.arch > summary::-webkit-details-marker { display: none; }
@@ -266,12 +274,14 @@
 
       <div class="work">
         <h3>Network Sandbox <span class="badge personal">Personal</span> <span class="badge wip">In Progress</span></h3>
-        <p class="meta"><a href="https://alanfong93.github.io/network-sandbox/">Live demo</a> · <a href="https://github.com/alanfong93/network-sandbox">Source</a></p>
         <p><b>What it does:</b> lets you build a switch/router/VLAN topology in the browser, send a frame, and read hop by hop what happened — including the exact 802.1Q step that dropped it — before you try the same change on live gear.</p>
         <p>A browser-only sandbox for <b>IEEE 802.1Q / 802.1D</b> bridging, plus documented models of routing, NAT, DHCP and ARP. No server and no account. The bridge path runs the published ingress → forward → egress pipeline rather than a pile of vendor-shaped if-statements. <b>A trace, never a verdict:</b> it does not certify a production design, and it does not emulate any vendor's defaults. You still translate a working design into your box's syntax.</p>
         <p>Wired core, access points as wired devices, and multi-WAN are in the engine; the browser editor (palette, inspector, SVG canvas, hop replay) is started. Radio coverage is not modelled.</p>
         <div class="tags"><span class="chip">TypeScript</span><span class="chip">IEEE 802.1Q</span><span class="chip">802.1D STP</span><span class="chip">Browser-only</span><span class="chip">GitHub Pages</span></div>
-        <details class="arch"><summary>Show architecture</summary>
+        <div class="card-actions">
+          <a class="btn-card primary" href="https://alanfong93.github.io/network-sandbox/">Try the sandbox</a>
+          <a class="btn-card ghost" href="https://github.com/alanfong93/network-sandbox">Source</a>
+          <details class="arch"><summary>Show architecture</summary>
         <pre class="mermaid">
 flowchart LR
     UI[Browser UI<br>palette · canvas · inspector] --> ENG[802.1Q engine<br>ingress → forward → egress]
@@ -281,6 +291,7 @@ flowchart LR
     style TRACE fill:#fff3cd,color:#000
         </pre>
         </details>
+        </div>
       </div>
 
       <div class="work">

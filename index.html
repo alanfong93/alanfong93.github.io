@@ -265,6 +265,25 @@
       <h3 class="tier">Featured</h3>
 
       <div class="work">
+        <h3>Network Sandbox <span class="badge personal">Personal</span> <span class="badge wip">In Progress</span></h3>
+        <p class="meta"><a href="https://alanfong93.github.io/network-sandbox/">Live demo</a> · <a href="https://github.com/alanfong93/network-sandbox">Source</a></p>
+        <p><b>What it does:</b> lets you build a switch/router/VLAN topology in the browser, send a frame, and read hop by hop what happened — including the exact 802.1Q step that dropped it — before you try the same change on live gear.</p>
+        <p>A browser-only sandbox for <b>IEEE 802.1Q / 802.1D</b> bridging, plus documented models of routing, NAT, DHCP and ARP. No server and no account. The bridge path runs the published ingress → forward → egress pipeline rather than a pile of vendor-shaped if-statements. <b>A trace, never a verdict:</b> it does not certify a production design, and it does not emulate any vendor's defaults. You still translate a working design into your box's syntax.</p>
+        <p>Wired core, access points as wired devices, and multi-WAN are in the engine; the browser editor (palette, inspector, SVG canvas, hop replay) is started. Radio coverage is not modelled.</p>
+        <div class="tags"><span class="chip">TypeScript</span><span class="chip">IEEE 802.1Q</span><span class="chip">802.1D STP</span><span class="chip">Browser-only</span><span class="chip">GitHub Pages</span></div>
+        <details class="arch"><summary>Show architecture</summary>
+        <pre class="mermaid">
+flowchart LR
+    UI[Browser UI<br>palette · canvas · inspector] --> ENG[802.1Q engine<br>ingress → forward → egress]
+    ENG --> TRACE[Hop trace<br>why it forwarded or died]
+    style UI fill:#cce5ff,color:#000
+    style ENG fill:#d4edda,color:#000
+    style TRACE fill:#fff3cd,color:#000
+        </pre>
+        </details>
+      </div>
+
+      <div class="work">
         <h3>Distributed Print-Fleet Service <span class="badge">Work</span></h3>
         <p><b>What it does:</b> lets several sites (offices, branches, shop floors) share and manage their receipt/label printers from one central dashboard — instead of setting up and troubleshooting each printer machine-by-machine, on site.</p>
         <p>A self-hosted platform that turns USB thermal printers into a managed, multi-site network resource. <b>Raspberry Pi edge agents</b> expose printers over an authenticated HTTP API with reboot-safe job queues — so a print job is never lost or double-printed if a device restarts. A <b>central control plane</b> handles device enrollment, access tokens, job dispatch, status callbacks, and over-the-air (OTA) updates to the whole fleet — with a web dashboard and hardened deployment.</p>
@@ -515,7 +534,7 @@ flowchart TD
       <a href="https://www.linkedin.com/in/alan-fong"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"/></svg>LinkedIn</a> &nbsp;·&nbsp;
       <a href="https://github.com/alanfong93"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222 0 1.606-.014 2.898-.014 3.293 0 .322.216.694.825.576C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>GitHub</a>
     </div>
-    <p style="color:#94a3b8;font-size:.85rem;margin-top:10px">Most implementation code lives in private repositories — this site highlights architecture, decisions, and outcomes.</p>
+    <p style="color:#94a3b8;font-size:.85rem;margin-top:10px">Employer implementation lives in private repositories. Public personal work is linked from its cards.</p>
   </footer>
 
   <section id="resume-print">

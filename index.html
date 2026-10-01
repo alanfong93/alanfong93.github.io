@@ -113,7 +113,8 @@
 
   /* Collapsible architecture diagrams */
   .card-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 14px; }
-  .btn-card { display: inline-flex; align-items: center; justify-content: center; padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: .88rem; }
+  .btn-card { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: .88rem; }
+  .btn-card svg { width: 18px; height: 18px; fill: currentColor; flex-shrink: 0; }
   .btn-card.primary { background: var(--accent); color: #042f2e; }
   .btn-card.primary:hover { text-decoration: none; filter: brightness(1.08); }
   .btn-card.ghost { background: transparent; color: var(--accent2); border: 1px solid var(--line); }
@@ -162,34 +163,34 @@
   }
   /* Résumé — branded, but real selectable text (ATS-friendly). Only visibility is print-gated. */
   #resume-print { display: none; }
-  #resume-print { max-width: 720px; margin: 0 auto; color: #0f172a; line-height: 1.45;
+  #resume-print { max-width: 720px; margin: 0 auto; color: #0f172a; line-height: 1.3;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  #resume-print .r-head { display: flex; align-items: center; gap: 16px; border-bottom: 3px solid #14b8a6; padding-bottom: 10px; margin-bottom: 14px; }
+  #resume-print .r-head { display: flex; align-items: center; gap: 14px; border-bottom: 3px solid #14b8a6; padding-bottom: 8px; margin-bottom: 10px; }
   #resume-print .r-head .r-text { flex: 1; }
-  #resume-print .r-photo { width: 86px; height: 86px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+  #resume-print .r-photo { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
   /* RÉSUMÉ PHOTO TOGGLE — change 'block' to 'none' to hide the photo (e.g. for US / Europe applications) */
   #resume-print .r-photo { display: block; }
   #resume-print h1 { font-size: 26px; margin: 0; letter-spacing: -0.01em; }
   #resume-print .r-title { font-size: 14px; font-weight: 700; color: #0d9488; margin: 3px 0 7px; }
   #resume-print .r-contact { font-size: 11px; color: #475569; margin: 0; }
-  #resume-print h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; margin: 16px 0 8px; padding-left: 10px; border-left: 4px solid #14b8a6; }
-  #resume-print h3 { font-size: 14px; margin: 10px 0 0; }
+  #resume-print h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; margin: 12px 0 5px; padding-left: 8px; border-left: 4px solid #14b8a6; break-after: avoid; }
+  #resume-print h2::before { display: none; }
+  #resume-print h3 { font-size: 14px; margin: 8px 0 0; }
   #resume-print .r-meta { font-size: 11px; color: #6366f1; font-weight: 600; margin: 1px 0 4px; }
-  #resume-print p { font-size: 12px; margin: 4px 0; color: #334155; }
+  #resume-print p { font-size: 14px; margin: 4px 0; color: #334155; }
   #resume-print ul { margin: 4px 0 0; padding-left: 18px; }
-  #resume-print li { font-size: 12px; margin: 3px 0; color: #334155; }
-  #resume-print .r-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
-  #resume-print .r-chip { background: #f1f5f9; color: #0f172a; border-radius: 6px; padding: 3px 9px; font-size: 11px; }
-  #resume-print .r-job { margin-bottom: 11px; page-break-inside: avoid; }
+  #resume-print li { font-size: 14px; margin: 4px 0; color: #334155; }
+  #resume-print .r-job { margin-bottom: 8px; break-inside: avoid; }
+  #resume-print a { color: inherit; text-decoration: none; }
   @media print {
     .nav, header.hero, main, footer { display: none !important; }
     body { background: #fff !important; }
     #resume-print { display: block !important; }
     /* margin:0 removes the page-margin strip the browser fills with the print date + URL;
        re-create the margins as padding so the résumé looks identical, just clean. */
-    @page { margin: 0; }
-    #resume-print { max-width: none; margin: 0; padding: 13mm 16mm; }
+    @page { size: A4 portrait; margin: 0; }
+    #resume-print { width: 210mm; max-width: none; margin: 0; padding: 12mm 15mm; }
   }
 </style>
 <script>
@@ -271,7 +272,6 @@
     <section id="projects">
       <h2>Projects</h2>
       <h3 class="tier">Public Personal Projects</h3>
-      <p class="note">Project status checked against GitHub on 1 October 2026.</p>
 
       <div class="work">
         <h3>ops-guard <span class="badge personal">Public</span> <span class="badge wip">In Progress</span></h3>
@@ -279,7 +279,7 @@
         <p>A single-operator <b>MCP server</b> with LAN HTTPS runbook search and audited proposal creation. Its execution gate checks evidence, observed preconditions, and authorization <b>inside the server</b>. Permitted and refused execution paths are demonstrated over the real components; optional Telegram approval binds a human decision to a specific proposal.</p>
         <p><b>Current boundary:</b> execution is not yet exposed as an MCP tool. Local risk judgments are audit-only and never authorize an operation; the current rubric failed its usefulness evaluation.</p>
         <div class="tags"><span class="chip">Python</span><span class="chip">FastMCP</span><span class="chip">SQLite</span><span class="chip">TLS</span><span class="chip">Approval gates</span><span class="chip">Audit logging</span></div>
-        <div class="card-actions"><a class="btn-card primary" href="https://github.com/alanfong93/ops-guard">GitHub Repo</a></div>
+        <div class="card-actions"><a class="btn-card primary" href="https://github.com/alanfong93/ops-guard"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222 0 1.606-.014 2.898-.014 3.293 0 .322.216.694.825.576C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>GitHub Repo</a></div>
       </div>
 
       <div class="work">
@@ -288,7 +288,7 @@
         <p>One core serves a <b>Python library, HTTP API, and MCP interface</b>, using Ollama or an explicitly configured OpenAI-compatible endpoint. Implements a documented Jev-compatible subset with choice, score, and Noul questions. Model output is validated in code, invalid responses become typed failures, and repeated-sample agreement is distinguished from calibrated confidence.</p>
         <p><b>Status:</b> core, adapters, interfaces, and container deployment are implemented. Scripted evidence-runner tests exist; representative live-model usefulness has not yet been established.</p>
         <div class="tags"><span class="chip">Python</span><span class="chip">Ollama</span><span class="chip">HTTP API</span><span class="chip">MCP</span><span class="chip">Docker</span><span class="chip">Structured judgments</span></div>
-        <div class="card-actions"><a class="btn-card primary" href="https://github.com/alanfong93/local-judge">GitHub Repo</a></div>
+        <div class="card-actions"><a class="btn-card primary" href="https://github.com/alanfong93/local-judge"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222 0 1.606-.014 2.898-.014 3.293 0 .322.216.694.825.576C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>GitHub Repo</a></div>
       </div>
 
       <div class="work">
@@ -296,7 +296,7 @@
         <p><b>What it does:</b> makes existing notes and trusted sources available as AI context, with compiled answers pointing back to the originals.</p>
         <p>A starter kit from <i>The Context You Already Earned</i> meetup talk: an empty vault for original sources and cited wiki notes, two compile/index skills, and a <b>MemPalace pointer-index script</b> for Markdown and captions. Supports Claude Code, Codex, and OpenCode. Indexing is explicitly run after writes; the kit contains no personal notes.</p>
         <div class="tags"><span class="chip">Python</span><span class="chip">Markdown</span><span class="chip">Obsidian</span><span class="chip">MemPalace</span><span class="chip">Agent skills</span></div>
-        <div class="card-actions"><a class="btn-card primary" href="https://github.com/alanfong93/jiandu">GitHub Repo</a></div>
+        <div class="card-actions"><a class="btn-card primary" href="https://github.com/alanfong93/jiandu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222 0 1.606-.014 2.898-.014 3.293 0 .322.216.694.825.576C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>GitHub Repo</a></div>
       </div>
 
       <div class="work">
@@ -307,7 +307,7 @@
         <div class="tags"><span class="chip">TypeScript</span><span class="chip">IEEE 802.1Q</span><span class="chip">802.1D STP</span><span class="chip">Browser-only</span><span class="chip">GitHub Pages</span></div>
         <div class="card-actions">
           <a class="btn-card primary" href="https://alanfong93.github.io/network-sandbox/">Try the sandbox</a>
-          <a class="btn-card ghost" href="https://github.com/alanfong93/network-sandbox">GitHub Repo</a>
+          <a class="btn-card ghost" href="https://github.com/alanfong93/network-sandbox"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222 0 1.606-.014 2.898-.014 3.293 0 .322.216.694.825.576C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>GitHub Repo</a>
           <details class="arch"><summary>Show architecture</summary>
         <pre class="mermaid">
 flowchart LR
@@ -589,57 +589,47 @@ flowchart TD
       <div class="r-text">
         <h1>Alan Fong</h1>
         <p class="r-title">DevOps &amp; Automation Engineer</p>
-        <p class="r-contact">Johor Bahru, Malaysia · alanfong93@gmail.com · linkedin.com/in/alan-fong · github.com/alanfong93 · alanfong93.github.io</p>
+        <p class="r-contact">Johor Bahru, Malaysia · <a href="mailto:alanfong93@gmail.com">alanfong93@gmail.com</a><br><a href="https://www.linkedin.com/in/alan-fong">linkedin.com/in/alan-fong</a> · <a href="https://alanfong93.github.io/">alanfong93.github.io</a></p>
       </div>
     </div>
 
     <h2>Summary</h2>
-    <p>DevOps &amp; Automation Engineer who builds and runs the systems that keep a business operating, with AI woven into the workflows. As the first IT hire at an SME, built the entire IT function from zero — networking, virtualization, infrastructure and security — and grew from sole engineer to leading a small team while staying hands-on.</p>
+    <p>Hands-on IT manager combining infrastructure operations, software engineering, and AI-enabled automation. Established an SME's IT function as its first IT hire and grew the team while continuing to build and operate business systems.</p>
 
     <h2>Core Skills</h2>
-    <div class="r-chips">
-      <span class="r-chip">Docker</span><span class="r-chip">Windows Hyper-V</span><span class="r-chip">Proxmox</span><span class="r-chip">Linux</span><span class="r-chip">Nginx</span><span class="r-chip">Python</span><span class="r-chip">C#</span><span class="r-chip">PHP</span><span class="r-chip">JavaScript</span><span class="r-chip">TypeScript</span><span class="r-chip">PowerShell</span><span class="r-chip">Bash</span><span class="r-chip">AWS</span><span class="r-chip">GCP</span><span class="r-chip">n8n</span><span class="r-chip">MCP</span><span class="r-chip">Ollama</span><span class="r-chip">CI/CD (GitHub Actions)</span><span class="r-chip">Cloudflare Tunnel</span><span class="r-chip">Multi-WAN · OpenWRT · pfSense</span><span class="r-chip">LLM &amp; agent automation</span><span class="r-chip">Uptime Kuma</span><span class="r-chip">YubiKey</span><span class="r-chip">Synology NAS</span>
-    </div>
+    <p><b>Engineering:</b> Python · C# · PHP · JavaScript/TypeScript · PowerShell · FastAPI</p>
+    <p><b>Infrastructure:</b> Docker · Hyper-V · Linux · Nginx · AWS · multi-WAN/VPN · NAS backups</p>
+    <p><b>Automation &amp; reliability:</b> n8n · MCP · Ollama · GitHub Actions · monitoring · patch management</p>
 
     <h2>Experience</h2>
     <div class="r-job">
-      <h3>IT Manager | Platform Engineering, Infrastructure Automation &amp; Reliability</h3>
-      <p class="r-meta">Modern Zone Marketing Sdn Bhd · Jun 2020 – Present · Johor Bahru, Malaysia</p>
+      <h3>IT Manager</h3>
+      <p class="r-meta">Modern Zone Marketing Sdn Bhd · Jun 2020 – Present · Johor Bahru</p>
       <ul>
-        <li>Built the company's IT infrastructure from scratch as the first IT hire — Windows Hyper-V virtualization, Docker hosts, Nginx reverse proxy, multi-WAN networking with automatic failover, and automated file-server backups to a separate NAS.</li>
-        <li>Designed and shipped an AI/LLM-powered Telegram IT-support bot (FAQ/SOP retrieval + automated VM restart) that resolves routine L1 tickets end-to-end — freeing the team for higher-value engineering.</li>
-        <li>Built an n8n automation platform; automated sales/delivery order creation and a tap-card HR/attendance system, removing recurring manual work.</li>
-        <li>Hardened security org-wide — YubiKey deployment, Action1 patch management, VPN access.</li>
-        <li>Drove engineering practices team-wide: branch-based Git workflow, pull-request reviews, CI-based automated code review, and a docs standard for every repo.</li>
-        <li>Grew and led the IT team (solo to 7 engineers); mentored a colleague with little programming background into the primary author of a shipped internal automation.</li>
+        <li>Established the IT function as the first IT hire; operate Hyper-V virtualization, Docker services, multi-WAN failover, monitoring, and automated off-box NAS backups.</li>
+        <li>Sole author of the C# asset-management system; rebuilt the packaging recommendation service with FastAPI, OR-Tools 3D packing, and isolated solver workers.</li>
+        <li>Led the Telegram AI-support bot and VM-management control plane, combining knowledge-base guidance, human escalation, and automated VM remediation.</li>
+        <li>Built n8n workflows and internal tools for sales/delivery order automation and card-tap attendance, removing recurring manual work.</li>
+        <li>Grew the team from one to a peak of seven; mentored a non-developer into a shipping contributor and introduced branch-based PR reviews and engineering documentation.</li>
       </ul>
     </div>
     <div class="r-job">
       <h3>Chief / Senior Technician</h3>
-      <p class="r-meta">Meadow Computer &amp; System Sdn Bhd · 2013 – 2020 · Johor Bahru, Malaysia</p>
-      <ul>
-        <li>Progressed from technician to chief technician; managed up to four technicians and ran after-sales services.</li>
-        <li>Built and maintained internal systems and scripts (warranty management, automated software deployment) and a technical knowledge base.</li>
-      </ul>
+      <p class="r-meta">Meadow Computer &amp; System Sdn Bhd · 2013 – 2020 · Johor Bahru</p>
+      <p>Managed up to four technicians, ran after-sales services, automated manual tasks, and maintained the service/warranty system.</p>
     </div>
     <div class="r-job">
-      <h3>Software Engineer Intern</h3>
-      <p class="r-meta">GNey Software · 2018 · Johor Bahru, Malaysia</p>
-      <ul>
-        <li>Built project scaffolding and maintained client websites; supported testing and documentation.</li>
-      </ul>
+      <p><b>Software Engineer Intern</b> · GNey Software · 2018</p>
     </div>
 
-    <h2>Public Projects</h2>
+    <h2>Selected Public Projects</h2>
     <ul>
-      <li><b>ops-guard:</b> cited runbook retrieval and audited proposals over MCP; server-side execution gate and optional human approval. Execution MCP surface still in progress. github.com/alanfong93/ops-guard</li>
-      <li><b>local-judge:</b> typed judgments through Python, HTTP, and MCP, with Ollama/OpenAI-compatible adapters and output validation. Live-model usefulness not yet established. github.com/alanfong93/local-judge</li>
-      <li><b>jiandu:</b> source-backed AI context starter kit with cited wiki compilation and explicit MemPalace indexing. github.com/alanfong93/jiandu</li>
-      <li><b>Network Sandbox:</b> browser-only 802.1Q/802.1D bridge traces, topology editing and replay. github.com/alanfong93/network-sandbox</li>
+      <li><a href="https://github.com/alanfong93/ops-guard"><b>ops-guard</b></a> — cited runbook search and audited proposals over MCP, with a server-side execution gate. MCP execution tool still in progress.</li>
+      <li><a href="https://github.com/alanfong93/network-sandbox"><b>Network Sandbox</b></a> — browser topology editor with implemented 802.1Q/802.1D bridge traces and hop replay. <a href="https://alanfong93.github.io/network-sandbox/">Live demo</a>.</li>
     </ul>
 
     <h2>Education &amp; Certifications</h2>
-    <p><b>Bachelor's Degree, Information Technology (Software Engineering)</b> — Southern University College · 2014–2018</p>
+    <p><b>Bachelor's Degree, IT (Software Engineering)</b> · Southern University College · 2014–2018</p>
     <p><b>Google IT Support Professional Certificate</b> — 2024</p>
   </section>
 

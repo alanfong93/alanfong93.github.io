@@ -26,7 +26,7 @@
   html[data-theme="dark"] .card .label,
   html[data-theme="dark"] .work .meta,
   html[data-theme="dark"] td::before { color: #a5b4fc; }
-  html[data-theme="dark"] .work p,
+  html[data-theme="dark"] .work > p,
   html[data-theme="dark"] ul.bullets,
   html[data-theme="dark"] .step { color: #94a3b8; }
   html[data-theme="dark"] .step { background: #0f2e2a; }
@@ -96,7 +96,7 @@
   #education { scroll-margin-top: 68px; }
 
   .work { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 22px 24px; margin-bottom: 18px; box-shadow: 0 1px 2px rgba(15,23,42,.04); }
-  .work p { color: #475569; margin: 6px 0 12px; }
+  .work > p { color: #475569; margin: 6px 0 12px; }
   .work .meta { color: var(--accent2); font-weight: 600; font-size: .85rem; margin: 0 0 10px; }
   .badge { display: inline-block; background: #eef2ff; color: var(--accent2); font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; padding: 3px 9px; border-radius: 999px; vertical-align: middle; margin-left: 8px; }
   .badge.personal { background: #f1f5f9; color: #475569; }
@@ -120,6 +120,7 @@
   .btn-card.ghost { background: transparent; color: var(--accent2); border: 1px solid var(--line); }
   .btn-card.ghost:hover { text-decoration: none; border-color: var(--accent2); }
   .card-actions details.arch { margin-top: 0; }
+  .card-actions details.arch[open] { flex-basis: 100%; }
   details.arch { margin-top: 6px; }
   details.arch > summary { cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: .88rem; color: var(--accent2); background: #eef2ff; padding: 8px 14px; border-radius: 8px; user-select: none; }
   details.arch > summary::-webkit-details-marker { display: none; }
@@ -127,9 +128,10 @@
   details.arch[open] > summary::after { transform: rotate(180deg); }
   details.arch > summary:hover { background: #e0e7ff; }
   pre.mermaid { background: #f8fafc; border: 1px solid var(--line); border-radius: 10px; padding: 16px; overflow-x: auto; text-align: center; margin-top: 12px; }
+  .work .mermaid p { color: #000; margin: 0; }
   details.arch[open] .mermaid svg { max-width: 100%; height: auto; }
 
-  /* Open-source table */
+  /* Utilities table */
   .table-wrap { width: 100%; }
   table { width: 100%; border-collapse: collapse; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
   th, td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--line); font-size: .92rem; }
@@ -148,7 +150,7 @@
     table thead { position: absolute; left: -9999px; top: -9999px; }
     table, tbody, tr, td { display: block; width: 100%; }
     tr { border: 1px solid var(--line); border-radius: 12px; margin-bottom: 12px; padding: 12px 14px; background: var(--panel); }
-    td { border: none; padding: 4px 0; display: flex; gap: 10px; }
+    td { border: none; padding: 4px 0; display: flex; gap: 10px; overflow-wrap: anywhere; }
     td::before { content: attr(data-label); font-weight: 700; color: var(--accent2); min-width: 78px; font-size: .72rem; text-transform: uppercase; letter-spacing: .03em; flex-shrink: 0; padding-top: 2px; }
     td:first-child { font-size: 1.05rem; font-weight: 600; }
   }
@@ -257,8 +259,8 @@
           <h2>How I Work</h2>
           <div class="steps">
             <div class="step"><b>Automation-first</b> — repetitive tasks get a pipeline.</div>
-            <div class="step"><b>Docs-first</b> — architecture/flow docs and Mermaid diagrams in every repo.</div>
-            <div class="step"><b>Disciplined Git</b> — Conventional Commits, branch-based PRs, maintainer-style and adversarial AI review.</div>
+            <div class="step"><b>Docs-first</b> — document architecture, workflows, and decisions alongside the code.</div>
+            <div class="step"><b>Review before shipping</b> — branch-based PRs, automated checks, and AI-assisted reviews that trace behavior through the system.</div>
           </div>
           <h2 id="education" style="margin-top:30px">Education &amp; Certifications</h2>
           <div class="edu">
@@ -275,39 +277,36 @@
 
       <div class="work">
         <h3>ops-guard <span class="badge personal">Public</span> <span class="badge wip">In Progress</span></h3>
-        <p><b>What it does:</b> gives an AI agent cited operational guidance, freezes proposed operations for review, and records the evidence and authorization behind submitted actions.</p>
-        <p>A single-operator <b>MCP server</b> with LAN HTTPS runbook search and audited proposal creation. Its execution gate checks evidence, observed preconditions, and authorization <b>inside the server</b>. Permitted and refused execution paths are demonstrated over the real components; optional Telegram approval binds a human decision to a specific proposal.</p>
-        <p><b>Current boundary:</b> execution is not yet exposed as an MCP tool. Local risk judgments are audit-only and never authorize an operation; the current rubric failed its usefulness evaluation.</p>
+        <p>A single-operator <b>MCP server</b> that gives AI agents cited runbook guidance and records proposed operations for review. The execution gate checks evidence, preconditions, and authorization <b>inside the server</b>, with optional Telegram approval tied to a specific proposal.</p>
+        <p>Runbook search and audited proposals are available over LAN HTTPS. Permitted and refused execution paths are demonstrated; the MCP execution tool is still in progress. Local risk assessments are advisory only.</p>
         <div class="tags"><span class="chip">Python</span><span class="chip">FastMCP</span><span class="chip">SQLite</span><span class="chip">TLS</span><span class="chip">Approval gates</span><span class="chip">Audit logging</span></div>
         <div class="card-actions"><a class="btn-card primary" href="https://github.com/alanfong93/ops-guard"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222 0 1.606-.014 2.898-.014 3.293 0 .322.216.694.825.576C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>GitHub Repo</a></div>
       </div>
 
       <div class="work">
         <h3>local-judge <span class="badge personal">Public</span> <span class="badge ai">AI</span></h3>
-        <p><b>What it does:</b> turns shared state and typed questions into structured judgments for filtering, verification, and triage.</p>
-        <p>One core serves a <b>Python library, HTTP API, and MCP interface</b>, using Ollama or an explicitly configured OpenAI-compatible endpoint. Implements a documented Jev-compatible subset with choice, score, and Noul questions. Model output is validated in code, invalid responses become typed failures, and repeated-sample agreement is distinguished from calibrated confidence.</p>
-        <p><b>Status:</b> core, adapters, interfaces, and container deployment are implemented. Scripted evidence-runner tests exist; representative live-model usefulness has not yet been established.</p>
+        <p>A structured decision engine for filtering, verification, and triage. One core serves a <b>Python library, HTTP API, and MCP interface</b>, backed by Ollama or an OpenAI-compatible endpoint.</p>
+        <p>Implements a documented Jev-compatible subset: choices, scores, and estimated statement probabilities. Validates model output in code, returns typed failures, and reports sample agreement without presenting it as calibrated confidence. Interfaces and container deployment are implemented; representative live-model usefulness has not yet been established.</p>
         <div class="tags"><span class="chip">Python</span><span class="chip">Ollama</span><span class="chip">HTTP API</span><span class="chip">MCP</span><span class="chip">Docker</span><span class="chip">Structured judgments</span></div>
         <div class="card-actions"><a class="btn-card primary" href="https://github.com/alanfong93/local-judge"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222 0 1.606-.014 2.898-.014 3.293 0 .322.216.694.825.576C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>GitHub Repo</a></div>
       </div>
 
       <div class="work">
         <h3>jiandu — Source-Backed AI Context <span class="badge personal">Public</span></h3>
-        <p><b>What it does:</b> makes existing notes and trusted sources available as AI context, with compiled answers pointing back to the originals.</p>
-        <p>A starter kit from <i>The Context You Already Earned</i> meetup talk: an empty vault for original sources and cited wiki notes, two compile/index skills, and a <b>MemPalace pointer-index script</b> for Markdown and captions. Supports Claude Code, Codex, and OpenCode. Indexing is explicitly run after writes; the kit contains no personal notes.</p>
+        <p>A starter kit for turning trusted sources and existing notes into reusable AI context. Keeps original material alongside <b>cited wiki notes</b>, with MemPalace indexing that helps an agent find and read the relevant source.</p>
+        <p>Created for <i>The Context You Already Earned</i> meetup talk. Includes compile/index skills and a pointer-index script for Markdown and captions, supporting Claude Code, Codex, and OpenCode.</p>
         <div class="tags"><span class="chip">Python</span><span class="chip">Markdown</span><span class="chip">Obsidian</span><span class="chip">MemPalace</span><span class="chip">Agent skills</span></div>
         <div class="card-actions"><a class="btn-card primary" href="https://github.com/alanfong93/jiandu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222 0 1.606-.014 2.898-.014 3.293 0 .322.216.694.825.576C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>GitHub Repo</a></div>
       </div>
 
       <div class="work">
-        <h3>Network Sandbox <span class="badge personal">Personal</span> <span class="badge wip">In Progress</span></h3>
-        <p><b>What it does:</b> lets you build a switch/router/VLAN topology in the browser, send a frame, and read hop by hop what happened — including the exact 802.1Q step that dropped it — before you try the same change on live gear.</p>
-        <p>A browser-only sandbox for <b>IEEE 802.1Q / 802.1D</b> bridging, plus documented models of routing, NAT, DHCP and ARP. No server and no account. The bridge path runs the published ingress → forward → egress pipeline rather than a pile of vendor-shaped if-statements. <b>A trace, never a verdict:</b> it does not certify a production design, and it does not emulate any vendor's defaults. You still translate a working design into your box's syntax.</p>
-        <p>Wired core, access points as wired devices, and multi-WAN are in the engine. The browser editor includes a device palette, inspector, SVG canvas, port-click cabling, hop replay, and starter topologies. Save/import topology JSON or export a share copy with ISP credentials stripped. Optional AI review is labelled advice beside the engine. Radio coverage is not modelled.</p>
+        <h3>Network Sandbox <span class="badge personal">Public</span> <span class="badge wip">In Progress</span></h3>
+        <p>Build a switch/router/VLAN topology in the browser, send a frame, and replay its hop-by-hop trace. The engine implements an <b>802.1Q/802.1D bridge pipeline</b> alongside documented routing, NAT, DHCP, and ARP models.</p>
+        <p>Includes a canvas editor, starter topologies, import/export, and credential-stripped share copies. Runs without a server or account. Traces support design review, not production certification or vendor emulation; radio coverage is not modelled. Optional AI advice stays separate from engine traces.</p>
         <div class="tags"><span class="chip">TypeScript</span><span class="chip">IEEE 802.1Q</span><span class="chip">802.1D STP</span><span class="chip">Browser-only</span><span class="chip">GitHub Pages</span></div>
         <div class="card-actions">
-          <a class="btn-card primary" href="https://alanfong93.github.io/network-sandbox/">Try the sandbox</a>
-          <a class="btn-card ghost" href="https://github.com/alanfong93/network-sandbox"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222 0 1.606-.014 2.898-.014 3.293 0 .322.216.694.825.576C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>GitHub Repo</a>
+          <a class="btn-card ghost" href="https://alanfong93.github.io/network-sandbox/">Live Demo</a>
+          <a class="btn-card primary" href="https://github.com/alanfong93/network-sandbox"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222 0 1.606-.014 2.898-.014 3.293 0 .322.216.694.825.576C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>GitHub Repo</a>
           <details class="arch"><summary>Show architecture</summary>
         <pre class="mermaid">
 flowchart LR
@@ -326,8 +325,8 @@ flowchart LR
 
       <div class="work">
         <h3>Distributed Print-Fleet Service <span class="badge">Work</span></h3>
-        <p><b>What it does:</b> lets several sites (offices, branches, shop floors) share and manage their receipt/label printers from one central dashboard — instead of setting up and troubleshooting each printer machine-by-machine, on site.</p>
-        <p>A self-hosted platform that turns USB thermal printers into a managed, multi-site network resource. <b>Raspberry Pi edge agents</b> expose printers over an authenticated HTTP API with reboot-safe job queues — so a print job is never lost or double-printed if a device restarts. A <b>central control plane</b> handles device enrollment, access tokens, job dispatch, status callbacks, and over-the-air (OTA) updates to the whole fleet — with a web dashboard and hardened deployment.</p>
+        <p>A self-hosted platform for managing USB thermal printers across sites from a central dashboard. <b>Raspberry Pi edge agents</b> expose authenticated HTTP APIs with persistent queues and idempotent job handling.</p>
+        <p>The control plane handles device enrollment, scoped access tokens, job dispatch, status callbacks, and <b>over-the-air updates</b>. Built with FastAPI and containerized deployment.</p>
         <div class="tags"><span class="chip">Python</span><span class="chip">FastAPI</span><span class="chip">Distributed systems</span><span class="chip">Raspberry Pi</span><span class="chip">SQLite/Postgres</span><span class="chip">Docker</span><span class="chip">OTA</span></div>
         <details class="arch"><summary>Show architecture</summary>
         <pre class="mermaid">
@@ -350,9 +349,8 @@ flowchart LR
 
       <div class="work">
         <h3>Package Optimization Service <span class="badge">Work</span></h3>
-        <p><b>What it does:</b> automatically tells warehouse staff the best-fit shipping box for each order — cutting wasted space, packaging cost, and the guesswork of picking a box by eye.</p>
-        <p>A <b>FastAPI</b> microservice that recommends the optimal shipping box using <b>3D bin-packing</b> — a packing algorithm (Google OR-Tools CP-SAT) that fits items in three dimensions while respecting fragility, weight-stacking and rotation rules. Packing runs as <b>background jobs</b> the caller can poll for progress, caches recurring scenarios, and runs in <b>isolated worker processes</b> so a solver crash degrades a single recommendation instead of taking down the whole service. 200+ tests, Dockerized.</p>
-        <p class="impact"><b>Origin:</b> rebuilt from a flawed AI-generated prototype into a production-grade service.</p>
+        <p>Rebuilt an AI-generated prototype into a <b>FastAPI packaging recommendation service</b>. Uses OR-Tools CP-SAT for 3D packing with fragility, stacking, weight, and rotation constraints.</p>
+        <p>Background jobs provide progress polling, recurring scenarios are cached, and <b>isolated worker processes</b> contain native solver failures. Containerized, with automated tests.</p>
         <div class="tags"><span class="chip">Python</span><span class="chip">FastAPI</span><span class="chip">OR-Tools (CP-SAT)</span><span class="chip">Async jobs</span><span class="chip">Optimization</span><span class="chip">Docker</span></div>
         <details class="arch"><summary>Show architecture</summary>
         <pre class="mermaid">
@@ -372,9 +370,9 @@ flowchart LR
 
       <div class="work">
         <h3>Scheduled Broadcast Automation <span class="badge">Work</span></h3>
-        <p><b>What it does:</b> plays the right scheduled audio and announcements across a site automatically — switching playlists by time of day and season — and quietly recovers on its own if playback ever stalls.</p>
-        <p>A Python service driving the playback, with a <b>REST control + metrics API</b>. Built reliability-first: <b>circuit breakers</b> (it backs off and self-heals instead of hammering a component that's failing), timeout management, config that is validated on load and can be changed without a restart, and 118+ tests.</p>
-        <div class="tags"><span class="chip">Python</span><span class="chip">REST API</span><span class="chip">Pydantic</span><span class="chip">Circuit breaker</span><span class="chip">Scheduling</span><span class="chip">118+ tests</span></div>
+        <p>A Python service for scheduled audio playback, with time- and season-aware playlists and a <b>REST control and metrics API</b>.</p>
+        <p>Circuit breakers, timeouts, and browser recovery handle playback failures. Pydantic validates configuration, hot reload applies updates without a restart, and automated tests cover the service.</p>
+        <div class="tags"><span class="chip">Python</span><span class="chip">REST API</span><span class="chip">Pydantic</span><span class="chip">Circuit breaker</span><span class="chip">Scheduling</span></div>
         <details class="arch"><summary>Show architecture</summary>
         <pre class="mermaid">
 flowchart LR
@@ -392,9 +390,8 @@ flowchart LR
 
       <div class="work">
         <h3>AI-Powered IT Support Bot <span class="badge">Work</span> <span class="badge ai">AI</span></h3>
-        <p><b>What it does:</b> a Telegram chatbot that handles everyday IT requests from staff — answering common questions and walking people through fixes — so the team is only pulled in for the issues that genuinely need a human.</p>
-        <p>An AI/LLM-backed bot that automates first-line ("L1" — the routine front-desk tier) IT support end-to-end: tickets are checked against an FAQ/SOP/solutions knowledge base, the bot guides users through known fixes, and escalates only what needs a person — with common remediations (e.g. automatically restarting a stuck virtual machine) wired into the flow.</p>
-        <p class="impact"><b>Impact:</b> handles routine L1 tickets end-to-end, freeing the IT team to focus on higher-value engineering instead of repetitive support.</p>
+        <p>Led development of a <b>Telegram IT-support bot</b> that checks requests against an FAQ and procedures knowledge base, guides staff through known fixes, and escalates unresolved issues to an engineer.</p>
+        <p>Includes common remediations such as VM restarts, giving staff a first-line support path and the IT team more time for engineering work.</p>
         <div class="tags"><span class="chip">LLM</span><span class="chip">Telegram</span><span class="chip">Knowledge base</span></div>
         <details class="arch"><summary>Show architecture</summary>
         <pre class="mermaid">
@@ -416,7 +413,8 @@ flowchart TD
 
       <div class="work">
         <h3>Self-Hosted IT Infrastructure <span class="badge">Work</span></h3>
-        <p>As the first IT hire at an SME, I designed and built the entire IT function from zero — the office network, servers, self-hosted apps, central file storage, backups, and security. File storage runs on a <b>Synology NAS</b> with SHR redundant storage, automatically replicated to a separate NAS as an off-box backup target.</p>
+        <p>Established the IT function as the first IT hire, building and operating virtualization, self-hosted services, storage, backups, and security tooling while maintaining the business network.</p>
+        <p><b>Hyper-V and Docker</b> host virtual desktops and services; OpenWRT provides multi-WAN failover. Synology storage uses SHR redundancy and replication to a separate backup target.</p>
         <details class="arch"><summary>Show architecture</summary>
         <pre class="mermaid">
 flowchart LR
@@ -449,8 +447,8 @@ flowchart LR
 
       <div class="work">
         <h3>n8n Automation Platform <span class="badge">Work</span></h3>
-        <p><b>What it does:</b> takes repetitive day-to-day tasks — the kind people would otherwise do by hand — and runs them automatically and reliably, with full visibility into every run.</p>
-        <p>A self-hosted <b>n8n</b> platform spanning everything from business workflows to a personal AI-assistant suite, wired to both local and cloud AI models (LLMs).</p>
+        <p>A self-hosted <b>n8n automation platform</b> for recurring business workflows, connecting triggers, internal services, and local or cloud AI models.</p>
+        <p>Separate personal workflows integrate calendar, email, and document services. Execution history makes runs and failures inspectable.</p>
         <details class="arch"><summary>Show architecture</summary>
         <pre class="mermaid">
 flowchart LR
@@ -468,8 +466,8 @@ flowchart LR
 
       <div class="work">
         <h3>JoJo — Personal AI Assistant <span class="badge personal">Personal</span> <span class="badge ai">AI</span></h3>
-        <p><b>What it does:</b> a personal AI assistant that manages calendar, email, notes and files, runs automations, browses the web, and retains context across conversations.</p>
-        <p>An agentic assistant running in <b>OpenCode</b>, connected to n8n workflows and browser tools through MCP (Model Context Protocol). <b>MemPalace and an Obsidian vault</b> provide persistent cross-session context, with explicit indexing after vault writes. A self-hosted Whisper service supports transcription in automation pipelines.</p>
+        <p>A personal assistant running in <b>OpenCode</b>, connected through MCP to browser tools and n8n workflows for calendar, email, notes, files, and research.</p>
+        <p><b>MemPalace and an Obsidian vault</b> retain context across sessions. Explicit indexing connects new notes to retrieval; self-hosted Whisper supports audio transcription.</p>
         <div class="tags"><span class="chip">OpenCode</span><span class="chip">MCP</span><span class="chip">MemPalace</span><span class="chip">Obsidian</span><span class="chip">n8n</span><span class="chip">Whisper</span></div>
         <details class="arch"><summary>Show architecture</summary>
         <pre class="mermaid">
@@ -491,8 +489,8 @@ flowchart LR
 
       <div class="work">
         <h3>AI Eyes — Vision Assistant <span class="badge personal">Personal</span> <span class="badge ai">AI</span> <span class="badge wip">In Progress</span></h3>
-        <p><b>What it does:</b> point a camera at the world and get a real-time AI overlay — a DIY take on the HoloLens idea. Three modes: <b>Identify</b> (names and describes the object in view), <b>How-to</b> (generates a step-by-step repair/usage guide for what it sees), and <b>Translate</b> (reads on-screen text via OCR and translates it).</p>
-        <p>All three modes run on a single multimodal call to <b>Google Gemini Flash 3</b>. A <b>FastAPI</b> backend serves a web HUD and exposes one <code>/api/analyze</code> endpoint; the display layer never talks to the model directly — it only sends a captured frame plus the selected mode and renders the normalized <b>overlay JSON</b> it gets back. That stable contract is the whole point: Phase&nbsp;1 proves the loop on an ordinary monitor, so Phase&nbsp;2 can swap in AR glasses or a hologram <i>without rewriting the core</i>. Includes live object boxes and hand-tracking point-to-select, with unit-tested selection logic.</p>
+        <p>A camera-to-AI prototype with three overlay modes: <b>Identify</b> objects, request <b>How-to</b> guidance, or <b>Translate</b> visible text.</p>
+        <p>A FastAPI backend sends a captured frame and mode to <b>Gemini Flash 3</b>, then returns structured overlay data to a web HUD. The display is separate from model integration, with object boxes and hand-tracking selection in the prototype.</p>
         <div class="tags"><span class="chip">Gemini Flash 3</span><span class="chip">Multimodal VLM</span><span class="chip">FastAPI</span><span class="chip">Computer Vision</span><span class="chip">Python</span><span class="chip">JavaScript</span></div>
         <details class="arch"><summary>Show architecture</summary>
         <pre class="mermaid">
@@ -512,13 +510,12 @@ flowchart LR
 
       <div class="work">
         <h3>Enterprise Systems — Current Role <span class="badge">Work</span></h3>
-        <p class="note">Built for an SME; kept high-level to respect confidentiality.</p>
         <ul class="bullets">
           <li><b>HR &amp; attendance</b> — in-house card-tap system replacing an off-the-shelf biometric solution</li>
-          <li><b>IT ticketing &amp; asset/stock management</b> — internal tools for requests and hardware</li>
+          <li><b>IT asset management</b> — sole author of the C# system for hardware and stock tracking</li>
+          <li><b>IT ticketing</b> — internal tools for staff requests and support</li>
           <li><b>Warehouse management</b> — multi-courier dispatch, consignment notes and stock tracking (maintained &amp; extended)</li>
-          <li><b>Order follow-up &amp; automated reporting</b> — internal follow-up system plus scheduled reports delivered hands-free</li>
-          <li><b>Team development</b> — mentored a colleague with little programming background to design and ship an OCR-driven automation end-to-end, turning a non-developer into the project's primary author</li>
+          <li><b>Order follow-up &amp; reporting</b> — contributed to follow-up tooling and automated scheduled reports</li>
         </ul>
         <details class="arch"><summary>Show architecture</summary>
         <pre class="mermaid">
@@ -548,7 +545,7 @@ flowchart TD
             <tr><td data-label="Project"><b>KupuPost</b></td><td data-label="What it is">Unified messaging API — send to one or many recipients across WhatsApp &amp; Telegram from a single endpoint, with WhatsApp session management</td><td data-label="Stack">Python · FastAPI · Docker</td></tr>
             <tr><td data-label="Project"><b>telegrambots</b></td><td data-label="What it is">FastAPI REST service for sending Telegram messages — text, replies, HTML formatting — with OpenAPI docs and Docker deployment</td><td data-label="Stack">Python · FastAPI · Docker</td></tr>
             <tr><td data-label="Project"><b>database-sensei</b></td><td data-label="What it is">Turns plain-English requests into SQL from a database's schema using AI (Google Gemini) — FastAPI backend + web UI, multi-database (PostgreSQL / MySQL / SQLite / SQL Server) via SQLAlchemy</td><td data-label="Stack">Python · FastAPI · JavaScript · SQLAlchemy · Gemini · Docker</td></tr>
-            <tr><td data-label="Project"><b>WindowsOptimizationsScript</b></td><td data-label="What it is">Windows debloat &amp; optimization — automated system tweaks and cleanup</td><td data-label="Stack">PowerShell</td></tr>
+            <tr><td data-label="Project"><b>Windows Optimization Script</b></td><td data-label="What it is">Windows debloat &amp; optimization — automated system tweaks and cleanup</td><td data-label="Stack">PowerShell</td></tr>
           </tbody>
         </table>
       </div>
@@ -559,8 +556,8 @@ flowchart TD
       <div class="work">
         <h3>IT Manager | Platform Engineering, Infrastructure Automation &amp; Reliability</h3>
         <p class="meta">Modern Zone Marketing Sdn Bhd · Jun 2020 – Present · Johor Bahru</p>
-        <p>First IT hire — built and now lead the entire IT function: infrastructure, networking, support, and an engineering team I grew from just me to 7. Drove automation, self-hosting, and AI tooling across the business — and mentored team members, including growing a non-developer into a shipping contributor.</p>
-        <p style="margin-top:10px">Flagship builds from this role — the <b>AI IT-support bot</b>, <b>n8n automation platform</b>, and the <b>self-hosted IT infrastructure</b> — are detailed in the work above.</p>
+        <p>First IT hire, establishing the IT function and leading infrastructure, networking, support, and software delivery. Grew the team from one to a <b>peak of seven</b> and mentored a colleague with little programming background into the primary author of a shipped OCR automation.</p>
+        <p>Authored the C# asset-management system and rebuilt the packaging service. Led the <b>AI-support bot and VM-management control plane</b>, alongside hands-on automation and operations work.</p>
       </div>
       <div class="work">
         <h3>Chief / Senior Technician</h3>
@@ -570,7 +567,7 @@ flowchart TD
       <div class="work">
         <h3>Software Engineer Intern</h3>
         <p class="meta">GNey Software · 2018 · Johor Bahru</p>
-        <p>Software development internship building internal applications.</p>
+        <p>Built project scaffolding, maintained client websites, and supported testing and documentation.</p>
       </div>
     </section>
   </main>
@@ -580,7 +577,7 @@ flowchart TD
       <a href="https://www.linkedin.com/in/alan-fong"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"/></svg>LinkedIn</a> &nbsp;·&nbsp;
       <a href="https://github.com/alanfong93"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222 0 1.606-.014 2.898-.014 3.293 0 .322.216.694.825.576C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>GitHub</a>
     </div>
-    <p style="color:#94a3b8;font-size:.85rem;margin-top:10px">Employer implementation lives in private repositories. Public personal work is linked from its cards.</p>
+    <p style="color:#94a3b8;font-size:.85rem;margin-top:10px">Based in Johor Bahru, Malaysia.</p>
   </footer>
 
   <section id="resume-print">
@@ -646,13 +643,18 @@ flowchart TD
       d.addEventListener('toggle', () => { if (d.open) renderVisible(); }));
   </script>
   <script>
+    document.querySelectorAll('.menu-panel a').forEach(a =>
+      a.addEventListener('click', () => { a.closest('details').open = false; }));
     function toggleTheme(){
       var root = document.documentElement;
       var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
       root.setAttribute('data-theme', next);
       try { localStorage.setItem('theme', next); } catch(e){}
       var b = document.getElementById('theme-toggle');
-      if (b) b.textContent = next === 'dark' ? '☀️' : '🌙';
+      if (b) {
+        b.textContent = next === 'dark' ? '☀️' : '🌙';
+        b.setAttribute('aria-label', next === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+      }
     }
     // Print the résumé with a clean default filename. Chrome's "Save as PDF"
     // uses document.title as the default name, so swap it during printing.
@@ -665,7 +667,14 @@ flowchart TD
       });
       window.print();
     }
-    (function(){ var b = document.getElementById('theme-toggle'); if (b) b.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙'; })();
+    (function(){
+      var b = document.getElementById('theme-toggle');
+      var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+      if (b) {
+        b.textContent = dark ? '☀️' : '🌙';
+        b.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+      }
+    })();
   </script>
 </body>
 </html>

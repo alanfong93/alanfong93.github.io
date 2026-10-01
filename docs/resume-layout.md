@@ -33,5 +33,17 @@ header links there. Do not add every new project to the résumé automatically.
   arbitrary paper/settings are outside this print contract.
 
 Repository buttons use the visible label **GitHub Repo** and an inline,
-decorative GitHub SVG, matching the existing site icon. Its fill inherits the
-button text color in either theme; it is hidden from assistive technology.
+decorative GitHub SVG, matching the existing site icon. All repository buttons
+use the teal primary style; a separate Live Demo button uses the outlined style.
+The SVG fill inherits the button text color in either theme; it is hidden from
+assistive technology.
+
+## Portfolio copy
+
+Project cards lead with the implemented capability and its engineering approach,
+usually in two short paragraphs. Keep material limits where they affect what a
+visitor can try or reasonably infer. Setup instructions, routine privacy
+reassurance, duplicated impact statements, and stale test counts belong in the
+project README rather than the portfolio. Avoid absolute delivery guarantees or
+unmeasured savings. State employer confidentiality once at the work-section
+heading, and keep authorship and leadership wording consistent with the résumé.

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Alan Fong's detailed CV: IT leadership, infrastructure operations, software engineering, and automation.">
+  <title>Alan Fong - CV</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #f8fafc; color: #0f172a; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.35; }
+    a { color: #0f766e; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    a:focus-visible, button:focus-visible { outline: 2px solid #0f766e; outline-offset: 3px; }
+    .toolbar { max-width: 760px; margin: 24px auto; padding: 0 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; }
+    .toolbar button { border: 0; border-radius: 6px; padding: 10px 14px; background: #0f766e; color: #fff; font: inherit; cursor: pointer; }
+    .cv-page { max-width: 760px; margin: 0 auto 24px; padding: 28px; background: #fff; border: 1px solid #d8e0e9; }
+    .identity { display: flex; align-items: center; gap: 16px; border-bottom: 3px solid #0f766e; padding-bottom: 10px; margin-bottom: 12px; }
+    .identity > div { flex: 1; min-width: 0; }
+    .identity img { width: 64px; height: 64px; object-fit: cover; border-radius: 50%; }
+    h1 { font-size: 28px; line-height: 1.2; margin: 0 0 4px; }
+    .role { font-weight: 600; color: #0f766e; margin: 0 0 6px; }
+    .contact { font-size: 12px; color: #475569; }
+    .contact a { color: inherit; }
+    h2 { font-size: 16px; margin: 16px 0 7px; padding-left: 8px; border-left: 3px solid #0f766e; break-after: avoid; }
+    h3 { font-size: 14px; margin: 12px 0 3px; break-after: avoid; }
+    p { margin: 5px 0; }
+    .meta { color: #475569; font-size: 12px; margin: 3px 0 6px; }
+    ul { margin: 5px 0 8px; padding-left: 18px; }
+    li { margin: 3px 0; }
+    .entry { break-inside: avoid; }
+    .page-heading { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px; padding-bottom: 8px; border-bottom: 2px solid #0f766e; color: #475569; font-size: 12px; }
+    .note { color: #475569; font-size: 12px; }
+    dl { margin: 6px 0; }
+    dl > div { margin-bottom: 6px; }
+    dt { font-weight: 600; }
+    dd { margin: 2px 0 0; }
+    @media (max-width: 560px) {
+      .cv-page { padding: 20px 16px; margin: 0 12px 20px; }
+      .identity { align-items: flex-start; }
+      .identity img { width: 48px; height: 48px; }
+      .contact { overflow-wrap: anywhere; }
+    }
+    @media print {
+      @page { size: A4 portrait; margin: 14mm 16mm; }
+      body { background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .toolbar { display: none; }
+      .cv-page { max-width: none; margin: 0; padding: 0; border: 0; }
+      .cv-page + .cv-page { break-before: page; }
+      a { color: inherit; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="toolbar" aria-label="CV actions">
+    <a href="index.html">Back to portfolio</a>
+    <a href="Alan-Fong-CV.pdf" download="Alan Fong - CV.pdf">Download CV (PDF)</a>
+    <button type="button" onclick="window.print()">Print / Save CV</button>
+  </nav>
+  <main>
+    <section class="cv-page" aria-label="Professional experience">
+      <header class="identity">
+        <div>
+          <h1>Alan Fong</h1>
+          <p class="role">DevOps &amp; Automation Engineer</p>
+          <p class="contact">Johor Bahru, Malaysia · <a href="mailto:alanfong93@gmail.com">alanfong93@gmail.com</a><br><a href="https://www.linkedin.com/in/alan-fong">linkedin.com/in/alan-fong</a> · <a href="https://github.com/alanfong93">github.com/alanfong93</a> · <a href="https://alanfong93.github.io/">alanfong93.github.io</a></p>
+        </div>
+        <img src="profile.jpg" alt="Alan Fong">
+      </header>
+
+      <h2>Professional profile</h2>
+      <p>Hands-on IT manager combining infrastructure operations, software engineering, and AI-enabled automation. Established an SME's IT function as its first IT hire, grew the team, and continued to build and operate the systems supporting business operations. Experience spans technical support, team leadership, internal applications, distributed services, and workflow automation.</p>
+
+      <h2>Professional experience</h2>
+      <article class="entry">
+        <h3>IT Manager · Modern Zone Marketing Sdn Bhd</h3>
+        <p class="meta">Jun 2020 – Present · Johor Bahru, Malaysia</p>
+        <ul>
+          <li>Established the IT function as the first IT hire, covering infrastructure, networking, support, and software delivery for office and warehouse operations.</li>
+          <li>Build and operate Hyper-V virtualization, virtual desktops, Docker services, reverse proxies, file storage, monitoring, and automated off-box NAS backups.</li>
+          <li>Maintain the business network, including multi-WAN failover, DHCP, wireless access, and VPN access; deploy security keys and patch-management tooling.</li>
+          <li>Deliver internal applications for asset tracking, attendance, orders, and support. Sole author of the C# asset-management system and rebuilt packaging recommendation service.</li>
+          <li>Lead the Telegram AI-support bot and VM-management control plane with a collaborator, combining knowledge-base guidance, human escalation, job dispatch, and automated VM remediation.</li>
+          <li>Build n8n workflows and scripts to automate recurring work, including sales/delivery order generation, reporting, and integrations between services.</li>
+          <li>Grew the IT team from one to a peak of seven. Mentored a colleague with little programming background into the primary author of a shipped OCR automation.</li>
+          <li>Introduced branch-based development, GitHub Issues, pull-request reviews, automated code review, and architecture/workflow/API documentation with Mermaid diagrams.</li>
+        </ul>
+      </article>
+
+      <article class="entry">
+        <h3>Chief / Senior Technician · Meadow Computer &amp; System Sdn Bhd</h3>
+        <p class="meta">2013 – Mar 2020 · Johor Bahru, Malaysia</p>
+        <p>Progressed from junior technician to senior and chief-technician responsibilities. Worked part-time during degree studies in 2014–2016 and returned after the 2018 software-engineering internship.</p>
+        <ul>
+          <li>Managed up to four technicians, including rosters, leave coordination, and training new technicians; ran after-sales and warranty services.</li>
+          <li>Diagnosed computer issues, reinstalled operating systems, and installed routers and Wi-Fi mesh equipment.</li>
+          <li>Digitized handwritten service/warranty forms using Google Forms and Sheets, and scripted recurring manual tasks.</li>
+          <li>Maintained and extended an existing service/warranty management system, including WhatsApp customer messaging; maintained the software library used for customer installations.</li>
+        </ul>
+      </article>
+
+      <article class="entry">
+        <h3>Software Engineer Intern · GNey Software</h3>
+        <p class="meta">2018 · Johor Bahru, Malaysia</p>
+        <p>Built project scaffolding, maintained client websites, and supported testing and documentation during the software-development internship.</p>
+      </article>
+
+    </section>
+
+    <section class="cv-page" aria-label="Selected employer projects">
+      <header class="page-heading"><span>Alan Fong · Detailed CV</span><span>Selected employer projects</span></header>
+      <h2>Selected employer projects</h2>
+      <p class="note">Capabilities and contributions are described at a high level. Employer implementation remains private.</p>
+
+      <article class="entry">
+        <h3>C# IT asset-management system</h3>
+        <p class="meta">Contribution: sole author · C# / .NET</p>
+        <p>Wrote the asset-management application end to end for internal hardware and stock tracking.</p>
+      </article>
+
+      <article class="entry">
+        <h3>Packaging recommendation service</h3>
+        <p class="meta">Contribution: sole author of the rebuilt service and frontend · Python, FastAPI, JavaScript, OR-Tools</p>
+        <ul>
+          <li>Rebuilt an AI-generated prototype into a shipping-box recommendation service using OR-Tools CP-SAT for 3D packing with fragility, stacking, weight, and rotation constraints.</li>
+          <li>Implemented background jobs with progress polling, recurring-scenario caching, and isolated worker processes to contain native solver failures.</li>
+        </ul>
+      </article>
+
+      <article class="entry">
+        <h3>Windows VM-management control plane</h3>
+        <p class="meta">Contribution: led design and delivery with a collaborator · Python, PowerShell, Hyper-V</p>
+        <p>Central dashboard for authenticated job dispatch, batch PowerShell execution, and over-the-air agent updates across Windows VMs. A generic bundle system supports deployment of Windows Service executables.</p>
+      </article>
+
+      <article class="entry">
+        <h3>Telegram AI-powered IT support</h3>
+        <p class="meta">Contribution: led development with a collaborator · Python, Telegram, LLM integration</p>
+        <p>Checks staff requests against an FAQ and procedures knowledge base, guides users through known fixes, follows up on resolution, and escalates unresolved requests to an engineer. Includes common remediations such as VM restarts.</p>
+      </article>
+
+      <article class="entry">
+        <h3>Distributed print-fleet service</h3>
+        <p class="meta">Contribution: primary author of the printer service · Python, FastAPI, Raspberry Pi, Docker</p>
+        <p>Raspberry Pi edge agents expose USB thermal printers through authenticated HTTP APIs with persistent queues and idempotent job handling. The fleet platform combines central enrollment, dispatch, status callbacks, and over-the-air updates.</p>
+      </article>
+
+      <article class="entry">
+        <h3>Scheduled broadcast automation</h3>
+        <p class="meta">Contribution: primary author · Python, Pydantic, REST API</p>
+        <p>Scheduled audio playback with time- and season-aware playlists, a control/metrics API, circuit breakers, timeouts, and browser recovery. Validated configuration and hot reload support ongoing operation.</p>
+      </article>
+
+      <article class="entry">
+        <h3>Warehouse, follow-up, and workflow automation</h3>
+        <p class="meta">Contribution: primary author on warehouse work; contributor to follow-up tooling · JavaScript, n8n</p>
+        <ul>
+          <li>Maintained and extended warehouse tooling for multi-courier dispatch, consignment notes, and stock tracking within a multi-engineer codebase.</li>
+          <li>Contributed to order follow-up tooling; automated recurring reports and order-generation workflows. Also delivered internal card-tap attendance and IT-support tools.</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="cv-page" aria-label="Personal projects, skills, and education">
+      <header class="page-heading"><span>Alan Fong · Detailed CV</span><span>Projects, skills, and education</span></header>
+      <h2>Public personal projects</h2>
+      <article class="entry">
+        <h3><a href="https://github.com/alanfong93/network-sandbox">Network Sandbox</a> · <a href="https://alanfong93.github.io/network-sandbox/">Live demo</a></h3>
+        <p>Browser topology editor with an implemented 802.1Q/802.1D bridge pipeline, documented routing/NAT/DHCP/ARP models, and hop replay. Includes starter topologies and share-safe export. Traces support design review, not production certification or vendor emulation; radio coverage is not modelled.</p>
+      </article>
+      <article class="entry">
+        <h3><a href="https://github.com/alanfong93/ops-guard">ops-guard</a></h3>
+        <p>Single-operator MCP server for cited runbook guidance and audited proposals. Demonstrated gate paths check evidence, preconditions, and authorization inside the server. Search/proposals run over LAN HTTPS; the MCP execution tool is pending. Local risk assessments never authorize execution.</p>
+      </article>
+      <article class="entry">
+        <h3><a href="https://github.com/alanfong93/local-judge">local-judge</a></h3>
+        <p>Structured judgments through Python, HTTP, and MCP, with Ollama and OpenAI-compatible adapters. Implements a documented Jev-compatible subset with code-side output validation and sample agreement rather than calibrated confidence. Representative live-model usefulness has not yet been established.</p>
+      </article>
+      <article class="entry">
+        <h3><a href="https://github.com/alanfong93/jiandu">jiandu</a></h3>
+        <p>Source-backed AI-context starter kit created for The Context You Already Earned meetup talk. Preserves originals alongside cited wiki notes and provides compile/index skills and MemPalace pointers for Markdown and captions.</p>
+      </article>
+
+      <h2>Additional personal engineering</h2>
+      <p><b>JoJo:</b> OpenCode-based assistant connecting browser tools and n8n workflows with MemPalace/Obsidian context. <b>AI Eyes:</b> FastAPI camera-to-AI prototype for identification, how-to guidance, and translation.</p>
+      <p><b>Private utilities:</b> messaging APIs for WhatsApp/Telegram, schema-aware database tooling, Windows optimization scripts, local transcription, and reusable agent skills for planning, implementation, and review.</p>
+
+      <article class="entry">
+        <h3>Ad-hoc freelance IT support</h3>
+        <p class="meta">Selected paid engagements: 2018–2022 and 2025</p>
+        <p>Provided IT troubleshooting for individual clients. Later remote engagements included application installation and software-licence troubleshooting.</p>
+      </article>
+
+      <h2>Technical skills</h2>
+      <dl>
+        <div><dt>Engineering</dt><dd>Python · C# / .NET · PHP · JavaScript · TypeScript · PowerShell · Bash · FastAPI</dd></div>
+        <div><dt>Infrastructure and operations</dt><dd>Docker / Compose · Hyper-V · Proxmox VE · Linux · Nginx · AWS · Google Cloud Platform · Google Workspace · Uptime Kuma · Synology storage and backups</dd></div>
+        <div><dt>Networking and security</dt><dd>OpenWRT · pfSense · multi-WAN · VPN · Cloudflare Tunnel · YubiKey · Action1 patch management</dd></div>
+        <div><dt>Automation and AI</dt><dd>n8n · MCP · OpenCode · Ollama · Whisper · Telegram Bot API · AI-assisted development and review</dd></div>
+      </dl>
+
+      <h2>Education and certification</h2>
+      <p><b>Bachelor of Software Engineering (Hons)</b> · Southern University College<br>2014–2018 · Second Class Upper Division · Conferred 27 May 2018</p>
+      <p><b>Google IT Support Professional Certificate</b> · 2024</p>
+    </section>
+  </main>
+</body>
+</html>

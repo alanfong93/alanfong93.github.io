@@ -1,7 +1,8 @@
 # One-page résumé
 
-The portfolio is the full record. `#resume-print` in `index.html` is a curated
-one-page résumé, exported by the Résumé (PDF) button using browser printing.
+The portfolio is a browsable overview; [the detailed CV](cv.md) carries the fuller
+professional record. `#resume-print` in `index.html` is a curated one-page résumé,
+exported by the Print / Save résumé button using browser printing.
 
 ## Content priorities
 
@@ -55,6 +56,14 @@ project README rather than the portfolio. Avoid absolute delivery guarantees or
 unmeasured savings. State employer confidentiality once at the work-section
 heading, and keep authorship and leadership wording consistent with the résumé.
 
+Lead public work with Network Sandbox's working demo, followed by ops-guard,
+local-judge, and jiandu. Use plain availability/evidence labels without turning
+implemented interfaces into proven usefulness. Employer cards name established
+contributions explicitly; personal n8n integrations belong with JoJo, not the
+employer platform. Describe intended benefits as intentions where no measured
+outcome is available. Keep Meadow's two concrete bullets visible on screen as
+well as in the résumé.
+
 ## Project groups
 
 Use independent native `details`/`summary` controls in this order:
@@ -86,7 +95,9 @@ The document and navigation follow Introduction, Projects, Experience, Skills /
 How I Work, Education, then Contact. Projects immediately follow a compact
 introduction; the portrait supports the text rather than dominating it. The
 hero provides **Print / Save résumé** (browser printing, with a print icon),
-**View projects**, and quieter social links. Contact includes the email already
+**Detailed CV (PDF)** as a quiet download link, **View projects**, and quieter
+social links. The detailed CV is maintained separately in `cv.html` and
+`Alan-Fong-CV.pdf`; see [cv.md](cv.md). Contact includes the email already
 published in the résumé.
 
 Use off-white/charcoal in light mode and dark slate in dark mode. Teal is the

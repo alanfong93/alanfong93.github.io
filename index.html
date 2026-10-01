@@ -105,8 +105,18 @@
   .tags .chip { font-size: .8rem; }
   .badge.ai { background: #f5f3ff; color: #6d28d9; }
   .badge.wip { background: #fef3c7; color: #b45309; }
-  h3.tier { font-size: .8rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 700; margin: 4px 0 18px; }
-  h3.tier.second { margin-top: 40px; }
+  .project-group { margin-bottom: 18px; }
+  .project-group > summary { position: relative; cursor: pointer; list-style: none; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px 16px 44px; }
+  .project-group > summary::-webkit-details-marker { display: none; }
+  .project-group > summary::before { content: "›"; position: absolute; left: 19px; top: 13px; font-size: 1.4rem; color: var(--accent); transition: transform .2s ease; }
+  .project-group[open] > summary::before { transform: rotate(90deg); }
+  .project-group > summary:hover { border-color: var(--accent); }
+  .project-group > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .project-group > summary h3 { margin: 0; font-size: 1.05rem; }
+  .group-heading { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; }
+  .group-count { font-size: .8rem; font-weight: 400; color: var(--muted); }
+  .group-description { display: block; margin-top: 4px; font-size: .88rem; font-weight: 400; color: var(--muted); }
+  .group-content { padding-top: 16px; }
   .note { color: var(--muted); font-size: .9rem; font-style: italic; margin: 0 0 14px; }
   ul.bullets { padding-left: 18px; color: #475569; margin: 6px 0 0; }
   ul.bullets li { margin: 4px 0; }
@@ -273,7 +283,9 @@
 
     <section id="projects">
       <h2>Projects</h2>
-      <h3 class="tier">Public Personal Projects</h3>
+      <details class="project-group" open>
+        <summary><h3><span class="group-heading">Public Personal Projects <span class="group-count">4 projects</span></span><span class="group-description">AI operations, local decision tools, source-backed context, and a network sandbox.</span></h3></summary>
+        <div class="group-content">
 
       <div class="work">
         <h3>ops-guard <span class="badge personal">Public</span> <span class="badge wip">In Progress</span></h3>
@@ -320,7 +332,12 @@ flowchart LR
         </div>
       </div>
 
-      <h3 class="tier second">Featured Employer Work</h3>
+        </div>
+      </details>
+
+      <details class="project-group">
+        <summary><h3><span class="group-heading">Featured Employer Work <span class="group-count">6 projects</span></span><span class="group-description">Print-fleet management, packaging optimization, IT support, and infrastructure automation.</span></h3></summary>
+        <div class="group-content">
       <p class="note">Employer projects are described at a high level; their implementation remains private.</p>
 
       <div class="work">
@@ -462,7 +479,44 @@ flowchart LR
         </details>
       </div>
 
-      <h3 class="tier second">Personal AI Projects</h3>
+        </div>
+      </details>
+
+      <details class="project-group">
+        <summary><h3><span class="group-heading">Internal Business Systems <span class="group-count">5 systems</span></span><span class="group-description">HR, asset tracking, ticketing, warehouse tools, and reporting.</span></h3></summary>
+        <div class="group-content">
+      <div class="work">
+        <h3>Enterprise Systems — Current Role <span class="badge">Work</span></h3>
+        <ul class="bullets">
+          <li><b>HR &amp; attendance</b> — in-house card-tap system replacing an off-the-shelf biometric solution</li>
+          <li><b>IT asset management</b> — sole author of the C# system for hardware and stock tracking</li>
+          <li><b>IT ticketing</b> — internal tools for staff requests and support</li>
+          <li><b>Warehouse management</b> — multi-courier dispatch, consignment notes and stock tracking (maintained &amp; extended)</li>
+          <li><b>Order follow-up &amp; reporting</b> — contributed to follow-up tooling and automated scheduled reports</li>
+        </ul>
+        <details class="arch"><summary>Show architecture</summary>
+        <pre class="mermaid">
+flowchart TD
+    U[Staff] --> APPS[Internal web apps]
+    APPS --> HR[HR / attendance<br>card-tap]
+    APPS --> TICK[IT ticketing<br>+ asset tracking]
+    APPS --> ORD[Order automation<br>sales / delivery]
+    HR --> DB[(Shared database)]
+    TICK --> DB
+    ORD --> DB
+    APPS --> FS[Synology<br>file server]
+    style APPS fill:#cce5ff,color:#000
+    style DB fill:#d4edda,color:#000
+    style FS fill:#fff3cd,color:#000
+        </pre>
+        </details>
+      </div>
+        </div>
+      </details>
+
+      <details class="project-group">
+        <summary><h3><span class="group-heading">Personal AI Projects <span class="group-count">2 projects</span></span><span class="group-description">A personal assistant and a camera-to-AI prototype.</span></h3></summary>
+        <div class="group-content">
 
       <div class="work">
         <h3>JoJo — Personal AI Assistant <span class="badge personal">Personal</span> <span class="badge ai">AI</span></h3>
@@ -506,36 +560,12 @@ flowchart LR
         </details>
       </div>
 
-      <h3 class="tier second">Internal Business Systems</h3>
+        </div>
+      </details>
 
-      <div class="work">
-        <h3>Enterprise Systems — Current Role <span class="badge">Work</span></h3>
-        <ul class="bullets">
-          <li><b>HR &amp; attendance</b> — in-house card-tap system replacing an off-the-shelf biometric solution</li>
-          <li><b>IT asset management</b> — sole author of the C# system for hardware and stock tracking</li>
-          <li><b>IT ticketing</b> — internal tools for staff requests and support</li>
-          <li><b>Warehouse management</b> — multi-courier dispatch, consignment notes and stock tracking (maintained &amp; extended)</li>
-          <li><b>Order follow-up &amp; reporting</b> — contributed to follow-up tooling and automated scheduled reports</li>
-        </ul>
-        <details class="arch"><summary>Show architecture</summary>
-        <pre class="mermaid">
-flowchart TD
-    U[Staff] --> APPS[Internal web apps]
-    APPS --> HR[HR / attendance<br>card-tap]
-    APPS --> TICK[IT ticketing<br>+ asset tracking]
-    APPS --> ORD[Order automation<br>sales / delivery]
-    HR --> DB[(Shared database)]
-    TICK --> DB
-    ORD --> DB
-    APPS --> FS[Synology<br>file server]
-    style APPS fill:#cce5ff,color:#000
-    style DB fill:#d4edda,color:#000
-    style FS fill:#fff3cd,color:#000
-        </pre>
-        </details>
-      </div>
-
-      <h3 class="tier second">Private Utilities &amp; Tools</h3>
+      <details class="project-group">
+        <summary><h3><span class="group-heading">Private Utilities &amp; Tools <span class="group-count">5 tools</span></span><span class="group-description">Messaging APIs, database tooling, Windows utilities, and agent skills.</span></h3></summary>
+        <div class="group-content">
       <p class="note">Descriptions only; these repositories are private.</p>
       <div class="table-wrap">
         <table>
@@ -549,6 +579,8 @@ flowchart TD
           </tbody>
         </table>
       </div>
+        </div>
+      </details>
     </section>
 
     <section id="experience">
@@ -639,7 +671,7 @@ flowchart TD
       if (nodes.length) mermaid.run({ nodes });
     };
     renderVisible();
-    document.querySelectorAll('details.arch').forEach(d =>
+    document.querySelectorAll('details.arch, details.project-group').forEach(d =>
       d.addEventListener('toggle', () => { if (d.open) renderVisible(); }));
   </script>
   <script>

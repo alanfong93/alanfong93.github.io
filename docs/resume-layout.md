@@ -47,3 +47,23 @@ reassurance, duplicated impact statements, and stale test counts belong in the
 project README rather than the portfolio. Avoid absolute delivery guarantees or
 unmeasured savings. State employer confidentiality once at the work-section
 heading, and keep authorship and leadership wording consistent with the résumé.
+
+## Project groups
+
+Use independent native `details`/`summary` controls in this order:
+
+1. Public Personal Projects — open by default (4 projects).
+2. Featured Employer Work — closed by default (6 projects).
+3. Internal Business Systems — closed by default (5 systems in one overview).
+4. Personal AI Projects — closed by default (2 projects).
+5. Private Utilities & Tools — closed by default (5 tools).
+
+Each summary retains its title, count, short description, and disclosure arrow
+when closed. Multiple groups may be open at once. Keep counts aligned with the
+content when adding or removing projects. Skills, Experience, Education, and
+the one-page résumé do not belong inside these controls.
+
+Architecture disclosures remain nested within their cards. Render Mermaid only
+when both the group and architecture disclosure are open; opening either must
+also render any newly visible, unprocessed diagram. Collapsing groups must not
+affect résumé printing.

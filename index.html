@@ -106,7 +106,7 @@
   .badge.ai { background: #f5f3ff; color: #6d28d9; }
   .badge.wip { background: #fef3c7; color: #b45309; }
   .project-group { margin-bottom: 18px; }
-  .project-group > summary { position: relative; cursor: pointer; list-style: none; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px 16px 44px; }
+  .project-group > summary { position: relative; cursor: pointer; list-style: none; background: var(--chip); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px 16px 44px; }
   .project-group > summary::-webkit-details-marker { display: none; }
   .project-group > summary::before { content: "›"; position: absolute; left: 19px; top: 13px; font-size: 1.4rem; color: var(--accent); transition: transform .2s ease; }
   .project-group[open] > summary::before { transform: rotate(90deg); }
@@ -116,7 +116,7 @@
   .group-heading { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; }
   .group-count { font-size: .8rem; font-weight: 400; color: var(--muted); }
   .group-description { display: block; margin-top: 4px; font-size: .88rem; font-weight: 400; color: var(--muted); }
-  .group-content { padding-top: 16px; }
+  .group-content { margin-left: 12px; border-left: 2px solid var(--line); padding: 16px 0 0 14px; }
   .note { color: var(--muted); font-size: .9rem; font-style: italic; margin: 0 0 14px; }
   ul.bullets { padding-left: 18px; color: #475569; margin: 6px 0 0; }
   ul.bullets li { margin: 4px 0; }
@@ -155,6 +155,7 @@
   /* ---------- Mobile ---------- */
   @media (max-width: 760px) {
     .split { grid-template-columns: 1fr; gap: 22px; }
+    .group-content { margin-left: 6px; padding-left: 10px; }
     /* Morph table into stacked cards */
     table { border: none; background: transparent; }
     table thead { position: absolute; left: -9999px; top: -9999px; }
@@ -645,7 +646,10 @@ flowchart LR
     <div class="r-job">
       <h3>Chief / Senior Technician</h3>
       <p class="r-meta">Meadow Computer &amp; System Sdn Bhd · 2013 – 2020 · Johor Bahru</p>
-      <p>Managed up to four technicians, ran after-sales services, automated manual tasks, and maintained the service/warranty system.</p>
+      <ul>
+        <li>Progressed from technician to chief technician; managed up to four technicians and ran after-sales services.</li>
+        <li>Digitized service/warranty forms, scripted routine tasks, and added WhatsApp customer messaging to the in-house service system.</li>
+      </ul>
     </div>
     <div class="r-job">
       <p><b>Software Engineer Intern</b> · GNey Software · 2018</p>

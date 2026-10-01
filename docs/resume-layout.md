@@ -18,6 +18,10 @@ Detailed tool lists, separate process/security bullets, internship duties,
 and local-judge/jiandu descriptions belong on the full portfolio. The printed
 header links there. Do not add every new project to the résumé automatically.
 
+Retain two Meadow bullets: progression, leadership, and after-sales operations;
+then concrete automation and service-system improvements. Keep the internship
+to a single line rather than compressing the earlier leadership role into it.
+
 ## Print contract and verification
 
 - A4 portrait, 100% scale, zero browser margins, browser headers/footers off.
@@ -62,6 +66,11 @@ Each summary retains its title, count, short description, and disclosure arrow
 when closed. Multiple groups may be open at once. Keep counts aligned with the
 content when adding or removing projects. Skills, Experience, Education, and
 the one-page résumé do not belong inside these controls.
+
+Use a tinted summary background to distinguish group headers from project cards.
+Indent group content with a subtle left border; reduce the indent on mobile to
+preserve reading space. Apply this hierarchy only to the project groups, not
+the Experience section or printed résumé.
 
 Architecture disclosures remain nested within their cards. Render Mermaid only
 when both the group and architecture disclosure are open; opening either must

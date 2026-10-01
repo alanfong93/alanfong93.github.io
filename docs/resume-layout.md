@@ -27,6 +27,7 @@ to a single line rather than compressing the earlier leadership role into it.
 - A4 portrait, 100% scale, zero browser margins, browser headers/footers off.
 - CSS `@page` sets A4; the résumé supplies its own 12 mm vertical and 15 mm
   horizontal padding. Body text is 14 px (10.5 pt).
+- Contact details and employment metadata are 12 px (9 pt), in dark slate.
 - Do not use fixed-height clipping, hidden overflow, or whole-page shrinking
   to disguise extra content. Trim lower-priority content before reducing type.
 - After print-content or layout edits, export an actual Chromium PDF with
@@ -44,9 +45,11 @@ assistive technology.
 
 ## Portfolio copy
 
-Project cards lead with the implemented capability and its engineering approach,
-usually in two short paragraphs. Keep material limits where they affect what a
-visitor can try or reasonably infer. Setup instructions, routine privacy
+Project cards lead with a concise purpose sentence, followed by the engineering
+approach and Alan's contribution where established. Public-project status or
+scope sits in a visibly separate paragraph when a material boundary applies;
+actions precede supporting technology tags. Keep limits where they affect what
+a visitor can try or reasonably infer. Setup instructions, routine privacy
 reassurance, duplicated impact statements, and stale test counts belong in the
 project README rather than the portfolio. Avoid absolute delivery guarantees or
 unmeasured savings. State employer confidentiality once at the work-section
@@ -76,3 +79,26 @@ Architecture disclosures remain nested within their cards. Render Mermaid only
 when both the group and architecture disclosure are open; opening either must
 also render any newly visible, unprocessed diagram. Collapsing groups must not
 affect résumé printing.
+
+## Screen hierarchy and visual language
+
+The document and navigation follow Introduction, Projects, Experience, Skills /
+How I Work, Education, then Contact. Projects immediately follow a compact
+introduction; the portrait supports the text rather than dominating it. The
+hero provides **Print / Save résumé** (browser printing, with a print icon),
+**View projects**, and quieter social links. Contact includes the email already
+published in the résumé.
+
+Use off-white/charcoal in light mode and dark slate in dark mode. Teal is the
+single action accent: `#0f766e` with white action text in light mode, `#2dd4bf`
+with dark action text in dark mode. Secondary text uses `#475569` / `#b0bdd0`;
+group surfaces use `#eef2f6` / `#243247`. Check text against its actual surface,
+including hover, focus, and both themes, rather than assuming token contrast.
+
+Retain one project column, restrained borders, tinted group headers, and the
+child rail. Remove redundant context/AI badges; retain meaningful in-progress
+labels. Architecture controls are quieter than external actions. Experience is
+a chronological list with formal job titles and a subordinate scope line;
+skills use compact definition rows rather than more project-like cards.
+Education is a separate section. Screen redesigns must not couple the résumé
+to disclosure states or change its content priorities.

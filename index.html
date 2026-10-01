@@ -242,10 +242,10 @@
         <div>
           <h2>Tech Stack</h2>
           <div class="grid">
-            <div class="card"><div class="label">Languages</div><div class="chips"><span class="chip">Python</span><span class="chip">PHP</span><span class="chip">JavaScript</span><span class="chip">PowerShell</span><span class="chip">Bash</span></div></div>
+            <div class="card"><div class="label">Languages</div><div class="chips"><span class="chip">Python</span><span class="chip">C#</span><span class="chip">PHP</span><span class="chip">JavaScript</span><span class="chip">TypeScript</span><span class="chip">PowerShell</span><span class="chip">Bash</span></div></div>
             <div class="card"><div class="label">Containers &amp; Virtualization</div><div class="chips"><span class="chip">Docker</span><span class="chip">Compose</span><span class="chip">Hyper-V</span><span class="chip">Proxmox VE</span></div></div>
             <div class="card"><div class="label">Cloud</div><div class="chips"><span class="chip">AWS</span><span class="chip">GCP</span><span class="chip">Google Workspace</span></div></div>
-            <div class="card"><div class="label">Automation / AI</div><div class="chips"><span class="chip">n8n</span><span class="chip">Claude Code</span><span class="chip">LLM agents</span><span class="chip">Whisper</span></div></div>
+            <div class="card"><div class="label">Automation / AI</div><div class="chips"><span class="chip">n8n</span><span class="chip">OpenCode</span><span class="chip">MCP</span><span class="chip">Ollama</span><span class="chip">LLM agents</span><span class="chip">Whisper</span></div></div>
             <div class="card"><div class="label">Networking</div><div class="chips"><span class="chip">OpenWRT</span><span class="chip">pfSense</span><span class="chip">multi-WAN</span><span class="chip">VPN</span><span class="chip">Cloudflare Tunnel</span></div></div>
             <div class="card"><div class="label">Infra / DevOps</div><div class="chips"><span class="chip">Nginx</span><span class="chip">CI/CD</span><span class="chip">Uptime Kuma</span></div></div>
             <div class="card"><div class="label">Storage / NAS</div><div class="chips"><span class="chip">Synology DSM</span><span class="chip">SHR / RAID</span><span class="chip">Backups</span></div></div>
@@ -257,7 +257,7 @@
           <div class="steps">
             <div class="step"><b>Automation-first</b> — repetitive tasks get a pipeline.</div>
             <div class="step"><b>Docs-first</b> — architecture/flow docs and Mermaid diagrams in every repo.</div>
-            <div class="step"><b>Disciplined Git</b> — Conventional Commits, branch-based PRs, CI-based automated code review.</div>
+            <div class="step"><b>Disciplined Git</b> — Conventional Commits, branch-based PRs, maintainer-style and adversarial AI review.</div>
           </div>
           <h2 id="education" style="margin-top:30px">Education &amp; Certifications</h2>
           <div class="edu">
@@ -270,13 +270,40 @@
 
     <section id="projects">
       <h2>Projects</h2>
-      <h3 class="tier">Featured</h3>
+      <h3 class="tier">Public Personal Projects</h3>
+      <p class="note">Project status checked against GitHub on 1 October 2026.</p>
+
+      <div class="work">
+        <h3>ops-guard <span class="badge personal">Public</span> <span class="badge wip">In Progress</span></h3>
+        <p><b>What it does:</b> gives an AI agent cited operational guidance, freezes proposed operations for review, and records the evidence and authorization behind submitted actions.</p>
+        <p>A single-operator <b>MCP server</b> with LAN HTTPS runbook search and audited proposal creation. Its execution gate checks evidence, observed preconditions, and authorization <b>inside the server</b>. Permitted and refused execution paths are demonstrated over the real components; optional Telegram approval binds a human decision to a specific proposal.</p>
+        <p><b>Current boundary:</b> execution is not yet exposed as an MCP tool. Local risk judgments are audit-only and never authorize an operation; the current rubric failed its usefulness evaluation.</p>
+        <div class="tags"><span class="chip">Python</span><span class="chip">FastMCP</span><span class="chip">SQLite</span><span class="chip">TLS</span><span class="chip">Approval gates</span><span class="chip">Audit logging</span></div>
+        <div class="card-actions"><a class="btn-card primary" href="https://github.com/alanfong93/ops-guard">Source &amp; evidence</a></div>
+      </div>
+
+      <div class="work">
+        <h3>local-judge <span class="badge personal">Public</span> <span class="badge ai">AI</span></h3>
+        <p><b>What it does:</b> turns shared state and typed questions into structured judgments for filtering, verification, and triage.</p>
+        <p>One core serves a <b>Python library, HTTP API, and MCP interface</b>, using Ollama or an explicitly configured OpenAI-compatible endpoint. Implements a documented Jev-compatible subset with choice, score, and Noul questions. Model output is validated in code, invalid responses become typed failures, and repeated-sample agreement is distinguished from calibrated confidence.</p>
+        <p><b>Status:</b> core, adapters, interfaces, and container deployment are implemented. Scripted evidence-runner tests exist; representative live-model usefulness has not yet been established.</p>
+        <div class="tags"><span class="chip">Python</span><span class="chip">Ollama</span><span class="chip">HTTP API</span><span class="chip">MCP</span><span class="chip">Docker</span><span class="chip">Structured judgments</span></div>
+        <div class="card-actions"><a class="btn-card primary" href="https://github.com/alanfong93/local-judge">Source</a></div>
+      </div>
+
+      <div class="work">
+        <h3>jiandu — Source-Backed AI Context <span class="badge personal">Public</span></h3>
+        <p><b>What it does:</b> makes existing notes and trusted sources available as AI context, with compiled answers pointing back to the originals.</p>
+        <p>A starter kit from <i>The Context You Already Earned</i> meetup talk: an empty vault for original sources and cited wiki notes, two compile/index skills, and a <b>MemPalace pointer-index script</b> for Markdown and captions. Supports Claude Code, Codex, and OpenCode. Indexing is explicitly run after writes; the kit contains no personal notes.</p>
+        <div class="tags"><span class="chip">Python</span><span class="chip">Markdown</span><span class="chip">Obsidian</span><span class="chip">MemPalace</span><span class="chip">Agent skills</span></div>
+        <div class="card-actions"><a class="btn-card primary" href="https://github.com/alanfong93/jiandu">Starter kit</a></div>
+      </div>
 
       <div class="work">
         <h3>Network Sandbox <span class="badge personal">Personal</span> <span class="badge wip">In Progress</span></h3>
         <p><b>What it does:</b> lets you build a switch/router/VLAN topology in the browser, send a frame, and read hop by hop what happened — including the exact 802.1Q step that dropped it — before you try the same change on live gear.</p>
         <p>A browser-only sandbox for <b>IEEE 802.1Q / 802.1D</b> bridging, plus documented models of routing, NAT, DHCP and ARP. No server and no account. The bridge path runs the published ingress → forward → egress pipeline rather than a pile of vendor-shaped if-statements. <b>A trace, never a verdict:</b> it does not certify a production design, and it does not emulate any vendor's defaults. You still translate a working design into your box's syntax.</p>
-        <p>Wired core, access points as wired devices, and multi-WAN are in the engine; the browser editor (palette, inspector, SVG canvas, hop replay) is started. Radio coverage is not modelled.</p>
+        <p>Wired core, access points as wired devices, and multi-WAN are in the engine. The browser editor includes a device palette, inspector, SVG canvas, port-click cabling, hop replay, and starter topologies. Save/import topology JSON or export a share copy with ISP credentials stripped. Optional AI review is labelled advice beside the engine. Radio coverage is not modelled.</p>
         <div class="tags"><span class="chip">TypeScript</span><span class="chip">IEEE 802.1Q</span><span class="chip">802.1D STP</span><span class="chip">Browser-only</span><span class="chip">GitHub Pages</span></div>
         <div class="card-actions">
           <a class="btn-card primary" href="https://alanfong93.github.io/network-sandbox/">Try the sandbox</a>
@@ -293,6 +320,9 @@ flowchart LR
         </details>
         </div>
       </div>
+
+      <h3 class="tier second">Featured Employer Work</h3>
+      <p class="note">Employer projects are described at a high level; their implementation remains private.</p>
 
       <div class="work">
         <h3>Distributed Print-Fleet Service <span class="badge">Work</span></h3>
@@ -434,17 +464,19 @@ flowchart LR
         </details>
       </div>
 
+      <h3 class="tier second">Personal AI Projects</h3>
+
       <div class="work">
         <h3>JoJo — Personal AI Assistant <span class="badge personal">Personal</span> <span class="badge ai">AI</span></h3>
-        <p><b>What it does:</b> a personal AI assistant I talk to over Telegram, by text or voice — it manages my calendar, email, notes and files, runs automations, browses the web for me, and remembers context from one conversation to the next.</p>
-        <p>An agentic assistant built on <b>Claude Code</b>. Under the hood it runs automations through n8n, drives a real browser for research, and keeps <b>persistent cross-session memory</b> via custom MCP (Model Context Protocol) servers — the open standard that lets an AI assistant plug into external tools and data. Voice messages are handled by a <b>self-hosted Whisper</b> (faster-whisper) service running on my own hardware, so I can just talk to it with no per-use cloud cost.</p>
-        <div class="tags"><span class="chip">Claude Code</span><span class="chip">MCP servers</span><span class="chip">Telegram</span><span class="chip">n8n</span><span class="chip">Whisper</span><span class="chip">Semantic memory</span></div>
+        <p><b>What it does:</b> a personal AI assistant that manages calendar, email, notes and files, runs automations, browses the web, and retains context across conversations.</p>
+        <p>An agentic assistant running in <b>OpenCode</b>, connected to n8n workflows and browser tools through MCP (Model Context Protocol). <b>MemPalace and an Obsidian vault</b> provide persistent cross-session context, with explicit indexing after vault writes. A self-hosted Whisper service supports transcription in automation pipelines.</p>
+        <div class="tags"><span class="chip">OpenCode</span><span class="chip">MCP</span><span class="chip">MemPalace</span><span class="chip">Obsidian</span><span class="chip">n8n</span><span class="chip">Whisper</span></div>
         <details class="arch"><summary>Show architecture</summary>
         <pre class="mermaid">
 flowchart LR
-    TG[Telegram] <--> AGENT[Claude Code agent]
-    VOICE[Voice message] --> STT[Self-hosted Whisper<br>speech-to-text]
-    STT --> AGENT
+    USER[Operator] <--> AGENT[OpenCode agent]
+    AUDIO[Audio] --> STT[Self-hosted Whisper<br>speech-to-text]
+    STT --> N8N
     AGENT --> MCP[MCP tools<br>memory / browser / search]
     AGENT --> N8N[n8n workflows]
     N8N --> SVC[Calendar / Email<br>Drive / News]
@@ -476,6 +508,8 @@ flowchart LR
         </details>
       </div>
 
+      <h3 class="tier second">Internal Business Systems</h3>
+
       <div class="work">
         <h3>Enterprise Systems — Current Role <span class="badge">Work</span></h3>
         <p class="note">Built for an SME; kept high-level to respect confidentiality.</p>
@@ -504,12 +538,13 @@ flowchart TD
         </details>
       </div>
 
-      <h3 class="tier second">Utilities &amp; Tools</h3>
+      <h3 class="tier second">Private Utilities &amp; Tools</h3>
+      <p class="note">Descriptions only; these repositories are private.</p>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Project</th><th>What it is</th><th>Stack</th></tr></thead>
           <tbody>
-            <tr><td data-label="Project"><b>Agentic Coding Scaffold</b></td><td data-label="What it is">Reusable Claude Code skill framework — 22 modular skills, persistent cross-session memory scaffolds, permission/safety policies, and multi-model (Gemini) fallback routing. Configuration-as-code, actively maintained.</td><td data-label="Stack">Python · Claude Code · MCP</td></tr>
+            <tr><td data-label="Project"><b>Agentic Coding Scaffold</b></td><td data-label="What it is">Reusable agent skills for docs-first planning, issue-to-PR implementation, maintainer-style review, and explicit memory indexing. Configuration-as-code, actively maintained.</td><td data-label="Stack">Python · OpenCode · MCP</td></tr>
             <tr><td data-label="Project"><b>KupuPost</b></td><td data-label="What it is">Unified messaging API — send to one or many recipients across WhatsApp &amp; Telegram from a single endpoint, with WhatsApp session management</td><td data-label="Stack">Python · FastAPI · Docker</td></tr>
             <tr><td data-label="Project"><b>telegrambots</b></td><td data-label="What it is">FastAPI REST service for sending Telegram messages — text, replies, HTML formatting — with OpenAPI docs and Docker deployment</td><td data-label="Stack">Python · FastAPI · Docker</td></tr>
             <tr><td data-label="Project"><b>database-sensei</b></td><td data-label="What it is">Turns plain-English requests into SQL from a database's schema using AI (Google Gemini) — FastAPI backend + web UI, multi-database (PostgreSQL / MySQL / SQLite / SQL Server) via SQLAlchemy</td><td data-label="Stack">Python · FastAPI · JavaScript · SQLAlchemy · Gemini · Docker</td></tr>
@@ -563,7 +598,7 @@ flowchart TD
 
     <h2>Core Skills</h2>
     <div class="r-chips">
-      <span class="r-chip">Docker</span><span class="r-chip">Windows Hyper-V</span><span class="r-chip">Proxmox</span><span class="r-chip">Linux</span><span class="r-chip">Nginx</span><span class="r-chip">Python</span><span class="r-chip">PHP</span><span class="r-chip">JavaScript</span><span class="r-chip">PowerShell</span><span class="r-chip">Bash</span><span class="r-chip">AWS</span><span class="r-chip">GCP</span><span class="r-chip">n8n</span><span class="r-chip">CI/CD (GitHub Actions)</span><span class="r-chip">Cloudflare Tunnel</span><span class="r-chip">Multi-WAN · OpenWRT · pfSense</span><span class="r-chip">LLM &amp; agent automation</span><span class="r-chip">Uptime Kuma</span><span class="r-chip">YubiKey</span><span class="r-chip">Synology NAS</span>
+      <span class="r-chip">Docker</span><span class="r-chip">Windows Hyper-V</span><span class="r-chip">Proxmox</span><span class="r-chip">Linux</span><span class="r-chip">Nginx</span><span class="r-chip">Python</span><span class="r-chip">C#</span><span class="r-chip">PHP</span><span class="r-chip">JavaScript</span><span class="r-chip">TypeScript</span><span class="r-chip">PowerShell</span><span class="r-chip">Bash</span><span class="r-chip">AWS</span><span class="r-chip">GCP</span><span class="r-chip">n8n</span><span class="r-chip">MCP</span><span class="r-chip">Ollama</span><span class="r-chip">CI/CD (GitHub Actions)</span><span class="r-chip">Cloudflare Tunnel</span><span class="r-chip">Multi-WAN · OpenWRT · pfSense</span><span class="r-chip">LLM &amp; agent automation</span><span class="r-chip">Uptime Kuma</span><span class="r-chip">YubiKey</span><span class="r-chip">Synology NAS</span>
     </div>
 
     <h2>Experience</h2>
@@ -594,6 +629,14 @@ flowchart TD
         <li>Built project scaffolding and maintained client websites; supported testing and documentation.</li>
       </ul>
     </div>
+
+    <h2>Public Projects</h2>
+    <ul>
+      <li><b>ops-guard:</b> cited runbook retrieval and audited proposals over MCP; server-side execution gate and optional human approval. Execution MCP surface still in progress. github.com/alanfong93/ops-guard</li>
+      <li><b>local-judge:</b> typed judgments through Python, HTTP, and MCP, with Ollama/OpenAI-compatible adapters and output validation. Live-model usefulness not yet established. github.com/alanfong93/local-judge</li>
+      <li><b>jiandu:</b> source-backed AI context starter kit with cited wiki compilation and explicit MemPalace indexing. github.com/alanfong93/jiandu</li>
+      <li><b>Network Sandbox:</b> browser-only 802.1Q/802.1D bridge traces, topology editing and replay. github.com/alanfong93/network-sandbox</li>
+    </ul>
 
     <h2>Education &amp; Certifications</h2>
     <p><b>Bachelor's Degree, Information Technology (Software Engineering)</b> — Southern University College · 2014–2018</p>

@@ -91,14 +91,16 @@ affect résumé printing.
 
 ## Screen hierarchy and visual language
 
-The document and navigation follow Introduction, Projects, Experience, Skills /
-How I Work, Education, then Contact. Projects immediately follow a compact
-introduction; the portrait supports the text rather than dominating it. The
+The hero contains the introduction, Education, and How I work highlights. Main
+content follows Projects, Experience, and Skills, then the Contact footer.
+Navigation follows those targets in reading order. Projects immediately follow
+the hero; the portrait supports the introduction rather than dominating it. The
 desktop portrait column includes compact Education and How I work highlights
 beneath the photo. At 760 px and below, the photo precedes the introduction and
-the highlights follow it in two columns. Their headings link to the fuller
-sections; do not duplicate the complete skills list in the hero. The full
-Education and working-method sections remain available farther down the page.
+the highlights follow it in two columns. Their headings own the `#education`
+and `#how-i-work` anchors used by navigation. Do not duplicate these highlights
+in lower website sections, or copy the complete skills list into the hero.
+Detailed education remains in the printable résumé and detailed CV.
 The highlights are screen-only as part of the hero, leaving both CV formats
 independent of this layout.
 
@@ -119,5 +121,6 @@ child rail. Remove redundant context/AI badges; retain meaningful in-progress
 labels. Architecture controls are quieter than external actions. Experience is
 a chronological list with formal job titles and a subordinate scope line;
 skills use compact definition rows rather than more project-like cards.
-Education is a separate section. Screen redesigns must not couple the résumé
-to disclosure states or change its content priorities.
+Education and working principles appear only in the hero on screen. Screen
+redesigns must not couple the résumé to disclosure states or change its content
+priorities.

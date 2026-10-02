@@ -87,21 +87,13 @@
   h2::before { content: ""; width: 22px; height: 3px; background: var(--accent); border-radius: 2px; }
   h3 { font-size: 1.15rem; margin: 0 0 6px; }
 
-  /* Skills + How I Work split */
-  .split { display: grid; grid-template-columns: 3fr 2fr; gap: 28px; align-items: start; }
+  /* Skills */
   .skill-list { margin: 0; }
   .skill-list > div { padding: 12px 0; border-bottom: 1px solid var(--line); }
   .skill-list > div:first-child { padding-top: 0; }
   .skill-list dt { font-weight: 600; margin-bottom: 4px; }
   .skill-list dd { margin: 0; font-size: .92rem; color: var(--muted); }
-  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px; }
-  .card .label { font-weight: 600; font-size: .85rem; color: var(--muted); margin-bottom: 8px; }
   .chip { background: var(--chip); color: var(--muted); border-radius: 6px; padding: 3px 8px; font-size: .8rem; }
-  .steps { display: flex; flex-direction: column; gap: 12px; }
-  .step { border-left: 2px solid var(--line); padding: 4px 0 4px 14px; font-size: .92rem; color: var(--muted); }
-  .step b { color: var(--ink); }
-  .edu { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
-  #education { scroll-margin-top: 68px; }
 
   .work { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 22px 24px; margin-bottom: 18px; }
   .work h3 { font-size: 1.25rem; }
@@ -170,7 +162,6 @@
 
   /* ---------- Mobile ---------- */
   @media (max-width: 760px) {
-    .split { grid-template-columns: 1fr; gap: 22px; }
     .group-content { margin-left: 6px; padding-left: 10px; }
     .work { padding: 18px 16px; }
     /* Morph table into stacked cards */
@@ -236,10 +227,11 @@
     <div class="nav-inner">
       <a class="brand" href="#top">Alan Fong</a>
       <div class="links">
+        <a href="#education">Education</a>
+        <a href="#how-i-work">How I work</a>
         <a href="#projects">Projects</a>
         <a href="#experience">Experience</a>
         <a href="#skills">Skills</a>
-        <a href="#education">Education</a>
         <a href="#contact">Contact</a>
       </div>
       <div class="nav-right">
@@ -247,10 +239,11 @@
         <details class="menu">
           <summary>☰ Menu</summary>
           <div class="menu-panel">
+            <a href="#education">Education</a>
+            <a href="#how-i-work">How I work</a>
             <a href="#projects">Projects</a>
             <a href="#experience">Experience</a>
             <a href="#skills">Skills</a>
-            <a href="#education">Education</a>
             <a href="#contact">Contact</a>
           </div>
         </details>
@@ -279,12 +272,12 @@
     <img class="avatar" src="profile.jpg" alt="Alan Fong">
     <aside class="profile-highlights" aria-label="Profile highlights">
       <div>
-        <h2><a href="#education">Education</a></h2>
+        <h2 id="education">Education</h2>
         <p><strong>Software Engineering (Hons)</strong><br>Southern University College · 2018</p>
         <p>Google IT Support Professional Certificate · 2024</p>
       </div>
       <div>
-        <h2><a href="#how-i-work">How I work</a></h2>
+        <h2 id="how-i-work">How I work</h2>
         <ul>
           <li>Document decisions alongside code</li>
           <li>Automate recurring work</li>
@@ -634,36 +627,16 @@ flowchart LR
     </section>
 
     <section id="skills">
-      <div class="split">
-        <div>
-          <h2>Skills</h2>
-          <dl class="skill-list">
-            <div><dt>Engineering</dt><dd>Python · C# · PHP · JavaScript · TypeScript · PowerShell · Bash · FastAPI</dd></div>
-            <div><dt>Containers &amp; virtualization</dt><dd>Docker · Docker Compose · Hyper-V · Proxmox VE</dd></div>
-            <div><dt>Cloud</dt><dd>AWS · Google Cloud Platform · Google Workspace</dd></div>
-            <div><dt>Automation &amp; AI</dt><dd>n8n · OpenCode · MCP · Ollama · LLM agents · Whisper</dd></div>
-            <div><dt>Networking</dt><dd>OpenWRT · pfSense · multi-WAN · VPN · Cloudflare Tunnel</dd></div>
-            <div><dt>Operations &amp; storage</dt><dd>Nginx · CI/CD · Uptime Kuma · Synology DSM · SHR/RAID · automated backups</dd></div>
-            <div><dt>Security</dt><dd>YubiKey · Action1 patch management</dd></div>
-          </dl>
-        </div>
-        <div>
-          <h2 id="how-i-work">How I Work</h2>
-          <div class="steps">
-            <div class="step"><b>Automation-first</b> — repetitive tasks get a pipeline.</div>
-            <div class="step"><b>Docs-first</b> — document architecture, workflows, and decisions alongside the code.</div>
-            <div class="step"><b>Review before shipping</b> — branch-based PRs, automated checks, and AI-assisted reviews that trace behavior through the system.</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="education">
-      <h2>Education &amp; Certifications</h2>
-      <div class="edu">
-        <div class="card"><div class="label">Education</div><p style="margin:6px 0 0"><b>Bachelor of Software Engineering (Hons)</b><br>Southern University College · 2014–2018</p></div>
-        <div class="card"><div class="label">Certification</div><p style="margin:6px 0 0"><b>Google IT Support Professional Certificate</b><br>2024</p></div>
-      </div>
+      <h2>Skills</h2>
+      <dl class="skill-list">
+        <div><dt>Engineering</dt><dd>Python · C# · PHP · JavaScript · TypeScript · PowerShell · Bash · FastAPI</dd></div>
+        <div><dt>Containers &amp; virtualization</dt><dd>Docker · Docker Compose · Hyper-V · Proxmox VE</dd></div>
+        <div><dt>Cloud</dt><dd>AWS · Google Cloud Platform · Google Workspace</dd></div>
+        <div><dt>Automation &amp; AI</dt><dd>n8n · OpenCode · MCP · Ollama · LLM agents · Whisper</dd></div>
+        <div><dt>Networking</dt><dd>OpenWRT · pfSense · multi-WAN · VPN · Cloudflare Tunnel</dd></div>
+        <div><dt>Operations &amp; storage</dt><dd>Nginx · CI/CD · Uptime Kuma · Synology DSM · SHR/RAID · automated backups</dd></div>
+        <div><dt>Security</dt><dd>YubiKey · Action1 patch management</dd></div>
+      </dl>
     </section>
   </main>
 

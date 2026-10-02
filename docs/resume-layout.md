@@ -117,8 +117,9 @@ group surfaces use `#eef2f6` / `#243247`. Check text against its actual surface,
 including hover, focus, and both themes, rather than assuming token contrast.
 
 Retain one project column, restrained borders, tinted group headers, and the
-child rail. Remove redundant context/AI badges; retain meaningful in-progress
-labels. Architecture controls are quieter than external actions. Experience is
+child rail. Omit redundant context/AI badges and in-progress title labels;
+communicate availability and scope in the project descriptions. Architecture
+controls are quieter than external actions. Experience is
 a chronological list with formal job titles and a subordinate scope line;
 skills use compact definition rows rather than more project-like cards.
 Education and working principles appear only in the hero on screen. Screen

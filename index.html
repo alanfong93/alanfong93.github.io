@@ -22,7 +22,6 @@
     --accent: #2dd4bf; --accent-ink: #042f2e; --line: #334155;
     --chip: #243247; --group: #243247; --page: #0b1220;
   }
-  html[data-theme="dark"] .badge.wip { background: #78350f; color: #fde68a; }
 
   /* Theme toggle */
   .nav .nav-right { display: flex; align-items: center; gap: 12px; }
@@ -104,7 +103,6 @@
   .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
   .card-actions + .tags { margin-top: 12px; }
   .tags .chip { font-size: .8rem; }
-  .badge.wip { background: #fff7ed; color: #92400e; }
   .badge.implemented { background: var(--chip); color: var(--muted); }
   .project-group { margin-bottom: 18px; }
   .project-group > summary { position: relative; cursor: pointer; list-style: none; background: var(--group); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px 16px 44px; }
@@ -296,7 +294,7 @@
         <div class="group-content">
 
       <div class="work">
-        <h3>Network Sandbox <span class="badge wip">In progress</span></h3>
+        <h3>Network Sandbox</h3>
         <p class="project-purpose">Build a browser topology, send a frame, and replay its hop-by-hop trace.</p>
         <p>Implements an 802.1Q/802.1D bridge pipeline with routing, NAT, DHCP, and ARP models. Includes starter topologies, import/export, and credential-stripped share copies; no server or account is needed.</p>
         <p class="project-status"><b>Scope:</b> Design-review traces, not production certification or vendor emulation. Radio coverage is not modelled; AI advice stays separate.</p>
@@ -318,7 +316,7 @@ flowchart LR
       </div>
 
       <div class="work">
-        <h3>ops-guard <span class="badge wip">In progress</span></h3>
+        <h3>ops-guard</h3>
         <p class="project-purpose">Cited runbook guidance and auditable proposals for AI-assisted operations.</p>
         <p>Built an MCP server with demonstrated gate paths for submitted operations. It checks evidence, preconditions, and authorization; Telegram approval is tied to the specific change. Model risk assessments cannot authorize execution.</p>
         <p class="project-status"><b>Available:</b> Search and recorded proposals on a private network. <b>Pending:</b> The MCP execution tool.</p>
@@ -559,7 +557,7 @@ flowchart LR
       </div>
 
       <div class="work">
-        <h3>AI Eyes — Vision Assistant <span class="badge wip">In progress</span></h3>
+        <h3>AI Eyes — Vision Assistant</h3>
         <p class="project-purpose">A camera-to-AI prototype for identifying objects, how-to guidance, and translating visible text.</p>
         <p>A FastAPI backend sends a captured frame and mode to <b>Gemini Flash 3</b>, then returns structured overlay data to a web HUD. The display is separate from model integration, with object boxes and hand-tracking selection in the prototype.</p>
         <div class="tags"><span class="chip">Gemini Flash 3</span><span class="chip">Multimodal VLM</span><span class="chip">FastAPI</span><span class="chip">Computer Vision</span><span class="chip">Python</span><span class="chip">JavaScript</span></div>

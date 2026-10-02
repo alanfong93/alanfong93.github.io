@@ -94,7 +94,15 @@ affect résumé printing.
 The document and navigation follow Introduction, Projects, Experience, Skills /
 How I Work, Education, then Contact. Projects immediately follow a compact
 introduction; the portrait supports the text rather than dominating it. The
-hero provides **Print / Save résumé** (browser printing, with a print icon),
+desktop portrait column includes compact Education and How I work highlights
+beneath the photo. At 760 px and below, the photo precedes the introduction and
+the highlights follow it in two columns. Their headings link to the fuller
+sections; do not duplicate the complete skills list in the hero. The full
+Education and working-method sections remain available farther down the page.
+The highlights are screen-only as part of the hero, leaving both CV formats
+independent of this layout.
+
+The hero provides **Print / Save résumé** (browser printing, with a print icon),
 **Detailed CV (PDF)** as a quiet download link, **View projects**, and quieter
 social links. The detailed CV is maintained separately in `cv.html` and
 `Alan-Fong-CV.pdf`; see [cv.md](cv.md). Contact includes the email already

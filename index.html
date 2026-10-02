@@ -34,7 +34,7 @@
   a { color: var(--accent); text-decoration: none; }
   a:hover { text-decoration: underline; }
   a:focus-visible, button:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-  section[id] { scroll-margin-top: 68px; }
+  section[id], h2[id] { scroll-margin-top: 68px; }
 
   /* Sticky nav */
   .nav { position: sticky; top: 0; z-index: 50; background: var(--page); border-bottom: 1px solid var(--line); }
@@ -47,22 +47,33 @@
   .nav details.menu { display: none; }
 
   header.hero { padding: 48px 24px 40px; border-bottom: 1px solid var(--line); }
-  .hero-inner { max-width: 872px; margin: 0 auto; display: flex; align-items: center; gap: 40px; }
-  .hero-copy { flex: 1; min-width: 0; }
+  .hero-inner { max-width: 872px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr) 240px; gap: 16px 40px; align-items: start; }
+  .hero-copy { grid-column: 1; grid-row: 1 / span 2; min-width: 0; align-self: center; }
   .hero h1 { font-size: clamp(2rem, 4.8vw, 3rem); margin: 0 0 4px; letter-spacing: -0.03em; line-height: 1.2; }
   .hero .role { font-size: 1.15rem; color: var(--accent); font-weight: 600; margin: 0 0 14px; }
   .hero .tagline { max-width: 640px; margin: 0 0 8px; font-size: 1.05rem; }
   .hero .intro { max-width: 640px; margin: 0; color: var(--muted); font-size: .95rem; }
   .hero .loc { color: var(--muted); font-size: .9rem; margin: 12px 0 20px; }
-  .hero .avatar { width: 112px; height: 112px; border-radius: 50%; object-fit: cover; border: 2px solid var(--line); flex-shrink: 0; }
+  .hero .avatar { grid-column: 2; grid-row: 1; justify-self: center; width: 112px; height: 112px; border-radius: 50%; object-fit: cover; border: 2px solid var(--line); }
+  .profile-highlights { grid-column: 2; grid-row: 2; border-top: 1px solid var(--line); padding-top: 12px; font-size: .85rem; line-height: 1.5; color: var(--muted); }
+  .profile-highlights > div + div { margin-top: 14px; }
+  .profile-highlights h2 { display: block; font-size: .85rem; margin: 0 0 6px; letter-spacing: 0; }
+  .profile-highlights h2::before { display: none; }
+  .profile-highlights p { margin: 0 0 6px; }
+  .profile-highlights strong { color: var(--ink); font-weight: 600; }
+  .profile-highlights ul { margin: 0; padding-left: 16px; }
+  .profile-highlights li { margin: 3px 0; }
   .btns { display: flex; gap: 10px; flex-wrap: wrap; }
   .hero-links { display: flex; flex-wrap: wrap; gap: 10px 18px; margin-top: 14px; font-size: .9rem; }
   .hero-links a { display: inline-flex; gap: 6px; align-items: center; }
   .hero-links svg { width: 16px; height: 16px; fill: currentColor; }
-  @media (max-width: 560px) {
+  @media (max-width: 760px) {
     header.hero { padding: 30px 24px; }
-    .hero-inner { flex-direction: column; align-items: flex-start; gap: 18px; }
-    .hero .avatar { width: 84px; height: 84px; order: -1; }
+    .hero-inner { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+    .hero-copy { grid-column: 1; grid-row: 2; }
+    .hero .avatar { grid-column: 1; grid-row: 1; justify-self: start; width: 84px; height: 84px; }
+    .profile-highlights { grid-column: 1; grid-row: 3; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .profile-highlights > div + div { margin-top: 0; }
   }
   .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 14px; border: 1px solid transparent; border-radius: 8px; font-family: inherit; font-weight: 600; font-size: .9rem; }
   .btn svg { width: 18px; height: 18px; fill: currentColor; flex-shrink: 0; }
@@ -266,6 +277,21 @@
     </div>
     </div>
     <img class="avatar" src="profile.jpg" alt="Alan Fong">
+    <aside class="profile-highlights" aria-label="Profile highlights">
+      <div>
+        <h2><a href="#education">Education</a></h2>
+        <p><strong>Software Engineering (Hons)</strong><br>Southern University College</p>
+        <p>Google IT Support Professional Certificate</p>
+      </div>
+      <div>
+        <h2><a href="#how-i-work">How I work</a></h2>
+        <ul>
+          <li>Document decisions alongside code</li>
+          <li>Automate recurring work</li>
+          <li>Review before shipping</li>
+        </ul>
+      </div>
+    </aside>
     </div>
   </header>
 
@@ -622,7 +648,7 @@ flowchart LR
           </dl>
         </div>
         <div>
-          <h2>How I Work</h2>
+          <h2 id="how-i-work">How I Work</h2>
           <div class="steps">
             <div class="step"><b>Automation-first</b> — repetitive tasks get a pipeline.</div>
             <div class="step"><b>Docs-first</b> — document architecture, workflows, and decisions alongside the code.</div>

@@ -69,9 +69,9 @@ well as in the résumé.
 Use independent native `details`/`summary` controls in this order:
 
 1. Public Personal Projects — open by default (4 projects).
-2. Featured Employer Work — closed by default (6 projects).
-3. Internal Business Systems — closed by default (5 systems in one overview).
-4. Personal AI Projects — closed by default (2 projects).
+2. Featured Employer Work — closed by default (8 projects).
+3. Internal Business Systems — closed by default (4 systems in one overview).
+4. Private Personal Projects — closed by default (3 projects).
 5. Private Utilities & Tools — closed by default (5 tools).
 
 Each summary retains its title, count, short description, and disclosure arrow
@@ -88,6 +88,21 @@ Architecture disclosures remain nested within their cards. Render Mermaid only
 when both the group and architecture disclosure are open; opening either must
 also render any newly visible, unprocessed diagram. Collapsing groups must not
 affect résumé printing.
+
+The employer group leads with MZM Project Board (creator/primary author) and
+the IT asset-management service (sole author of this service, not the wider
+.NET estate). Keep the asset service out of the shorter internal-systems list
+to avoid repeating the case. Private personal work covers JoJo, Mobility World,
+and AI Eyes; it is not exclusively AI. These private cases have descriptions and
+high-level diagrams, not public repository/demo actions.
+
+ops-guard's execution MCP tool is implemented but conditional on a configured
+operator execution catalog and policy. Do not call it pending, universally
+enabled, or authorized by the advisory model. Mobility World uses modelled
+travel times and scoped prototype evidence, not measured traffic, calibrated
+congestion, or completed hardware-performance acceptance. JoJo's staff-house
+runtime adds Microsoft Agent Framework dispatch/delivery/approval infrastructure
+to the existing assistant case; do not imply a public multi-tenant service.
 
 ## Screen hierarchy and visual language
 

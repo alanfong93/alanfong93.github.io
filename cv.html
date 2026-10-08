@@ -31,10 +31,9 @@
     .entry { break-inside: avoid; }
     .page-heading { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px; padding-bottom: 8px; border-bottom: 2px solid #0f766e; color: #475569; font-size: 12px; }
     .note { color: #475569; font-size: 12px; }
-    dl { margin: 6px 0; }
-    dl > div { margin-bottom: 6px; }
-    dt { font-weight: 600; }
-    dd { margin: 2px 0 0; }
+    .cv-page:last-child h2 { margin-top: 12px; }
+    .cv-page:last-child h3 { margin-top: 8px; }
+    .cv-page:last-child p { margin: 3px 0; }
     @media (max-width: 560px) {
       .cv-page { padding: 20px 16px; margin: 0 12px 20px; }
       .identity { align-items: flex-start; }
@@ -113,9 +112,15 @@
       <p class="note">Capabilities and contributions are described at a high level. Employer implementation remains private.</p>
 
       <article class="entry">
-        <h3>C# IT asset-management system</h3>
-        <p class="meta">Contribution: sole author · C# / .NET</p>
-        <p>Wrote the asset-management application end to end for internal hardware and stock tracking.</p>
+        <h3>IT asset-management service</h3>
+        <p class="meta">Contribution: sole author · C# / .NET 10, PostgreSQL</p>
+        <p>Clean Architecture/CQRS service for serialized asset assignments and consumable stock. EF Core persistence, permission-checked endpoints, ledger mutation enforcement, and bounded import work support the custody record.</p>
+      </article>
+
+      <article class="entry">
+        <h3>MZM Project Board</h3>
+        <p class="meta">Contribution: creator and primary author · Python, Docker, GitHub APIs</p>
+        <p>Module progress, blockers, and approval/review queues from read-only GitHub issue/PR data. Incremental API-budget-aware polling, persisted snapshots, refresh locking, and atomic publication protect refresh reliability.</p>
       </article>
 
       <article class="entry">
@@ -142,7 +147,7 @@
       <article class="entry">
         <h3>Distributed print-fleet service</h3>
         <p class="meta">Contribution: primary author of the printer service · Python, FastAPI, Raspberry Pi, Docker</p>
-        <p>Raspberry Pi edge agents expose USB thermal printers through authenticated HTTP APIs with persistent queues and idempotent job handling. The fleet platform combines central enrollment, dispatch, status callbacks, and over-the-air updates.</p>
+        <p>Raspberry Pi agents expose USB printers through authenticated APIs with persistent, idempotent queues. Central enrollment, dispatch, callbacks, and over-the-air updates coordinate the fleet.</p>
       </article>
 
       <article class="entry">
@@ -156,7 +161,7 @@
         <p class="meta">Contribution: primary author on warehouse work; contributor to follow-up tooling · JavaScript, n8n</p>
         <ul>
           <li>Maintained and extended warehouse tooling for multi-courier dispatch, consignment notes, and stock tracking within a multi-engineer codebase.</li>
-          <li>Contributed to order follow-up tooling; automated recurring reports and order-generation workflows. Also delivered internal card-tap attendance and IT-support tools.</li>
+          <li>Contributed to follow-up tooling; automated recurring reports and order-generation workflows.</li>
         </ul>
       </article>
     </section>
@@ -166,24 +171,29 @@
       <h2>Public personal projects</h2>
       <article class="entry">
         <h3><a href="https://github.com/alanfong93/network-sandbox">Network Sandbox</a> · <a href="https://alanfong93.github.io/network-sandbox/">Live demo</a></h3>
-        <p>Browser topology editor with an implemented 802.1Q/802.1D bridge pipeline, documented routing/NAT/DHCP/ARP models, and hop replay. Includes starter topologies and share-safe export. Traces support design review, not production certification or vendor emulation; radio coverage is not modelled.</p>
+        <p>Browser topology editor with scoped 802.1Q/802.1D bridge traces, routing/NAT/DHCP/ARP models, replay, and share-safe export. Not production certification or vendor emulation; radio coverage is not modelled.</p>
       </article>
       <article class="entry">
         <h3><a href="https://github.com/alanfong93/ops-guard">ops-guard</a></h3>
-        <p>Single-operator MCP server for cited runbook guidance and audited proposals. Demonstrated gate paths check evidence, preconditions, and authorization inside the server. Search/proposals run over LAN HTTPS; the MCP execution tool is pending. Local risk assessments never authorize execution.</p>
+        <p>Cited search, audited proposals, and catalog-bound MCP execution when an operator policy and execution catalog configure the gate. Server-side evidence/precondition/authorization checks; model risk assessments never authorize execution.</p>
       </article>
       <article class="entry">
         <h3><a href="https://github.com/alanfong93/local-judge">local-judge</a></h3>
-        <p>Structured judgments through Python, HTTP, and MCP, with Ollama and OpenAI-compatible adapters. Implements a documented Jev-compatible subset with code-side output validation and sample agreement rather than calibrated confidence. Representative live-model usefulness has not yet been established.</p>
+        <p>Typed judgments through Python, HTTP, and MCP with code-side validation and a documented Jev-compatible subset. Ollama/OpenAI-compatible adapters; sample agreement is not calibrated confidence. Representative live-model usefulness remains unproven.</p>
       </article>
       <article class="entry">
         <h3><a href="https://github.com/alanfong93/jiandu">jiandu</a></h3>
-        <p>Source-backed AI-context starter kit created for The Context You Already Earned meetup talk. Preserves originals alongside cited wiki notes and provides compile/index skills and MemPalace pointers for Markdown and captions.</p>
+        <p>Source-backed context kit preserving originals with cited wiki notes, compile/index skills, and MemPalace pointers for Markdown and captions.</p>
       </article>
 
       <h2>Additional personal engineering</h2>
-      <p><b>JoJo:</b> OpenCode-based assistant connecting browser tools and n8n workflows with MemPalace/Obsidian context. <b>AI Eyes:</b> FastAPI camera-to-AI prototype for identification, how-to guidance, and translation.</p>
-      <p><b>Private utilities:</b> messaging APIs for WhatsApp/Telegram, schema-aware database tooling, Windows optimization scripts, local transcription, and reusable agent skills for planning, implementation, and review.</p>
+      <article class="entry">
+        <h3>Mobility World</h3>
+        <p>r5py/R5 before/after comparisons over pinned OSM/GTFS data, synthetic routes, and an assumption-aware line editor. Three.js/Rapier walk/drive/motorcycle prototype. Cost ranges and input provenance; not observed traffic or calibrated congestion. Hardware-performance acceptance remains outstanding.</p>
+      </article>
+      <p><b>JoJo:</b> OpenCode/n8n assistant tooling plus a Microsoft Agent Framework specialist runtime with typed dispatch, durable admission/checkpoints, bound human approvals, effect journals, and operator controls. MemPalace/Obsidian provide context.</p>
+      <p><b>AI Eyes:</b> FastAPI camera-to-AI prototype for identification, how-to guidance, and translation.</p>
+      <p><b>Other tooling:</b> WhatsApp/Telegram messaging APIs, schema-aware database tools, Windows scripts, and reusable agent skills.</p>
 
       <article class="entry">
         <h3>Ad-hoc freelance IT support</h3>
@@ -192,12 +202,10 @@
       </article>
 
       <h2>Technical skills</h2>
-      <dl>
-        <div><dt>Engineering</dt><dd>Python · C# / .NET · PHP · JavaScript · TypeScript · PowerShell · Bash · FastAPI</dd></div>
-        <div><dt>Infrastructure and operations</dt><dd>Docker / Compose · Hyper-V · Proxmox VE · Linux · Nginx · AWS · Google Cloud Platform · Google Workspace · Uptime Kuma · Synology storage and backups</dd></div>
-        <div><dt>Networking and security</dt><dd>OpenWRT · pfSense · multi-WAN · VPN · Cloudflare Tunnel · YubiKey · Action1 patch management</dd></div>
-        <div><dt>Automation and AI</dt><dd>n8n · MCP · OpenCode · Ollama · Whisper · Telegram Bot API · AI-assisted development and review</dd></div>
-      </dl>
+      <p><b>Engineering:</b> Python · C# / .NET · PHP · JavaScript · TypeScript · PowerShell · Bash · FastAPI · EF Core / PostgreSQL</p>
+      <p><b>Infrastructure and operations:</b> Docker / Compose · Hyper-V · Proxmox VE · Linux · Nginx · AWS · Google Cloud Platform · Google Workspace · Uptime Kuma · Synology storage and backups</p>
+      <p><b>Networking and security:</b> OpenWRT · pfSense · multi-WAN · VPN · Cloudflare Tunnel · YubiKey · Action1 patch management</p>
+      <p><b>Automation and AI:</b> n8n · MCP · OpenCode · Microsoft Agent Framework · Ollama · Whisper · Telegram Bot API · AI-assisted development and review</p>
 
       <h2>Education and certification</h2>
       <p><b>Bachelor of Software Engineering (Hons)</b> · Southern University College<br>2014–2018 · Second Class Upper Division · Conferred 27 May 2018</p>

@@ -19,6 +19,8 @@ Preserve these distinctions:
 - Led with a collaborator: Telegram support bot and VM-management control plane.
 - Primary author: printer service, broadcast service, and warehouse contributions.
 - Contributor: follow-up tooling. Do not turn that into ownership of the system.
+- Creator and primary author: MZM Project Board, the engineering-status dashboard;
+  the returned shared-account contribution prevents a sole-author claim.
 - Seven is the team's peak size, not current headcount or direct reports.
 - Meadow includes part-time work during the degree and the return after the
   2018 internship. Its existing warranty application was maintained/extended,
@@ -29,6 +31,13 @@ Preserve these distinctions:
 
 Employer code remains private. Public-project limits must stay aligned with
 their repositories. The separate one-page résumé retains its own print layout.
+
+The asset case describes Alan's .NET 10/PostgreSQL service, not authorship of
+other company services. Mobility World is a private modelled-routing and
+streetscape prototype; no observed-traffic, calibrated-congestion, or hardware
+performance verdict is claimed. JoJo includes the implemented Microsoft Agent
+Framework staff runtime. ops-guard execution is registered only with the
+operator's execution catalog and policy; the model never grants authorization.
 
 ## Regenerating the PDF
 

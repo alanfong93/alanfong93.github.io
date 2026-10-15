@@ -125,6 +125,14 @@ social links. The detailed CV is maintained separately in `cv.html` and
 `Alan-Fong-CV.pdf`; see [cv.md](cv.md). Contact includes the email already
 published in the résumé.
 
+The introduction and Contact social links include Alan's confirmed X profile,
+`https://x.com/AlanFong93`, alongside LinkedIn and GitHub. Use an inline X SVG
+with `aria-hidden="true"`, visible **X** text and an accessible **X profile**
+label. Its fill inherits the link colour in either theme; it is a secondary
+social action rather than another primary button.
+At 420 px and below, the CV download occupies its own row so LinkedIn, GitHub,
+and X can stay together rather than leaving a lone wrapped social icon.
+
 Use off-white/charcoal in light mode and dark slate in dark mode. Teal is the
 single action accent: `#0f766e` with white action text in light mode, `#2dd4bf`
 with dark action text in dark mode. Secondary text uses `#475569` / `#b0bdd0`;

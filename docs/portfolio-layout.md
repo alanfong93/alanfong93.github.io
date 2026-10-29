@@ -86,6 +86,18 @@ emulate vendor defaults, and does not model radio coverage.
 
 ## Visual language
 
+### Social link previews
+
+The homepage declares an absolute Open Graph image URL and matching Twitter
+large-image metadata for `assets/social-preview.png` (1200 × 630 pixels).
+The artwork uses the existing portrait and portfolio branding. Its editable
+source is `assets/social-preview.html`; render it at a 1200 × 630 CSS-pixel
+viewport with device scale factor 1 and capture the full viewport as PNG after
+the portrait and fonts finish loading. Update the image and metadata together.
+After deployment, refresh the homepage URL in LinkedIn Post Inspector to request
+a fresh crawl; an existing Featured card may require editing or re-adding the
+link if LinkedIn retains its old thumbnail.
+
 Keep one project column with restrained borders. Teal is the single action
 accent: `#0f766e` with white text in light mode, `#2dd4bf` with dark text in dark
 mode. Secondary text uses `#475569` / `#b0bdd0`. Group headers use `#eef2f6` /

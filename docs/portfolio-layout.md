@@ -22,12 +22,18 @@ an accessible X profile label. All social icons inherit link color.
 
 ## Selected Work and visual evidence
 
-Network Sandbox and ops-guard are full Selected Work cards outside disclosure
+Network Sandbox, Cloud Architect Lab and ops-guard are full Selected Work cards outside disclosure
 controls. Do not repeat them in the remaining project catalogue. Use restrained
 depth and slightly larger headings to distinguish these cards.
 
 - Network Sandbox uses a real screenshot from the live demo in `assets/`, with
   the home-network starter loaded. Label it as a screenshot.
+- Cloud Architect Lab uses a screenshot of its managed-container starter and a
+  Play Demo link to `cloud-architect-lab/` on this Pages site. Its full project
+  repository stays private; only the allowlisted browser distribution is copied
+  here using its `npm run export:demo` command. Retain About/provenance notices,
+  illustrative-model limits and desktop/landscape-phone instructions. The export
+  manifest records content hashes; do not publish private source-tree files.
 - ops-guard uses a labelled inline SVG schematic of evidence, preconditions,
   approval, execution under operator policy, and audit logging. Telegram
   approval is optional and tied to the particular change. Model risk assessment

@@ -1,0 +1,634 @@
+/* Load after style.css and arcade.css. JS owns phone/portrait detection.
+ * Runtime attribution: OpenCode / openai/gpt-6.1-sol.
+ */
+#rotate-overlay,
+.phone-toolbar,
+.phone-actions {
+  display: none;
+}
+
+/* Preserve native dialog closure and explicit hidden state at every breakpoint. */
+.phone-dialog:not([open]),
+#rotate-overlay[hidden],
+.phone-toolbar[hidden],
+.phone-actions[hidden],
+body.phone-layout [hidden] {
+  display: none !important;
+}
+
+/* The root is not an ancestor with touch-action:none: modal/catalog pans work. */
+html:has(> body.phone-layout),
+body.phone-layout {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+body.phone-layout #game-shell {
+  position: fixed;
+  top: var(--phone-top, 0px);
+  left: var(--phone-left, 0px);
+  width: var(--phone-width, 100vw);
+  height: var(--phone-height, 100vh);
+  height: var(--phone-height, 100dvh);
+  padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px)
+    env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+  display: grid;
+  grid-template-rows: 44px minmax(0, 1fr);
+  overflow: hidden;
+  background: var(--bg);
+}
+
+body.phone-layout #game-shell > .topbar,
+body.phone-layout #game-shell .mission-bar,
+body.phone-layout #game-shell .metrics,
+body.phone-layout #game-shell main > footer,
+body.phone-layout #game-shell .canvas-toolbar,
+body.phone-layout #game-shell .timeline,
+body.phone-layout #game-shell .templates,
+body.phone-layout #game-shell .inspector {
+  display: none;
+}
+
+body.phone-layout .phone-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  height: 44px;
+  min-height: 44px;
+  padding: 0 6px;
+  border-bottom: 0;
+  box-shadow: inset 0 -1px #2b4a48;
+  background: linear-gradient(110deg, #122b2b, #101b26 65%);
+}
+
+body.phone-layout .phone-brand {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: .6px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+body.phone-layout .phone-brand span {
+  color: var(--text);
+}
+
+body.phone-layout .phone-toolbar button,
+body.phone-layout .phone-actions button {
+  flex: 0 0 auto;
+  min-width: 44px;
+  height: 44px;
+  min-height: 44px;
+  margin: 0;
+  padding: 0 10px;
+  border: 1px solid #35505c;
+  border-radius: 6px;
+  background: #172b36;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1;
+  white-space: nowrap;
+  touch-action: manipulation;
+}
+
+body.phone-layout #phone-start {
+  min-width: 70px;
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #09251b;
+}
+
+body.phone-layout .phone-stat {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  overflow: hidden;
+  color: var(--muted);
+  font: 7px ui-monospace, monospace;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+body.phone-layout .phone-stat :is(span, small, label) {
+  overflow: hidden;
+  font-size: 7px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+body.phone-layout :is(#phone-clock, #phone-credits, #phone-uptime) {
+  display: block;
+  overflow: hidden;
+  color: var(--text);
+  font: 650 12px ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+body.phone-layout #phone-uptime {
+  color: var(--accent);
+}
+
+body.phone-layout #game-shell > main {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  max-width: none;
+  margin: 0;
+  padding: 4px;
+  overflow: hidden;
+}
+
+body.phone-layout #game-shell .workspace {
+  display: grid;
+  grid-template-columns: clamp(132px, 20vw, 160px) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  align-items: stretch;
+  gap: 4px;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+body.phone-layout #game-shell .center-column {
+  display: grid;
+  grid-template-rows: 36px minmax(0, 1fr) 44px;
+  gap: 0;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+body.phone-layout #game-shell .event-strip {
+  display: grid;
+  grid-template-columns: 5px minmax(0, 1fr);
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  align-content: center;
+  align-items: center;
+  gap: 1px 7px;
+  height: 36px;
+  min-height: 0;
+  padding: 3px 8px;
+  overflow: hidden;
+  border-radius: 6px 6px 0 0;
+}
+
+body.phone-layout .event-strip .pulse-dot {
+  grid-row: 1 / -1;
+}
+
+body.phone-layout .event-strip :is(#event-name, #event-copy) {
+  grid-column: 2;
+  min-width: 0;
+  overflow: hidden;
+  padding: 0;
+  font-size: 9px;
+  line-height: 1.2;
+  letter-spacing: .2px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Explicitly undo all desktop and <=600px board minimums. At 320px high,
+ * the board gets 188px before safe-area deductions (44 + 8 + 36 + 44).
+ */
+body.phone-layout #game-shell #board {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  max-height: none;
+  border-radius: 0;
+  touch-action: none;
+}
+
+body.phone-layout #game-shell .palette {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+body.phone-layout .palette .panel-heading {
+  display: block;
+  flex: 0 0 auto;
+  padding: 7px 6px;
+}
+
+body.phone-layout .palette .panel-heading > span {
+  font-size: 9px;
+  letter-spacing: .3px;
+}
+
+body.phone-layout .palette .panel-heading small {
+  display: block;
+  margin-top: 4px;
+  font-size: 7px;
+  letter-spacing: 0;
+}
+
+body.phone-layout .palette #catalog {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+  max-height: none;
+  gap: 0;
+  padding: 4px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  touch-action: pan-y;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #426358 #111c27;
+}
+
+body.phone-layout .catalog-group {
+  flex: 0 0 auto;
+  width: 100%;
+  padding: 4px 0;
+}
+
+body.phone-layout .catalog-group + .catalog-group {
+  margin: 5px 0 0;
+  padding: 6px 0 0;
+  border-top: 1px solid var(--line);
+  border-left: 0;
+}
+
+body.phone-layout .catalog-group h3 {
+  margin: 3px 2px 5px;
+  font-size: 8px;
+  letter-spacing: .4px;
+}
+
+body.phone-layout .catalog-group-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+body.phone-layout .palette .service-card {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  width: 100%;
+  min-width: 0;
+  min-height: 52px;
+  gap: 4px;
+  margin: 0;
+  padding: 5px 2px;
+  touch-action: pan-y;
+  overscroll-behavior: contain;
+}
+
+body.phone-layout .service-card .service-icon {
+  flex: 0 0 24px;
+  width: 24px;
+  min-width: 24px;
+  height: 24px;
+  border-radius: 5px;
+  font-size: 18px;
+}
+
+body.phone-layout .service-card .service-copy {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+body.phone-layout .service-card :is(b, small) {
+  display: block;
+  overflow: hidden;
+  font-size: 9px;
+  line-height: 1.4;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+body.phone-layout .service-card .service-cost {
+  display: block;
+  flex: 0 0 auto;
+  margin-left: auto;
+  font-size: 12px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+body.phone-layout .palette-note,
+body.phone-layout .board-corner {
+  display: none;
+}
+
+body.phone-layout #board .node {
+  width: 60px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 3px 0;
+  touch-action: none;
+}
+
+body.phone-layout #board .node-body {
+  flex: 0 0 34px;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+}
+
+body.phone-layout #board .node.internet .node-body {
+  border-radius: 50%;
+}
+
+body.phone-layout #board .node-glyph {
+  font-size: 20px;
+}
+
+body.phone-layout #board .node b,
+body.phone-layout #board .node small {
+  max-width: 60px;
+  margin-top: 2px;
+  overflow: hidden;
+  font-size: 7px;
+  line-height: 1.15;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+body.phone-layout #board .canvas-legend {
+  right: 4px;
+  bottom: 4px;
+  left: 4px;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+body.phone-layout #board .canvas-legend span {
+  font-size: 7px;
+  line-height: 1.2;
+}
+
+body.phone-layout #board .canvas-legend i {
+  margin-right: 3px;
+}
+
+body.phone-layout #board #empty-hint {
+  inset: 25% 12px auto;
+  text-align: center;
+  font-size: 10px;
+}
+
+body.phone-layout #board #empty-hint strong {
+  font-size: 13px;
+}
+
+body.phone-layout #board #empty-hint p {
+  max-width: none;
+  line-height: 1.4;
+}
+
+body.phone-layout .phone-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  height: 44px;
+  overflow: hidden;
+  background: #12212c;
+  border-radius: 0 0 6px 6px;
+}
+
+body.phone-layout #toast {
+  bottom: calc(48px + env(safe-area-inset-bottom, 0px));
+  padding: 8px 12px;
+  font-size: 10px;
+}
+
+body.phone-portrait #toast {
+  display: none;
+}
+
+body.phone-layout #phone-selection {
+  flex: 1 1 0;
+  min-width: 0;
+  padding-left: 8px;
+  overflow: hidden;
+  color: #c6d4df;
+  font-size: 10px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+body.phone-layout #phone-reboot {
+  background: #332819;
+  border-color: #896533;
+  color: var(--amber);
+}
+
+body.phone-layout #phone-delete {
+  background: #351f2a;
+  border-color: #66404a;
+  color: #ffc2cd;
+}
+
+/* Native top-layer dialogs remain scrollable, including their moved content.
+ * [open] is essential: never turn a closed native dialog into a visible panel.
+ */
+body.phone-layout :is(.phone-dialog, #help-dialog, #model-dialog, #results-dialog)[open] {
+  width: min(520px, 96vw);
+  max-width: calc(var(--phone-width, 100vw) - 12px);
+  max-height: calc(var(--phone-height, 100dvh) - 12px
+    - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  margin: auto;
+  padding: 20px;
+  padding-top: 52px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  border-color: #3c665f;
+  background: linear-gradient(145deg, #142c30, #111c27 55%);
+}
+
+body.phone-layout dialog button,
+body.phone-layout dialog select,
+body.phone-layout dialog input[type="range"] {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+body.phone-layout dialog .close-dialog {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 6px;
+  color: #c9e3dc;
+}
+
+body.phone-layout .phone-dialog .inspector {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  overflow: visible;
+  grid-column: auto;
+}
+
+body.phone-layout .phone-dialog[open] {
+  padding-top: 20px;
+}
+
+body.phone-layout .phone-sheet-header {
+  position: sticky;
+  top: -20px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 52px;
+  margin: -20px -20px 12px;
+  padding: 4px 6px 4px 16px;
+  border-bottom: 1px solid #36584f;
+  background: #142c30;
+}
+
+body.phone-layout .phone-sheet-header h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+body.phone-layout .phone-sheet-header .close-dialog {
+  position: static;
+  flex: 0 0 44px;
+}
+
+body.phone-layout .phone-dialog #inspector-content {
+  min-height: 0;
+  border-left: 0;
+}
+
+body.phone-layout .phone-dialog .topology-audit {
+  border-left: 0;
+  border-top: 1px solid var(--line);
+}
+
+body.phone-layout .phone-dialog .audio-controls,
+body.phone-layout .phone-dialog .templates {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 8px;
+  touch-action: pan-y;
+}
+
+body.phone-layout .phone-dialog .timeline {
+  display: block;
+  min-width: 0;
+  touch-action: pan-y;
+}
+
+body.phone-layout .phone-dialog .timeline-heading,
+body.phone-layout .phone-dialog .timeline-labels {
+  flex-wrap: wrap;
+}
+
+body.phone-layout .phone-dialog .templates > span {
+  flex-basis: 100%;
+}
+
+/* JS controls both this class and hidden; CSS does not infer orientation. */
+body.phone-portrait #game-shell {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+body.phone-portrait #rotate-overlay:not([hidden]) {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: calc(24px + env(safe-area-inset-top, 0px))
+    calc(24px + env(safe-area-inset-right, 0px))
+    calc(24px + env(safe-area-inset-bottom, 0px))
+    calc(24px + env(safe-area-inset-left, 0px));
+  overflow: auto;
+  background: radial-gradient(ellipse at 50% 35%, #1b4941, transparent 65%), #0b1119;
+  color: var(--text);
+  text-align: center;
+}
+
+body.phone-portrait .rotate-glyph {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 88px;
+  height: 88px;
+  border: 1px solid #407b68;
+  border-radius: 24px;
+  background: #16352f;
+  color: var(--accent);
+  font-size: 64px;
+  line-height: 1;
+  box-shadow: 0 12px 48px #0005;
+}
+
+body.phone-portrait #rotate-overlay h2 {
+  margin: 8px 0 0;
+  font-size: clamp(24px, 7vw, 34px);
+  letter-spacing: -.6px;
+}
+
+body.phone-portrait #rotate-status {
+  max-width: 30ch;
+  margin: 0;
+  color: #b3c9c6;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+@media (max-width: 740px) {
+  body.phone-layout .phone-brand {
+    display: none;
+  }
+}
+
+/* Cosmetic compaction only: targets stay 44px and catalog cards stay 52px. */
+@media (pointer: coarse) and (max-height: 340px) {
+  body.phone-layout .palette .panel-heading {
+    padding: 5px 6px;
+  }
+
+  body.phone-layout .phone-toolbar {
+    gap: 3px;
+    padding-inline: 4px;
+  }
+
+  body.phone-layout .phone-toolbar button {
+    padding-inline: 8px;
+  }
+}

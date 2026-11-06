@@ -1,0 +1,86 @@
+/* Canvas-first desktop shell; shared controls and dialogs keep the same handlers.
+ * Runtime attribution: OpenCode / openai/gpt-6.1-sol. */
+html:has(> body.desktop-layout), body.desktop-layout { overflow:hidden; }
+body.desktop-layout #game-shell { height:100vh; height:100dvh; display:grid; grid-template-rows:60px minmax(0,1fr); }
+body.desktop-layout #game-shell > .topbar,
+body.desktop-layout #game-shell .mission-bar,
+body.desktop-layout #game-shell main > footer,
+body.desktop-layout #game-shell :is(.timeline,.templates,.inspector) { display:none; }
+body.desktop-layout .phone-toolbar { display:flex; align-items:center; gap:12px; padding:8px 20px; background:var(--panel-deep); border-bottom:1px solid var(--line); }
+body.desktop-layout .phone-brand { margin-right:auto; color:var(--accent); font-size:16px; font-weight:750; letter-spacing:1px; white-space:nowrap; }
+body.desktop-layout .phone-brand span { color:var(--text); }
+body.desktop-layout :is(.phone-toolbar,.phone-actions) button { min-height:44px; min-width:44px; padding:0 16px; border:1px solid var(--line); border-radius:7px; background:var(--panel-raised); color:var(--text); font-family:inherit; font-size:13px; font-weight:600; white-space:nowrap; }
+body.desktop-layout #phone-start { min-width:92px; background:var(--accent); border-color:var(--accent); color:var(--on-accent); }
+body.desktop-layout .phone-stat { display:grid; gap:2px; min-width:72px; padding-inline:12px; border-left:1px solid var(--line); }
+body.desktop-layout .phone-stat small { color:var(--muted); font-size:9px; letter-spacing:.8px; }
+body.desktop-layout .phone-stat strong { font:650 16px ui-monospace,monospace; }
+body.desktop-layout #phone-uptime { color:var(--success); }
+body.desktop-layout #game-shell > main { display:grid; grid-template-rows:66px minmax(0,1fr); gap:12px; width:100%; min-width:0; min-height:0; max-width:none; margin:0; padding:12px 20px 16px; }
+body.desktop-layout .metrics { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); margin:0; min-width:0; min-height:0; }
+body.desktop-layout .metrics > :is(.metric:first-child,.uptime-metric,.budget) { display:none; }
+body.desktop-layout .metric { padding:8px 16px; min-width:0; }
+body.desktop-layout .metric strong { display:inline; margin:0 10px 0 0; font-size:21px; }
+body.desktop-layout .metric > span { display:block; margin:0 0 3px; font-size:9px; }
+body.desktop-layout .metric small { font-size:10px; }
+body.desktop-layout .workspace { display:grid; grid-template-columns:220px minmax(0,1fr); grid-template-rows:minmax(0,1fr); gap:12px; height:100%; min-width:0; min-height:0; align-items:stretch; }
+body.desktop-layout .palette { display:flex; flex-direction:column; min-height:0; overflow:hidden; }
+body.desktop-layout .palette .panel-heading { flex:0 0 auto; padding:14px 12px; }
+body.desktop-layout .palette .panel-heading small { display:none; }
+body.desktop-layout #catalog { flex:1 1 auto; min-height:0; max-height:none; overflow-y:auto; overscroll-behavior:contain; scrollbar-width:thin; padding:8px; }
+body.desktop-layout .catalog-group-cards { display:grid; grid-template-columns:minmax(0,1fr); gap:6px; }
+body.desktop-layout .service-card { width:100%; min-height:58px; margin:0; }
+body.desktop-layout .service-copy b { font-size:12px; }
+body.desktop-layout .palette-note { flex:0 0 auto; margin:0; padding:10px 12px; font-size:10px; }
+body.desktop-layout .center-column { display:grid; grid-template-rows:32px 48px minmax(0,1fr) 52px; gap:0; height:100%; min-width:0; min-height:0; }
+body.desktop-layout .canvas-toolbar { min-height:0; padding:4px 12px; }
+body.desktop-layout .canvas-toolbar .icon-button { padding:0 8px; }
+body.desktop-layout .event-strip { margin:0; min-height:0; padding:8px 12px; display:flex; align-items:center; gap:10px; overflow:hidden; }
+body.desktop-layout .event-strip strong { flex:0 0 auto; font-size:11px; }
+body.desktop-layout #event-copy { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:11px; }
+body.desktop-layout .board { height:100%; min-height:0; max-height:none; aspect-ratio:auto; border-radius:0; }
+body.desktop-layout .node b { font-size:12px; }
+body.desktop-layout .node small { font-size:10px; }
+body.desktop-layout .canvas-legend span { font-size:10px; }
+body.desktop-layout .phone-actions { display:flex; align-items:center; gap:8px; min-width:0; padding:4px 8px; background:var(--panel); border:1px solid var(--line); border-top:0; border-radius:0 0 8px 8px; }
+body.desktop-layout #phone-selection { flex:1 1 auto; min-width:0; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; color:var(--muted); font-size:12px; }
+body.desktop-layout #selection-details { border-color:var(--accent); color:var(--accent); }
+body.desktop-layout #phone-reboot { background:var(--warning-bg); border-color:#87693b; color:var(--warning); }
+body.desktop-layout #phone-delete { background:var(--danger-bg); border-color:#975166; color:var(--danger); }
+
+/* Native dialogs remain modal and preserve deliberate Resume after closing. */
+body.desktop-layout .phone-dialog[open] { display:block; position:fixed; inset:16px 16px 16px auto; width:min(480px,calc(100vw - 32px)); height:calc(100dvh - 32px); max-height:none; max-width:none; margin:0; padding:20px; overflow-y:auto; overscroll-behavior:contain; border-radius:12px; }
+body.desktop-layout dialog::backdrop { backdrop-filter:none; background:#0006; }
+body.desktop-layout .phone-sheet-header { position:sticky; top:-20px; z-index:3; display:flex; justify-content:space-between; align-items:center; min-height:56px; margin:-20px -20px 12px; padding:6px 8px 6px 20px; background:var(--panel); border-bottom:1px solid var(--line); }
+body.desktop-layout .phone-sheet-header h2 { margin:0; font-size:20px; }
+body.desktop-layout .phone-sheet-header .close-dialog { position:static; width:44px; height:44px; }
+body.desktop-layout .phone-dialog .inspector { display:block; width:100%; min-width:0; max-height:none; border:0; }
+body.desktop-layout .phone-dialog .inspector :is(#inspector-content,.topology-audit) { border-left:0; padding:12px 0; }
+body.desktop-layout .phone-dialog :is(.audio-controls,.templates) { display:flex; flex-wrap:wrap; justify-content:flex-start; gap:10px; padding:12px 0; }
+body.desktop-layout .phone-dialog .templates > span { flex-basis:100%; }
+body.desktop-layout .phone-dialog .timeline { display:block; margin-block:16px; }
+body.desktop-layout .phone-dialog :is(.timeline-heading,.timeline-labels) { flex-wrap:wrap; }
+body.desktop-layout .phone-dialog :is(.button,.tiny-button,.templates button) { min-height:44px; }
+
+/* Prioritize configuration on both devices; explanations are expandable. */
+.managed-settings .service-explanation { margin-top:14px; color:var(--muted); font-size:12px; }
+.service-explanation summary { cursor:pointer; line-height:1.6; padding:10px 0; color:var(--accent); }
+#phone-details-dialog .inspector > .panel-heading,
+#phone-details-dialog .inspector-icon { display:none; }
+#phone-details-dialog .inspector h2 { font-size:20px; margin:12px 0; }
+:is(body.desktop-layout,body.phone-layout) #service-settings { gap:12px; }
+:is(body.desktop-layout,body.phone-layout) #service-settings label { font-size:12px; }
+:is(body.desktop-layout,body.phone-layout) #service-settings input[type="number"] { min-height:44px; font-size:15px; }
+:is(body.desktop-layout,body.phone-layout) #service-settings .policy-toggle { grid-column:auto; }
+:is(body.desktop-layout,body.phone-layout) #service-settings button { min-height:44px; }
+body.desktop-layout .managed-settings h3 { font-size:14px; }
+body.desktop-layout .service-live,body.desktop-layout .service-policy-status { font-size:12px; }
+body.phone-layout #selection-details { padding-inline:8px; }
+@media(max-width:1000px) {
+  body.desktop-layout .phone-toolbar { gap:6px; padding-inline:12px; }
+  body.desktop-layout .phone-stat { min-width:60px; padding-inline:6px; }
+  body.desktop-layout .phone-toolbar button { padding-inline:10px; }
+  body.desktop-layout .workspace { grid-template-columns:180px minmax(0,1fr); }
+  body.desktop-layout #game-shell > main { padding-inline:12px; gap:8px; }
+  body.desktop-layout .metric small { display:none; }
+  body.desktop-layout .event-strip { gap:6px; }
+}

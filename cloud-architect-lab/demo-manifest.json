@@ -1,0 +1,62 @@
+{
+  "project": "cloud-architect-lab",
+  "format": 1,
+  "assets": [
+    {
+      "name": "index.html",
+      "sha256": "b33b9e9c8c849534818af95be4fc39c17bd52c3d89a7a29c2558b8a0830ebb52"
+    },
+    {
+      "name": "style.css",
+      "sha256": "e98225c7748d723321ae4f7113d844101d6fded10e5072df21f5299ed909cc27"
+    },
+    {
+      "name": "arcade.css",
+      "sha256": "61f9730e14bde8579b16c0cade1ace91a4dfc4583150acbdeafb2d8048e3dcef"
+    },
+    {
+      "name": "phone.css",
+      "sha256": "a2a14d7dafa45210e40753342a94fd07dca2a373c58d050b8928aacf3537ca4a"
+    },
+    {
+      "name": "theme.css",
+      "sha256": "81c45031097d1177bfd2d6383a98997be3b687933b644f37c9ac70b937120533"
+    },
+    {
+      "name": "desktop.css",
+      "sha256": "6f2ab55558faf30b5fb90a8c48b62d0150004858861ff28557745fef89b92f70"
+    },
+    {
+      "name": "app.js",
+      "sha256": "dc01fc866fb090ff830601ff38ebe3a1b9c7aa67dc3575160b72d41984a30cae"
+    },
+    {
+      "name": "engine.js",
+      "sha256": "edd0ed595bd65e3578d5b86cd99be5a8dced0584f7543bd29abce727a6574c94"
+    },
+    {
+      "name": "services.js",
+      "sha256": "aeee3a3172d6ca0b5e647b66997aceddd837978bb58cf571abe5fec38db03265"
+    },
+    {
+      "name": "interaction.js",
+      "sha256": "3a0053cf4d40ab2090b78f6ab08554b531d4667a5e5c143997f69d432af57f3c"
+    },
+    {
+      "name": "sound.js",
+      "sha256": "8e3d9d063284239c4b592584665dd179e35e4a6fc3cbdf37e7a7b905bc6f9d52"
+    },
+    {
+      "name": "music.js",
+      "sha256": "a6c259786a2ed129d17012c361b97b0c38f19d70e9a49e8a9a0bddb3f846603e"
+    },
+    {
+      "name": "phone.js",
+      "sha256": "9f4051c9c71ad4654813b15b4752622a6f72fd0227945f6ee504b4d68482ba5a"
+    },
+    {
+      "name": "favicon.svg",
+      "sha256": "89aeb7758ff758b651939bdefa7633525a2db86c938fb9be6a597d28b2f2c2d8"
+    }
+  ]
+}

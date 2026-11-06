@@ -1,0 +1,96 @@
+/* Live-arcade additions. Values are display mechanics, not AWS service limits. */
+.arcade-brief { display:flex; flex-direction:column; gap:7px; padding:0 12px 4px 0; }
+.arcade-brief small { color:var(--muted); font-size:10px; }
+.service-card b { line-height:1.4; }
+.service-card { min-height:53px; }
+.service-copy { min-width:0; flex:1; }
+.service-cost { flex:0 0 auto; white-space:nowrap; font:700 15px ui-monospace,monospace; color:#d9eef8; margin-left:auto; }
+.mission-controls { flex-direction:column; align-items:stretch; min-width:360px; gap:9px; }
+.round-controls { display:flex; justify-content:flex-end; align-items:center; gap:16px; }
+.audio-controls { display:flex; align-items:center; justify-content:flex-end; flex-wrap:wrap; gap:8px; padding:7px 9px; border:1px solid #2c4050; border-radius:6px; background:#111e2a; }
+.audio-controls label { display:flex; flex-direction:row; align-items:center; gap:6px; font-size:9px; letter-spacing:0; }
+.audio-controls input { width:78px; accent-color:var(--accent); cursor:pointer; }
+.audio-controls output { min-width:28px; font:10px ui-monospace,monospace; color:#c9e3ec; }
+#music-status { color:#91bdaf; font:9px ui-monospace,monospace; min-width:95px; }
+.palette #catalog { max-height:760px; overflow-y:auto; }
+.catalog-group { padding-top:7px; }
+.catalog-group + .catalog-group { border-top:1px solid #263b49; margin-top:8px; }
+.catalog-group h3 { margin:4px 8px 8px; color:#a0b5c7; font:700 9px ui-monospace,monospace; letter-spacing:1px; text-transform:uppercase; }
+.assessment-title { display:flex; align-items:center; gap:9px; }
+.assessment-icon { display:inline-grid; place-items:center; width:20px; height:20px; flex:0 0 20px; border-radius:50%; font-size:14px; }
+.assessment-pass { color:#73efb8; background:#214d3c; }
+.assessment-fail { color:#ff8ca2; background:#542737; }
+.assessment-info { color:#a6bbce; background:#24394b; }
+.node b { max-width:100px; white-space:nowrap; }
+#traffic-layer { pointer-events:none; }
+.traffic-packet { pointer-events:none; stroke-width:1.2px; vector-effect:non-scaling-stroke; }
+.request-packet { fill:#a6ffed; stroke:#f1fffd; filter:drop-shadow(0 0 4px #3dffd0) drop-shadow(0 0 8px #3dffd088); }
+.attack-packet { fill:#ff244f; stroke:#ffb1c1; filter:drop-shadow(0 0 5px #ff1749) drop-shadow(0 0 10px #ff1749bb); }
+.node.blocking .node-body { box-shadow:0 0 0 4px #65e5b42b,0 0 23px #65e5b454; }
+.node.state-overloaded .node-meter i { background:#ffad45; }
+.node.state-down .node-body:after { content:'REBOOT'; }
+.node.state-rebooting .node-body { border-color:#f8c66b; color:#f8c66b; }
+.node.state-rebooting .node-body:after { content:'BOOTING'; color:#f8c66b; background:#2a2417; }
+.node.state-maintenance .node-body { border-color:#c1a0ff; color:#c1a0ff; box-shadow:0 0 16px #b48bff33; }
+.node.state-maintenance .node-body:after { content:'MAINT.'; color:#d0b8ff; background:#241b36; }
+.node.state-throttled .node-body { border-color:#f8c66b; }
+.reboot-button { width:100%; margin-top:8px; background:#eeb65e; border-color:#eeb65e; color:#2a1b05; }
+.service-rule { border-left:2px solid #577c8d; padding-left:9px; }
+.metrics { grid-template-columns:repeat(6,minmax(0,1fr)); }
+.uptime-metric strong { color:var(--accent); }
+#result-metrics { grid-template-columns:repeat(4,minmax(0,1fr)); }
+#result-metrics strong { font-size:23px; }
+#node-state { color:#f5cf8c; }
+.event-strip { border-radius:0; border-bottom:0; transition:background-color .18s,border-color .18s; }
+.board { border-radius:0 0 8px 8px; }
+.event-strip strong { white-space:normal; line-height:1.5; }
+.event-strip.situation-surge { background:#362a16; border-color:#86642e; color:#e7cda4; }
+.situation-surge strong { color:#ffd07b; }
+.situation-surge .pulse-dot { background:#ffd07b; }
+.event-strip.situation-attack,.event-strip.situation-failure { background:#3b1924; border-color:#a94358; color:#ffc2cd; }
+.situation-attack strong,.situation-failure strong { color:#ff708e; }
+.situation-attack .pulse-dot,.situation-failure .pulse-dot { background:#ff476e; box-shadow:0 0 9px #ff476e; }
+.event-strip.situation-maintenance { background:#2c2340; border-color:#755795; color:#d4c1ee; }
+.situation-maintenance strong { color:#d3adff; }
+.situation-maintenance .pulse-dot { background:#bf8dff; }
+.event-strip.situation-paused { background:#1e2b3a; border-color:#476078; color:#b7c7d8; }
+.situation-paused strong { color:#bed6ec; }
+.event-strip.situation-recovery,.event-strip.situation-complete { background:#16392f; border-color:#3f8c6d; }
+.node.wire-source .node-body { outline:2px solid #f8c66b; outline-offset:5px; }
+@media(max-width:600px) {
+  .metrics { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .metrics .metric:nth-child(4) { grid-column:auto; }
+  .metrics .metric:nth-child(n+4) { border-top:1px solid var(--line); }
+  .metrics .metric:nth-child(3n) { border-right:0; }
+  #result-metrics { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  #result-metrics>div:nth-child(2) { border-right:0; }
+  #result-metrics>div:nth-child(n+3) { border-top:1px solid var(--line); }
+  .mission-controls { min-width:0; width:100%; }
+  .round-controls { gap:8px; justify-content:space-between; }
+  .round-controls .button { font-size:11px; padding:10px 12px; }
+  .audio-controls { justify-content:flex-start; gap:7px; }
+  .audio-controls input { width:65px; }
+  #music-status { flex-basis:100%; }
+  .brand { font-size:9px; letter-spacing:.5px; gap:7px; }
+  .brand-icon { font-size:30px; }
+  .brand small { font-size:6px; letter-spacing:1.5px; }
+  .top-right { gap:5px; }
+  .top-right .button { font-size:9px; padding:7px 8px; }
+  .event-strip { flex-wrap:wrap; gap:5px 8px; }
+  #event-copy { flex-basis:100%; padding-left:13px; }
+  .mission-controls .arcade-brief { flex:1; padding:0; }
+  .mission-controls>.button { flex-basis:auto; }
+  .arcade-brief .eyebrow { font-size:8px; letter-spacing:.7px; }
+  .arcade-brief small { font-size:8px; }
+  .palette #catalog { max-height:none; overflow-x:auto; overflow-y:hidden; }
+  .catalog-group { flex:0 0 auto; padding:4px 0; }
+  .catalog-group + .catalog-group { border-top:0; border-left:1px solid #2b4050; margin:0 0 0 4px; padding-left:8px; }
+  .catalog-group h3 { margin:2px 6px 6px; font-size:8px; }
+  .catalog-group-cards { display:flex; gap:3px; }
+  .service-card { min-height:60px; min-width:165px; grid-template-columns:26px minmax(0,1fr) auto; }
+  .service-card .service-cost { display:block; grid-column:3; grid-row:1; align-self:center; font-size:15px; }
+  .node b { font-size:8px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .traffic-packet { filter:none; }
+}

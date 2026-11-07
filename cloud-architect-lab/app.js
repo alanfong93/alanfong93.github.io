@@ -7,7 +7,7 @@ const $ = id => document.getElementById(id);
 const escape = text => String(text).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 const num = n => Math.round(n).toLocaleString();
 const percent = n => (n * 100).toFixed(1);
-let { nodes, edges } = starterTopology('balanced');
+let { nodes, edges } = starterTopology('basic');
 let run = null, selected = null, selectedEdge = null, wireFrom = null, placing = null, sequence = 10, speed = 1;
 let drag = null, toastTimer, lastFrame = 0, lastPaint = 0, finishedShown = false;
 const board = $('board');
@@ -660,7 +660,7 @@ try {
   if (raw) {
     const value = JSON.parse(raw); ({ nodes, edges } = validateDesign(value));
   }
-} catch { toast('Saved design could not be restored; loaded the balanced starter.'); }
+} catch { toast('Saved design could not be restored; loaded the basic starter.'); }
 updatePhoneLayout(); render(); renderSoundControl();
 function frame(now) {
   const dt = lastFrame ? Math.min((now - lastFrame) / 1000, .25) : 0; lastFrame = now;

@@ -756,6 +756,10 @@ export function summarizeRun(run) {
 }
 
 export function starterTopology(mode = 'balanced') {
+  if (mode === 'basic') return {
+    nodes: [{ ...ROOT }, { id: 'compute-1', kind: 'compute', x: 48, y: 50 }, { id: 'rds', kind: 'rds', x: 83, y: 50 }],
+    edges: [{ from: 'internet', to: 'compute-1' }, { from: 'compute-1', to: 'rds' }],
+  };
   if (mode === 'empty') return { nodes: [{ ...ROOT }], edges: [] };
   if (['managed', 'queued'].includes(mode)) {
     const queued = mode === 'queued';

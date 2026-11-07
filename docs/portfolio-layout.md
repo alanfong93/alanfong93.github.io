@@ -28,7 +28,7 @@ depth and slightly larger headings to distinguish these cards.
 
 - Network Sandbox uses a real screenshot from the live demo in `assets/`, with
   the home-network starter loaded. Label it as a screenshot.
-- Cloud Architect Lab uses a screenshot of its managed-container starter and a
+- Cloud Architect Lab uses a screenshot of its basic Internet → VM → SQL starter and a
   Play Demo link to `cloud-architect-lab/` on this Pages site. Its full project
   repository stays private; only the allowlisted browser distribution is copied
   here using its `npm run export:demo` command. Retain About/provenance notices,

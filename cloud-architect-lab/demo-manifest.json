@@ -4,7 +4,7 @@
   "assets": [
     {
       "name": "index.html",
-      "sha256": "b33b9e9c8c849534818af95be4fc39c17bd52c3d89a7a29c2558b8a0830ebb52"
+      "sha256": "fc1b57b255ab2e3af50680c212d1ebf1c06f2e081c55ca98092c1ed664b1e8f0"
     },
     {
       "name": "style.css",
@@ -28,11 +28,11 @@
     },
     {
       "name": "app.js",
-      "sha256": "dc01fc866fb090ff830601ff38ebe3a1b9c7aa67dc3575160b72d41984a30cae"
+      "sha256": "e25b3f1f57db841eee56e2c764b42ed49c90c7b23630ad48972e20ec5e8b8cc7"
     },
     {
       "name": "engine.js",
-      "sha256": "edd0ed595bd65e3578d5b86cd99be5a8dced0584f7543bd29abce727a6574c94"
+      "sha256": "cfef5276ee206f7dbe2e21f9811dd4199aca9778fdff79b359455ed2c81991af"
     },
     {
       "name": "services.js",

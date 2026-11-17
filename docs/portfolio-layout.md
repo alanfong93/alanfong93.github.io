@@ -15,6 +15,8 @@ and below the hero uses a smaller portrait and reduced padding.
 Education and How I work appear once in a compact supporting section after
 Skills. Retain `#education` and `#how-i-work` for deep links. The portrait and
 supporting content must not dominate the introduction or delay selected work.
+The supporting columns have no separate top borders; the final Skills row
+already supplies the divider above this section.
 
 The introduction and Contact include the confirmed X profile,
 `https://x.com/AlanFong93`, with an inline decorative SVG, visible X text, and
@@ -76,6 +78,12 @@ distinctions between sole authorship, primary authorship, and project leadership
 Do not claim unmeasured savings or absolute guarantees. Setup instructions and
 stale test counts belong in project READMEs. Keep Meadow's two concrete career
 bullets visible. Describe intended benefits as intentions where not measured.
+
+Experience lists the upcoming Well Chip IT Manager appointment first, labelled
+as starting December 2026 until employment begins, followed by MZM (June 2020
+to November 2026). Upcoming-role text describes the appointment and scope,
+without claiming completed achievements. Use the employing entity, Kedai Pajak
+Well Chip Sdn. Bhd., with Well Chip Group for recognition.
 
 Employer work leads with the project board and asset-management service; do not
 duplicate the asset case in internal systems. The asset case describes the

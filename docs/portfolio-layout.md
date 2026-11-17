@@ -84,6 +84,9 @@ as starting December 2026 until employment begins, followed by MZM (June 2020
 to November 2026). Upcoming-role text describes the appointment and scope,
 without claiming completed achievements. Use the employing entity, Kedai Pajak
 Well Chip Sdn. Bhd., with Well Chip Group for recognition.
+The newest appointment has a small accent-coloured briefcase icon before its
+title. The icon is decorative; the visible status badge and dates communicate
+whether the appointment is upcoming or current.
 
 Employer work leads with the project board and asset-management service; do not
 duplicate the asset case in internal systems. The asset case describes the

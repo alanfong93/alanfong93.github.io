@@ -2,11 +2,13 @@ import { CATALOG, ARCADE, MANAGED_KINDS, validateServiceSettings, getAllocation,
 import { CATALOG_GROUPS, buildAssessments, connectionClick, activeSituations, describeSituation, musicMood } from './interaction.js';
 import { SoundEffects } from './sound.js';
 import { phoneLayout, beginTap, moveTap, isTap, serviceHealth } from './phone.js';
+import { ZONAL_KINDS, nodeZone, validateResilience, configureRelease, resilienceSnapshot } from './engine.js';
 
 const $ = id => document.getElementById(id);
 const escape = text => String(text).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 const num = n => Math.round(n).toLocaleString();
 const percent = n => (n * 100).toFixed(1);
+const workCount = n => n.toLocaleString(undefined, { maximumFractionDigits: 2 });
 let { nodes, edges } = starterTopology('basic');
 let run = null, selected = null, selectedEdge = null, wireFrom = null, placing = null, sequence = 10, speed = 1;
 let drag = null, toastTimer, lastFrame = 0, lastPaint = 0, finishedShown = false;
@@ -18,6 +20,7 @@ const allocated = () => getAllocation(nodes, run?.services);
 const packets = new Map();
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 let inspectorKey = '', inspectorStamp = '';
+let catalogZone = 'A';
 const sound = new SoundEffects();
 let soundRun = null, soundedEvents = new Set(), recoveryCursor = 0, serviceCursor = 0;
 
@@ -108,7 +111,7 @@ function renderPhoneControls() {
   $('phone-speed').textContent = `${speed}×`;
   $('phone-clock').textContent = $('clock').textContent;
   $('phone-credits').textContent = `$${scenario().budget - allocated()}`;
-  $('phone-uptime').textContent = $('uptime').textContent;
+  $('phone-uptime').textContent = $('success').textContent;
   $('phone-mute').textContent = sound.enabled ? '♪ On' : '♪ Off';
   $('phone-mute').setAttribute('aria-label', sound.enabled ? 'Mute game audio' : 'Unmute game audio');
   $('phone-mute').setAttribute('aria-pressed', String(sound.enabled));
@@ -119,10 +122,10 @@ function renderPhoneControls() {
   $('phone-reboot').textContent = $('fail-replica') ? 'Test failure' : n && CATALOG[n.kind]?.overloadMode === 'shutdown' ? `Reboot ${CATALOG[n.kind].rebootS}s` : 'Reboot';
   $('phone-delete').disabled = phoneState.blocked || !($('remove-edge') || $('remove-node'));
   $('phone-delete').textContent = selectedEdge ? 'Unwire' : 'Delete';
-  $('selection-details').disabled = phoneState.blocked || (!n && !selectedEdge);
+  $('selection-details').disabled = phoneState.blocked;
   $('selection-details').textContent = n && MANAGED_KINDS.includes(n.kind) ? 'Configure' : 'Details';
   $('phone-situation-copy').textContent = `${$('event-name').textContent}. ${$('event-copy').textContent}`;
-  $('phone-round-summary').textContent = `Request success ${$('success').textContent} · Failed ${$('failed').textContent} · Pending ${$('pending').textContent} · Incoming ${$('rps').textContent} · ${$('downtime').textContent}`;
+  $('phone-round-summary').textContent = `Checkout success ${$('success').textContent} · All-work request success ${$('all-work-success').textContent} · Graph uptime ${$('uptime').textContent} · ${$('downtime').textContent}`;
 }
 
 function renderSoundControl() {
@@ -199,9 +202,11 @@ function validateDesign(value) {
     else if (n.id === 'internet') throw new Error('The Internet source cannot be replaced.');
     const config = validateServiceSettings(n.kind, n.settings);
     if (!config.ok) throw new Error(config.reason);
-    return { id: n.id, kind: n.kind, x: Math.max(6, Math.min(94, n.x)), y: Math.max(15, Math.min(85, n.y)), ...(config.settings ? { settings: { ...config.settings } } : {}) };
+    return { id: n.id, kind: n.kind, x: Math.max(6, Math.min(94, n.x)), y: Math.max(15, Math.min(85, n.y)), ...(config.settings ? { settings: { ...config.settings } } : {}), ...(Object.hasOwn(n, 'zone') ? { zone: n.zone } : {}), ...(Object.hasOwn(n, 'requiredDependencyIds') ? { requiredDependencyIds: Array.isArray(n.requiredDependencyIds) ? [...n.requiredDependencyIds] : n.requiredDependencyIds } : {}) };
   });
   if (roots !== 1) throw new Error('A design needs exactly one Internet source.');
+  const resilience = validateResilience(cleanNodes);
+  if (!resilience.ok) throw new Error(resilience.reason);
   if (getAllocation(cleanNodes) > 120) throw new Error('This design exceeds the 120-credit allocation budget.');
   const cleanEdges = [];
   for (const e of value.edges) {
@@ -219,6 +224,8 @@ function invalidateRun() {
 // queues and event targets survive; a deleted queue's backlog fails exactly once.
 function changeDesign(nextNodes, nextEdges) {
   if (phoneState.blocked) return false;
+  const resilience = validateResilience(nextNodes);
+  if (!resilience.ok) { toast(resilience.reason); return false; }
   if (activeRound()) {
     const result = applyTopology(run, nextNodes, nextEdges);
     if (!result.ok) { toast(result.reason); return false; }
@@ -235,7 +242,7 @@ function addNode(kind, position) {
   let id;
   do { id = `${kind}-${++sequence}`; } while (nodes.some(n => n.id === id) || run?.nodeHistory[id]);
   const p = position ?? { x: 48, y: 45 };
-  if (!changeDesign([...nodes, { id, kind, ...p }], edges)) return;
+  if (!changeDesign([...nodes, { id, kind, ...p, ...(ZONAL_KINDS.includes(kind) ? { zone: catalogZone } : {}) }], edges)) return;
   selected = id; selectedEdge = null; placing = null;
   rememberDesign(); render(); sound.play('place'); toast(`${CATALOG[kind].name} placed. Click its source, then this node to connect.`);
 }
@@ -254,6 +261,48 @@ const serviceCard = kind => {
   const s = CATALOG[kind];
   return `<button class="service-card" data-kind="${kind}" title="${escape(s.description)}" style="--color:${s.color}" aria-label="Place ${escape(s.name)} for ${s.cost} allocation credits${s.managed ? ' per replica' : ''}"><span class="service-icon">${s.icon}</span><span class="service-copy"><b>${escape(s.name)}</b><small>${s.capacity} req/s${s.managed ? ' / replica' : ''}</small></span><span class="service-cost">$${s.cost}</span></button>`;
 };
+function placementForm(node) {
+  const zonal = ZONAL_KINDS.includes(node.kind), worker = ['compute', 'fargate', 'serverless', 'containers', 'queueworker'].includes(node.kind);
+  if (!zonal && !worker) return '<p class="resilience-help">Regional abstraction: outside the scripted AZ incident, not failure-proof.</p>';
+  const dependencies = nodes.filter(n => ['database', 'rds', 'aurora', 'cache'].includes(n.kind));
+  return `<section class="resilience-settings"><h3>Placement & required availability</h3><form id="resilience-settings">${zonal ? `<label>Placement<select name="zone" ${activeRound() ? 'disabled' : ''}>${['A', 'B', ...(MANAGED_KINDS.includes(node.kind) ? ['spread'] : [])].map(zone => `<option value="${zone}" ${nodeZone(node) === zone ? 'selected' : ''}>${zone === 'spread' ? 'Spread A / B' : `AZ ${zone}`}</option>`).join('')}</select></label><p>Existing live placement is locked, including managed spread. Provision a new node to change zones. New live capacity warms for 3s.</p>` : '<p>Regional worker abstraction; outside this AZ incident.</p>'}${worker ? `<fieldset><legend>Required dependencies (maximum 4; ALL required)</legend>${dependencies.map(n => `<label class="dependency-option"><input type="checkbox" name="dependency" value="${escape(n.id)}" ${(node.requiredDependencyIds ?? []).includes(n.id) ? 'checked' : ''}><span>${escape(n.id)} · ${escape(CATALOG[n.kind].name)} · ${escape(nodeZone(n) ?? 'regional')}</span></label>`).join('') || '<p>Add a database or cache to configure a requirement.</p>'}</fieldset><p>Availability-only AND gates. These are not traffic branches and add no capacity demand. Removing or changing a requirement changes application behavior; it does not certify resilience. New cache/database placement does not copy data or imply replication/consistency.</p>` : ''}<button class="button" type="submit">Apply placement / requirements</button></form><p id="dependency-status" role="status"></p></section>`;
+}
+function bindPlacementForm(node) {
+  const form = $('resilience-settings'); if (!form) return;
+  form.onsubmit = event => {
+    event.preventDefault(); if (phoneState.blocked) return;
+    const ids = [...form.querySelectorAll('[name="dependency"]:checked')].map(input => input.value);
+    if (ids.length > 4) return toast('At most four dependencies; every selected dependency is required.');
+    const candidate = nodes.map(n => n.id !== node.id ? n : { ...n,
+      ...(!activeRound() && form.elements.zone ? { zone: form.elements.zone.value } : {}),
+      ...(['compute', 'fargate', 'serverless', 'containers', 'queueworker'].includes(n.kind) ? { requiredDependencyIds: ids } : {}) });
+    if (changeDesign(candidate, edges)) { render(); toast('Configuration applied. Requirement changes are application changes, not certified resilience.'); }
+  };
+}
+// One persistent panel travels with the inspector into the native Details sheet.
+function renderRelease() {
+  const snapshot = run ? resilienceSnapshot(run) : null, release = snapshot?.release;
+  $('release-state').textContent = release ? `${release.phase} · ${percent(release.share ?? 0)}% new eligible executions` : 'Release pending · starts at 85s';
+  $('checkout-detail').textContent = snapshot ? `Checkout: ${num(snapshot.checkout.succeeded)} succeeded / ${num(snapshot.checkout.arrived)} arrivals; ${num(snapshot.checkout.pending)} pending. Failures: infrastructure ${num(snapshot.checkout.infrastructureFailed)}, dependency ${num(snapshot.checkout.dependencyFailed)}, business ${num(snapshot.checkout.businessFailed)}.` : 'No checkout observations yet.';
+  for (const version of ['stable', 'new']) {
+    const cohort = release?.versions?.[version], attempted = cohort?.attempted ?? 0;
+    $(`release-${version}`).textContent = attempted > 0 ? `${workCount(cohort.succeeded)} succeeded / ${workCount(attempted)} eligible executions · ${percent(cohort.businessFailed / attempted)}% business failures (fractional work)` : 'N/A · 0 eligible executions';
+  }
+  const enabled = !!run && activeRound() && run.time >= 85 && ['promoting', 'paused'].includes(release?.phase);
+  $('release-pause').disabled = !enabled;
+  $('release-rollback').disabled = !enabled;
+  const select = $('release-share');
+  for (const option of select.options) option.disabled = Number(option.value) > (release?.share ?? 0);
+  if (select.selectedOptions[0]?.disabled) select.value = '0';
+  select.disabled = !enabled; $('release-shift').disabled = !enabled;
+}
+for (const [id, action] of [['release-pause', 'pause'], ['release-shift', 'shift'], ['release-rollback', 'rollback']]) $(id).onclick = () => {
+  if (!run || phoneState.blocked) return;
+  const result = configureRelease(run, { action, ...(action === 'shift' ? { share: Number($('release-share').value) } : {}) });
+  toast(result.ok ? 'Release control applied to future eligible executions. Close Details, then Resume the simulation.' : result.reason);
+  render();
+};
+$('catalog-zone').onchange = event => { catalogZone = event.target.value; };
 function serviceForm(node, service) {
   const values = { ...service.config, replicas: service.desired };
   return `<section class="managed-settings"><h3>Replica management</h3><p id="service-live" class="service-live"></p><p id="service-policy-status" class="service-policy-status" role="status"></p><form id="service-settings" data-baseline="${escape(JSON.stringify(values))}"><label>Set desired replicas<input name="replicas" type="number" min="1" max="6" step="1" required value="${values.replicas}"></label><label class="policy-toggle"><input name="autoScale" type="checkbox" ${values.autoScale ? 'checked' : ''}> Enable autoscaler</label><label>Minimum replicas<input name="minReplicas" type="number" min="1" max="6" step="1" required value="${values.minReplicas}"></label><label>Maximum replicas<input name="maxReplicas" type="number" min="1" max="6" step="1" required value="${values.maxReplicas}"></label>${node.kind === 'containers' ? `<label>Target demand %<input name="targetUtilization" type="number" min="50" max="90" step="1" required value="${Math.round(values.targetUtilization * 100)}"></label>` : `<label>Backlog seconds / replica<input name="backlogSeconds" type="number" min="1" max="4" step="0.5" required value="${values.backlogSeconds}"></label>`}<button class="button primary" type="submit">Apply settings</button></form><p class="service-policy-help">${node.kind === 'containers' ? 'The autoscaler observes attempted load, including rejected/attack work. A load balancer or configured gateway integration still provides ingress.' : 'Workers pull queued jobs without an HTTP load balancer. The autoscaler observes connected queue backlog, not only completed throughput.'} Scale-out hold 2s, startup 3s, cooldown 4s; scale-in hold 8s. Paused time does not advance these timers. Unedited fields do not overwrite a live autoscaler’s changes. Saved designs keep settings, not live replica state.</p><button id="fail-replica" type="button" class="button fault-button" ${activeRound() && service.ready ? '' : 'disabled'}>Test one replica failure</button><p class="service-policy-help">Explicit fault injection: the service replaces that reserved slot after 3 simulated seconds. Overload alone does not inherently crash managed containers. Replacement is not autoscaling and requires no extra allocation.</p></section>`;
@@ -292,6 +341,7 @@ function bindServiceForm(node) {
   };
 }
 $('catalog').innerHTML = CATALOG_GROUPS.map(group => `<section class="catalog-group" aria-label="${escape(group.name)} services"><h3>${escape(group.name)}</h3><div class="catalog-group-cards">${group.kinds.map(serviceCard).join('')}</div></section>`).join('');
+document.querySelector('[data-template="empty"]').insertAdjacentHTML('beforebegin', '<button data-template="shared">Shared dependency lab</button>');
 $('help-dialog').innerHTML = `<button class="close-dialog" aria-label="Close help">×</button><span class="eyebrow">CLOUD ARCHITECT LAB</span><h2>Build it. Keep it alive.</h2><p>A provider-neutral learning model with live traffic, attacks, maintenance and recovery. No real cloud resources are created.</p><ol><li><b>Place and connect.</b> Tap a card then the board, or drag a card on desktop. Click A then B to connect A → B. Drag nodes to move them; Escape or empty space cancels a pending wire.</li><li><b>Choose lifecycle.</b> Virtual machines, standalone app containers, SQL nodes and cache nodes use operator-managed game profiles. Event functions and managed stores throttle excess work. Container Service and Queue Worker Service maintain reserved replica slots with delayed startup/replacement.</li><li><b>Keep responsibilities separate.</b> Container Service is an HTTP backend reached through a load balancer or configured API gateway integration. Queue Workers pull queued jobs without an HTTP load balancer. Autoscaling changes counts, not routing. API Gateway → Load Balancer and API Gateway → Queue are supported integration paths.</li><li><b>Configure managed services.</b> Select the node to set desired replicas and optional autoscaler min/max/target. On phone use Details; closing a sheet requires Resume. Test failure deliberately stops one ready replica, and the manager replaces its slot after 3 simulated seconds without extra allocation.</li><li><b>Watch limits.</b> Credits reserve slots once, including startup/replacement. Scale-in releases allocation, not spent cloud money. Growth can be blocked by budget or maximum. Queued work is pending until completed; deleting a queue loses its backlog.</li></ol><div class="callout">This round declares 60% static web work (object-storage origin) and 40% data-backed API/job work (compute/consumer → data store). That is a workload definition, not a rule that every real application needs a database. Per-replica capacities and short timers are game assumptions.</div><p class="muted">Music adapts to severity. Use Music, Volume, Test sound and master mute. Phone play is landscape-only; rotation pauses the round and preserves state.</p><button class="button primary close-help">Let’s build →</button>`;
 // Keep the model's timing explanation derived from the actual event schedule.
 const eventExplanation = [...$('model-dialog').querySelectorAll('p')].find(p => p.querySelector('b')?.textContent === 'Automatic events:');
@@ -320,7 +370,7 @@ function renderNodes() {
     if (element && element.dataset.kind !== n.kind) { element.remove(); element = null; }
     if (!element) {
       element = document.createElement('button'); element.className = 'node'; element.dataset.id = n.id; element.dataset.kind = n.kind;
-      element.innerHTML = `<span class="node-body"><span class="node-glyph">${s.icon}</span>${s.managed ? '<span class="replica-badge"></span>' : ''}<span class="node-meter"><i></i></span></span><b>${s.short}</b><small></small>`;
+      element.innerHTML = `<span class="node-body"><span class="node-glyph">${s.icon}</span>${s.managed ? '<span class="replica-badge"></span>' : ''}<span class="zone-badge"></span><span class="node-meter"><i></i></span></span><b>${s.short}</b><small></small>`;
       element.addEventListener('pointerdown', event => {
         if (event.button !== 0 || event.isPrimary === false || phoneState.blocked) return;
         event.stopPropagation();
@@ -336,11 +386,17 @@ function renderNodes() {
     const service = managedInfo(n);
     const utilization = n.kind === 'internet' ? 0 : stat?.utilization ?? 0;
     const health = serviceHealth(run, n, scenario()), state = health.state;
+    const zoneBadge = element.querySelector('.zone-badge');
+    zoneBadge.textContent = ZONAL_KINDS.includes(n.kind) ? nodeZone(n) === 'spread' ? 'A/B' : `AZ ${nodeZone(n)}` : 'REG';
+    zoneBadge.classList.toggle('zone-unavailable', (health.zoneRemaining ?? 0) > 0);
+    zoneBadge.title = 'Placement only; readiness and dependency availability are separate.';
     element.className = `node ${n.kind === 'internet' ? 'internet' : ''} ${selected === n.id ? 'selected' : ''} ${wireFrom === n.id ? 'wire-source' : ''} ${health.down ? 'down' : utilization > 1.001 ? 'overloaded' : utilization > .8 ? 'hot' : ''} state-${state} ${stat?.blocked > 0 ? 'blocking' : ''}`;
     element.style.cssText = `left:${n.x}%;top:${n.y}%;--color:${s.color}`;
-    element.setAttribute('aria-label', `${s.name}, ${n.id}${health.down ? ', offline' : stat ? `, ${Math.round(utilization * 100)} percent demand` : ''}`);
+    element.setAttribute('aria-label', `${s.name}, ${n.id}, ${ZONAL_KINDS.includes(n.kind) ? `placement ${nodeZone(n)}` : 'regional abstraction'}${health.down ? ', offline' : stat ? `, ${Math.round(utilization * 100)} percent demand` : ''}${stat?.dependencyBlocked?.length ? `, checkout blocked by ${stat.dependencyBlocked.map(d => d.dependencyId).join(', ')}` : ''}`);
     element.querySelector('.node-meter i').style.width = `${Math.min(1, utilization) * 100}%`;
     element.querySelector('small').textContent = service ? run ? `${service.ready}/${service.desired} ready` : `${service.desired} configured` : state === 'maintenance' ? `MAINT. ${Math.ceil(health.maintenanceRemaining)}s` : state === 'rebooting' ? `REBOOT ${Math.ceil(health.rebootRemaining)}s` : state === 'down' ? 'TAP TO REBOOT' : n.kind === 'internet' ? 'TRAFFIC SOURCE' : state === 'throttled' ? 'THROTTLING' : stat ? `${Math.round(stat.load)} / ${stat.capacity} req/s` : `${s.cost} credits`;
+    if (!service && health.zoneRemaining > 0) element.querySelector('small').textContent = `AZ LOSS ${Math.ceil(health.zoneRemaining)}s`;
+    else if (!service && health.startupRemaining > 0) element.querySelector('small').textContent = `STARTING ${Math.ceil(health.startupRemaining)}s`;
     if (service) element.querySelector('.replica-badge').textContent = run ? `${service.ready}/${service.desired}` : String(service.desired);
   }
 }
@@ -424,7 +480,7 @@ function renderInspector() {
   // Keep live action buttons stable between ticks so a pointerdown/up cannot lose
   // its target while the inspector refreshes. Only metric spans update in place.
   const key = selectedEdge ?? selected ?? 'overview';
-  const stamp = JSON.stringify([key, service ? 'managed' : state, run?.status ?? 'ready', service?.config ?? null, service ? 0 : allocated(), run?.editsTotal ?? 0]);
+  const stamp = JSON.stringify([key, !!activeRound(), run?.status === 'finished', nodes.map(n => [n.id, n.kind, n.zone, n.requiredDependencyIds])]);
   const rebuild = inspectorKey !== key || inspectorStamp !== stamp;
   inspectorKey = key; inspectorStamp = stamp;
   if (rebuild) {
@@ -447,6 +503,8 @@ function renderInspector() {
       $('inspector-content').querySelector('h2').after(settings);
       bindServiceForm(n, service);
     }
+    $('inspector-content').querySelector('h2').insertAdjacentHTML('afterend', placementForm(n));
+    bindPlacementForm(n);
   } else {
     $('inspector-content').innerHTML = `<span class="tag">${run?.status === 'running' ? 'EXPERIMENT RUNNING' : run?.status === 'paused' ? 'ROUND PAUSED' : run?.status === 'finished' ? 'ROUND COMPLETE' : 'BUILD MODE'}</span><h2>${escape(scenario().name)}</h2><p>${escape(scenario().description)}</p><div class="hint-callout">${escape(scenario().lesson)}<br><br>Select a service to inspect its role and live demand. Select a connection to remove it.</div>`;
   }
@@ -456,10 +514,18 @@ function renderInspector() {
     $('node-capacity').textContent = `${service ? service.capacity : health.down ? 0 : stat?.capacity ?? s.capacity} / ${service ? service.desired * s.capacity : s.capacity}`;
     $('node-load').textContent = stat ? stat.load.toFixed(1) : '—';
     $('node-state').textContent = service ? `${service.status.toUpperCase()} · ${service.ready}/${service.desired} ready` : state === 'maintenance' ? `Maintenance · ${Math.ceil(health.maintenanceRemaining)}s` : state === 'rebooting' ? `Rebooting · ${Math.ceil(health.rebootRemaining)}s` : state.toUpperCase();
+    if (health.zoneRemaining > 0) $('node-state').textContent += ` · ${health.zone === 'spread' ? 'AZ A slots' : `AZ ${health.zone}`} unavailable ${Math.ceil(health.zoneRemaining)}s`;
+    if (health.startupRemaining > 0) $('node-state').textContent += ` · starting ${Math.ceil(health.startupRemaining)}s`;
+    if ($('dependency-status')) {
+      const blocked = stat?.dependencyBlocked ?? [];
+      $('dependency-status').textContent = blocked.length ? `Checkout blocked by required dependencies: ${blocked.map(d => `${d.dependencyId} (${d.zone ?? 'regional'}): ${d.reason}`).join('; ')}. Queue work waits; direct work fails the dependency gate.` : (n.requiredDependencyIds?.length ? `ALL required: ${n.requiredDependencyIds.join(', ')}. No blocked dependency reported in the last measurement; not a business-success guarantee.` : 'No required dependency gates configured.');
+    }
+    if ($('reboot-node')) $('reboot-node').disabled = !activeRound() || state !== 'down';
     $('node-strain').textContent = service ? `${service.ready} ready, ${service.starting} starting, ${service.replacing} replacing` : s.overloadMode === 'shutdown' ? `${(stat?.overloadS ?? 0).toFixed(1)} / ${s.overloadToleranceS}s` : '—';
     $('node-queue').textContent = num(n.kind === 'queueworker' ? service?.metric?.value ?? 0 : stat?.queued ?? 0);
     if (service) {
       $('service-live').textContent = `Desired ${service.desired} · ready ${service.ready} · maintenance ${service.maintenance} · $${service.allocation} reserved`;
+      if (service.replicas) $('service-live').textContent += ` · available zones: ${[...new Set(service.replicas.filter(r => r.state === 'ready' && !r.maintenanceRemaining && !r.zoneRemaining).map(r => r.zone))].join(', ') || 'none'}`;
       $('service-policy-status').textContent = !service.config.autoScale ? 'Autoscaler off: desired count is manual.' : service.blockedReason === 'budget' ? 'Scale-out blocked: allocation budget.' : service.blockedReason === 'max' ? 'Autoscaler at configured maximum.' : `Autoscaler active · ${service.metric?.type === 'backlog' ? `${num(service.metric.value)} queued jobs` : `${(service.metric?.value ?? 0).toFixed(1)} attempted req/s`}`;
       $('fail-replica').disabled = !activeRound() || !service.ready;
     }
@@ -470,7 +536,8 @@ function renderInspector() {
     { okay: hasFailureTarget && !audit.spofs.length, text: !hasFailureTarget ? 'No eligible failure targets (not tested)' : audit.spofs.length ? `${audit.spofs.length} modeled single-node path risk${audit.spofs.length > 1 ? 's' : ''}` : 'No modeled single-node path loss' },
     ...audit.warnings.filter(w => !w.startsWith('No complete')).slice(0, 4).map(text => ({ okay: false, text })),
   ];
-   $('checks').innerHTML = checks.map(c => `<div class="check ${c.okay ? '' : 'warn'}"><span>${c.okay ? '✓' : '△'}</span>${escape(c.text)}</div>`).join('') + '<p class="audit-limit">Path checks are not a capacity or cloud availability guarantee.</p>';
+   $('checks').innerHTML = checks.map(c => `<div class="check ${c.okay ? '' : 'warn'}"><span>${c.okay ? '✓' : '△'}</span>${escape(c.text)}</div>`).join('') + '<p class="audit-limit">Graph paths are not checkout correctness, AZ independence, capacity or cloud availability guarantees.</p>';
+   renderRelease();
 }
 function renderMetrics() {
   const m = run?.metrics, elapsed = run?.time ?? 0, remaining = Math.max(0, 120 - elapsed);
@@ -479,8 +546,10 @@ function renderMetrics() {
   $('downtime').textContent = a?.observedSeconds ? `${a.downtimeSeconds.toFixed(1)}s downtime / ${a.observedSeconds.toFixed(1)}s observed` : 'No observed time yet';
   $('clock').textContent = `${String(Math.floor(remaining / 60)).padStart(2, '0')}:${String(Math.floor(remaining % 60)).padStart(2, '0')}`;
   $('phase').textContent = !run ? 'Build now or adapt live' : run.status === 'finished' ? 'Round complete' : run.status === 'paused' ? 'Paused · live editing available' : run.last.event ?? 'Demand rising';
-  $('success').innerHTML = `${m?.arrived ? percent(m.completed / m.arrived) : '—'}<sub>%</sub>`;
-  $('completed').textContent = m?.arrived ? `${num(m.completed)} / ${num(m.arrived)} completed` : 'No traffic yet';
+  const checkout = run?.checkout;
+  $('success').innerHTML = `${checkout?.arrived ? percent(checkout.succeeded / checkout.arrived) : 'N/A'}<sub>${checkout?.arrived ? '%' : ''}</sub>`;
+  $('completed').textContent = checkout?.arrived ? `${num(checkout.succeeded)} / ${num(checkout.arrived)} checkout arrivals` : 'No checkout arrivals yet';
+  $('all-work-success').textContent = m?.arrived ? `${percent(m.completed / m.arrived)}%` : 'N/A';
   $('rps').innerHTML = `${Math.round(run?.last.rps ?? 0)} <sub>req/s</sub>`;
   $('blocked').textContent = `${num(m?.attacksBlocked ?? 0)} malicious requests blocked`;
   $('failed').textContent = num(m?.failed ?? 0); $('pending').textContent = num(m?.pending ?? 0);
@@ -491,7 +560,9 @@ function renderMetrics() {
   const situation = describeSituation(run, scenario());
   $('event-strip').className = `event-strip situation-${situation.tone}`;
   if ($('event-name').textContent !== situation.title) $('event-name').textContent = situation.title;
-  $('event-copy').textContent = situation.message;
+  const resilience = run ? resilienceSnapshot(run) : null;
+  const hint = resilience?.zoneIncident.active ? `AZ ${resilience.zoneIncident.zone} unavailable. Inspect named required dependencies in Details.` : run && run.time >= 85 ? 'Release outcomes & pause / shift back / rollback: Details.' : 'AZ loss 10–18s; new release 85s. Details shows checkout & release.';
+  $('event-copy').textContent = `${hint} ${situation.message}`;
   $('timeline-progress').style.width = `${elapsed / 1.2}%`; $('playhead').style.left = `${elapsed / 1.2}%`;
   $('event-markers').innerHTML = scenario().events.map(e => `<span style="left:${e.at / 1.2}%;width:${(e.until - e.at) / 1.2}%" title="${escape(`${e.label}: ${e.at}–${e.until}s`)}"></span>`).join('');
   $('chart-line').setAttribute('d', (run?.history ?? []).filter((_, i) => i % 4 === 0).map((p, i) => `${i ? 'L' : 'M'}${p.time / 120 * 800},${40 - p.success * 36}`).join(' '));
@@ -523,14 +594,17 @@ function finish() {
   $('grade').textContent = result.grade; $('grade').classList.toggle('bad', result.grade !== 'A');
   $('result-title').textContent = result.success >= .98 ? 'Your cloud held its ground.' : 'You found the pressure point.';
   $('result-subtitle').textContent = `${scenario().name} · ${run.editsTotal} live edits · ${run.shutdowns} shutdowns · ${run.reboots} reboots`;
-  $('result-metrics').innerHTML = `<div><strong>${result.uptime === null ? '—' : percent(result.uptime)}%</strong><small>UPTIME</small></div><div><strong>${result.availability.downtimeSeconds.toFixed(1)}s</strong><small>DOWNTIME</small></div><div><strong>${percent(result.success)}%</strong><small>REQUEST SUCCESS</small></div><div><strong>${num(run.metrics.failed)}</strong><small>FAILED REQUESTS</small></div>`;
+  const resilience = resilienceSnapshot(run), checkout = resilience.checkout;
+  $('result-metrics').innerHTML = `<div><strong>${checkout.arrived ? `${percent(checkout.succeeded / checkout.arrived)}%` : 'N/A'}</strong><small>CHECKOUT SUCCESS / ARRIVALS</small></div><div><strong>${result.uptime === null ? 'N/A' : `${percent(result.uptime)}%`}</strong><small>GRAPH UPTIME</small></div><div><strong>${percent(result.success)}%</strong><small>ALL-WORK REQUEST SUCCESS</small></div><div><strong>${num(checkout.failed)}</strong><small>FAILED CHECKOUTS</small></div>`;
   const findings = buildAssessments(run, result);
   const symbols = { pass: '✓', fail: '✕', info: '•' };
   const labels = { pass: 'Passed', fail: 'Failed', info: 'Information / not established' };
   $('result-findings').innerHTML = findings.map(f => `<div class="finding" data-outcome="${f.outcome}"><strong class="assessment-title"><span class="assessment-icon assessment-${f.outcome}" role="img" aria-label="${labels[f.outcome]}">${symbols[f.outcome]}</span>${escape(f.title)}</strong><p>${escape(f.text)}</p></div>`).join('');
   try {
     const old = JSON.parse(localStorage.getItem('cal.rounds.v1') ?? '[]');
-    localStorage.setItem('cal.rounds.v1', JSON.stringify([...Array.isArray(old) ? old : [], { at: new Date().toISOString(), scenario: run.scenarioId, credits: allocated(), grade: result.grade, metrics: run.metrics, uptime: result.uptime, availability: result.availability, bottlenecks: result.bottlenecks, spofs: result.topology.spofs, failureEvidence: result.failureEvidence, edits: run.edits, editsTotal: run.editsTotal, discardedQueuedWork: run.discardedQueuedWork, recoveryLog: run.recoveryLog, shutdowns: run.shutdowns, reboots: run.reboots, services: result.services, serviceLog: run.serviceLog, serviceLogTotal: run.serviceLogTotal, managedFailures: run.managedFailures, replacements: run.replacements, scaleOuts: run.scaleOuts, scaleIns: run.scaleIns, budgetBlocks: run.budgetBlocks }].slice(-20)));
+    // Persist the detached bounded snapshot alongside the existing bounded logs.
+    const historyEntry = { resilience, resilienceLog: resilience.events, resilienceLogTotal: resilience.eventsTotal };
+    localStorage.setItem('cal.rounds.v1', JSON.stringify([...Array.isArray(old) ? old : [], { ...historyEntry, at: new Date().toISOString(), scenario: run.scenarioId, credits: allocated(), grade: result.grade, metrics: run.metrics, uptime: result.uptime, availability: result.availability, bottlenecks: result.bottlenecks, spofs: result.topology.spofs, failureEvidence: result.failureEvidence, edits: run.edits, editsTotal: run.editsTotal, discardedQueuedWork: run.discardedQueuedWork, recoveryLog: run.recoveryLog, shutdowns: run.shutdowns, reboots: run.reboots, services: result.services, serviceLog: run.serviceLog, serviceLogTotal: run.serviceLogTotal, managedFailures: run.managedFailures, replacements: run.replacements, scaleOuts: run.scaleOuts, scaleIns: run.scaleIns, budgetBlocks: run.budgetBlocks }].slice(-20)));
   } catch { toast('Round complete. Browser storage is unavailable; this result was not saved.'); }
   $('results-dialog').showModal(); render();
 }
@@ -623,7 +697,7 @@ $('phone-help').onclick = () => { closePhoneSheets(); $('help').click(); };
 $('phone-model').onclick = () => { closePhoneSheets(); $('model-info').click(); };
 $('phone-about').onclick = () => { closePhoneSheets(); $('about').click(); };
 document.querySelectorAll('[data-template]').forEach(button => { button.onclick = () => { if (activeRound()) return; ({ nodes, edges } = starterTopology(button.dataset.template)); resetRound(); rememberDesign(); toast('Template loaded. Arrange, connect, then run the arcade.'); }; });
-$('help').onclick = () => $('help-dialog').showModal(); $('model-info').onclick = () => $('model-dialog').showModal();
+$('help').onclick = () => { pauseRound(); $('help-dialog').showModal(); }; $('model-info').onclick = () => { pauseRound(); $('model-dialog').showModal(); };
 $('about').onclick = () => { if (phoneState.blocked) return; pauseRound(); $('about-dialog').showModal(); };
 document.querySelectorAll('dialog').forEach(dialog => {
   dialog.querySelector('.close-dialog').onclick = () => { dialog.close(); restoreSheet(dialog); };

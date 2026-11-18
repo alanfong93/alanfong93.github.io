@@ -1,4 +1,4 @@
-import { validateEdge } from './engine.js';
+import { validateEdge, resilienceSnapshot } from './engine.js';
 
 export const CATALOG_GROUPS = [
   { name: 'Compute', kinds: ['compute', 'fargate', 'serverless', 'containers', 'queueworker'] },
@@ -22,13 +22,31 @@ export function buildAssessments(run, result) {
   for (const b of result.bottlenecks.slice(0, 3)) findings.push({ title: `${b.name} · ${b.id}`, outcome: 'fail', text: `${count(b.dropped)} failed requests attributed here. ${b.id === 'internet' ? 'Connect both workload paths from the Internet.' : 'Inspect its demand, connected dependencies and available capacity.'}` });
   if (!result.bottlenecks.length && run.metrics.arrived > 0) findings.push({ title: 'Request delivery', outcome: run.metrics.pending ? 'info' : 'pass', text: run.metrics.pending ? 'No failures recorded, but queued work is still pending.' : 'No failed customer requests recorded in this round.' });
   for (const e of result.failureEvidence) {
-    const outcome = e.failed > 1e-7 ? 'fail' : e.arrived > 0 && e.completed >= e.arrived - 1e-7 ? 'pass' : 'info';
+    // Window totals describe correlation, not this target's causal outcome.
+    const outcome = 'info';
     findings.push({ title: e.label ?? 'Outage window', outcome, text: `${e.replicaId ? `One replica (${e.replicaId}) of ${e.nodeId}` : e.nodeId} was unavailable from ${e.at.toFixed(0)}–${e.until.toFixed(0)}s.${e.replicaId ? ' Other ready replicas could still serve.' : ''} The system-wide window observed ${count(e.completed)} completions and ${count(e.failed)} failures. ${outcome === 'info' ? 'Completion is not established by these window totals. ' : ''}Overlapping windows are not additive; failures are not automatically caused by this one node.` });
   }
   if (result.outstandingAtFinish > 0 || result.discardedQueuedWork > 0) findings.push({ title: 'Accepted is not completed', outcome: 'fail', text: `${count(result.outstandingAtFinish)} requests remained queued at the end; ${count(result.discardedQueuedWork)} were lost when queues were deleted. Both count as failures.` });
   findings.push({ title: 'Live operations', outcome: !hasPaths || !run.metrics.arrived ? 'info' : result.shutdowns || result.discardedQueuedWork ? 'fail' : 'pass', text: `${result.editsTotal} topology edits, ${result.shutdowns} overload shutdowns and ${result.reboots} manual reboots. This check requires complete workload paths and flags shutdowns or deleted queued work; earlier failures remain in cumulative totals even after a repair.` });
   if (Object.keys(run.services ?? {}).length) findings.push({ title: 'Managed replica lifecycle', outcome: 'info', text: `${run.managedFailures} injected replica failures, ${run.replacements} completed replacements, ${run.scaleOuts} scale-outs, ${run.scaleIns} scale-ins and ${run.budgetBlocks} budget blocks. Replacement restores an existing slot; scaling changes reserved allocation. These counters alone do not establish successful request delivery.` });
-  findings.push({ title: 'Next experiment', outcome: 'info', text: 'Try changing capacity before Black Friday, testing a managed replica failure, rebooting operator-managed nodes, or wiring around maintenance. Compare one change at a time.' });
+  if (run.checkout) findings.push(...resilienceAssessments(resilienceSnapshot(run)));
+  findings.push({ title: 'Next experiment', outcome: 'info', text: 'Compare graph uptime with checkout correctness. Test spread workers with one required AZ-A cache, then provision/rebind explicitly. At 85s compare stable/new eligible outcomes and pause, shift back or roll back. Requirement removal changes the application; it does not establish resilient placement.' });
+  return findings;
+}
+
+export function resilienceAssessments(snapshot) {
+  const { checkout, release, evidence = {}, requirementsChanged = 0 } = snapshot;
+  const count = n => (n ?? 0).toLocaleString(undefined, { maximumFractionDigits: 2 }), findings = [];
+  findings.push({ title: 'Checkout correctness', outcome: !checkout.arrived || checkout.pending ? 'info' : checkout.failed > 1e-7 ? 'fail' : 'pass', text: `${count(checkout.succeeded)} succeeded / ${count(checkout.arrived)} checkout arrivals; ${count(checkout.pending)} pending. Failures: ${count(checkout.infrastructureFailed)} infrastructure, ${count(checkout.dependencyFailed)} dependency, ${count(checkout.businessFailed)} business. Static work is excluded. Healthy graph uptime and Ready capacity do not certify business success.` });
+  for (const item of evidence.dependencies ?? []) findings.push({ title: `Required dependency · ${item.workerId} → ${item.dependencyId}`, outcome: item.count > 0 ? 'fail' : 'info', text: `${count(item.count)} direct checkout rejections recorded at this worker gate: ${item.dependencyId}, zone ${item.zone ?? 'regional'}, ${item.reason}; ${item.firstAt.toFixed(1)}–${item.lastAt.toFixed(1)}s. All requirements are AND gates, not traffic branches. Multiple blocked dependencies may describe the same work; these summaries are not additive. Recovery timing alone does not prove a repair caused success.` });
+  for (const item of evidence.blockedQueues ?? []) findings.push({ title: `Dependency-blocked queue · ${item.queueId}`, outcome: 'info', text: `${item.workerId} waited for ${item.dependencyId}, zone ${item.zone ?? 'regional'}, ${item.reason}; maximum ${count(item.maxPending)} pending, ${item.observedSeconds.toFixed(1)} observed seconds. This is pending evidence, not failed work or a summed job count. Prior executed stages are not replayed.` });
+  if (evidence.dependenciesOmitted || evidence.blockedQueuesOmitted) findings.push({ title: 'Bounded causal evidence', outcome: 'info', text: `${count(evidence.dependenciesOmitted)} direct summary observations omitted (${count(evidence.dependencyCountOmitted)} dependency-gate counts); ${count(evidence.blockedQueuesOmitted)} queue observations omitted (${(evidence.blockedQueueObservedSecondsOmitted ?? 0).toFixed(1)} observed seconds; maximum ${count(evidence.blockedQueueMaxPendingOmitted)} pending). Early summaries remain retained; overlapping dependencies are not additive.` });
+  if (requirementsChanged) findings.push({ title: 'Application requirements changed', outcome: 'info', text: `${count(requirementsChanged)} requirement changes recorded. Rebinding or removing a required dependency changes application behavior; it is not certified resilience and does not erase prior evidence. New data/cache placement does not establish replicated data or consistency.` });
+  for (const name of ['stable', 'new']) {
+    const cohort = release.versions[name];
+    findings.push({ title: `${name === 'new' ? 'New' : 'Stable'} release cohort`, outcome: !cohort.attempted ? 'info' : cohort.businessFailed > 1e-7 ? 'fail' : 'pass', text: `${cohort.attempted ? `${(100 * cohort.succeeded / cohort.attempted).toFixed(1)}% success; ${(100 * cohort.businessFailed / cohort.attempted).toFixed(1)}% business failures` : 'N/A: zero eligible executions'}. ${count(cohort.succeeded)} succeeded / ${count(cohort.attempted)} eligible terminal checkout executions. Infrastructure/dependency failures and pending work are excluded from this denominator. Assignment occurs at execution, not HTTP arrival; readiness is separate.` });
+  }
+  findings.push({ title: 'Release decisions', outcome: 'info', text: `Final phase ${release.phase}, new share ${(100 * release.share).toFixed(0)}%. Pause/shift/rollback affect future eligible executions, including queued work; historical cohort failures remain. ${snapshot.events?.length ?? 0} recent resilience events retained / ${snapshot.eventsTotal ?? 0} lifetime events. No automatic repair causality is inferred.` });
   return findings;
 }
 

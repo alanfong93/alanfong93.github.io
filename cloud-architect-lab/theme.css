@@ -166,3 +166,22 @@ body.phone-portrait #rotate-status { color:#c3cddb; }
 .fault-button { width:100%; border-color:#87693b; background:var(--warning-bg); color:var(--warning); }
 body.phone-layout #service-settings input[type="number"],body.phone-layout #service-settings .policy-toggle { min-height:44px; }
 body.phone-layout #service-settings input[type="checkbox"] { min-height:18px; min-width:18px; }
+/* Checkout resilience controls share the native Details surface. */
+.catalog-placement { display:flex; align-items:center; justify-content:space-between; gap:6px; padding:4px 8px; font-size:11px; flex:0 0 auto; }
+.catalog-placement select, .resilience-settings select { min-height:44px; min-width:60px; max-width:100%; background:var(--panel); color:var(--text); border:1px solid var(--line); border-radius:6px; }
+.resilience-settings { padding:12px; min-width:0; border-top:1px solid var(--line); }
+.resilience-settings h3 { font-size:15px; margin:8px 0; }
+.resilience-settings p, .resilience-help { font-size:12px; line-height:1.6; color:var(--muted); overflow-wrap:anywhere; }
+.resilience-settings form, .release-controls { display:grid; gap:10px; min-width:0; }
+.resilience-settings label { display:flex; align-items:center; justify-content:space-between; gap:8px; min-height:44px; font-size:12px; }
+.resilience-settings fieldset { min-width:0; margin:0; padding:8px; border:1px solid var(--line); }
+.resilience-settings legend { font-size:12px; }
+.resilience-settings .dependency-option { justify-content:flex-start; overflow-wrap:anywhere; }
+.dependency-option input { flex:0 0 22px; width:22px; height:22px; }
+.resilience-settings button { min-height:44px; max-width:100%; white-space:normal; }
+#release-panel dd { margin:4px 0 12px; font-size:12px; overflow-wrap:anywhere; }
+.zone-badge { position:absolute; left:-8px; top:-9px; padding:2px 4px; border:1px solid var(--accent); border-radius:4px; background:var(--panel-deep); color:var(--accent); font:700 9px ui-monospace,monospace; }
+.zone-badge.zone-unavailable { border-color:var(--danger); color:var(--danger); }
+body.phone-layout .catalog-placement { font-size:9px; padding:2px 4px; }
+body.phone-layout .catalog-placement select { width:64px; min-width:64px; padding:4px; font-size:11px; }
+body.phone-layout .zone-badge { font-size:7px; left:-9px; top:-6px; }

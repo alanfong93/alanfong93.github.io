@@ -4,7 +4,7 @@
   "assets": [
     {
       "name": "index.html",
-      "sha256": "fc1b57b255ab2e3af50680c212d1ebf1c06f2e081c55ca98092c1ed664b1e8f0"
+      "sha256": "f67731ca62c6e08011db7ced506777df6c01afccf91dfb714942439604ef0a53"
     },
     {
       "name": "style.css",
@@ -20,7 +20,7 @@
     },
     {
       "name": "theme.css",
-      "sha256": "81c45031097d1177bfd2d6383a98997be3b687933b644f37c9ac70b937120533"
+      "sha256": "a6a62b0e958160441e370af0c2e8057dd67e5b660861aa1e6297fc1277130988"
     },
     {
       "name": "desktop.css",
@@ -28,19 +28,23 @@
     },
     {
       "name": "app.js",
-      "sha256": "e25b3f1f57db841eee56e2c764b42ed49c90c7b23630ad48972e20ec5e8b8cc7"
+      "sha256": "3b8c60db27bf47b0930ee410087c79ec03b772eb539387d1da45c8dfc11431ea"
     },
     {
       "name": "engine.js",
-      "sha256": "cfef5276ee206f7dbe2e21f9811dd4199aca9778fdff79b359455ed2c81991af"
+      "sha256": "1d4cbc5bbd995acd0d8b04d186cdeb54cd8ce23f139276813907ef3dc28e05ff"
     },
     {
       "name": "services.js",
-      "sha256": "aeee3a3172d6ca0b5e647b66997aceddd837978bb58cf571abe5fec38db03265"
+      "sha256": "86e21cdf9f095c194f1800d140c95596bbe545eb24751139d93e8212071a366b"
+    },
+    {
+      "name": "resilience.js",
+      "sha256": "8acee06979de14933687606f86b76bc190ea04ab6e9bc9ab9cdc13021a661142"
     },
     {
       "name": "interaction.js",
-      "sha256": "3a0053cf4d40ab2090b78f6ab08554b531d4667a5e5c143997f69d432af57f3c"
+      "sha256": "11382a455a10f9ec0968eaf5bdca7f5653bb662967835cfa0121c9aa8a20dfc0"
     },
     {
       "name": "sound.js",
@@ -52,7 +56,7 @@
     },
     {
       "name": "phone.js",
-      "sha256": "9f4051c9c71ad4654813b15b4752622a6f72fd0227945f6ee504b4d68482ba5a"
+      "sha256": "13dc8eee97105fc619383d9694e31723bddd151f6ebe507750b45275ccbe08a9"
     },
     {
       "name": "favicon.svg",

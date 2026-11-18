@@ -1,4 +1,5 @@
 // Illustrative reserved-slot allocation, not cloud billing or provider guarantees.
+import { nodeZone, zoneRemaining } from './resilience.js';
 export const MANAGED_KINDS = ['containers', 'queueworker'];
 const defaults = { replicas: 1, autoScale: false, minReplicas: 1, maxReplicas: 6, targetUtilization: 0.7, backlogSeconds: 2 };
 export function validateServiceSettings(kind, value) {
@@ -29,14 +30,17 @@ export function allocation(nodes, services, catalog) {
   return total;
 }
 
-export function newService(id, config, time, ready) {
-  const service = { replicas: [], desired: 0, nextReplicaId: 1, config: { ...config }, highFor: 0, lowFor: 0, cooldownUntil: 0, blockedReason: '', metric: null };
+export function newService(id, config, time, ready, zone = 'A') {
+  const service = { replicas: [], desired: 0, nextReplicaId: 1, zone, config: { ...config }, highFor: 0, lowFor: 0, cooldownUntil: 0, blockedReason: '', metric: null };
   resizeService(service, id, config.replicas, time, ready);
   return service;
 }
 
 export function resizeService(service, id, count, time, ready = false) {
-  while (service.replicas.length < count) service.replicas.push({ id: `${id}-replica-${service.nextReplicaId++}`, state: ready ? 'ready' : 'starting', readyAt: ready ? time : time + 3 });
+  while (service.replicas.length < count) {
+    const number = service.nextReplicaId++;
+    service.replicas.push({ id: `${id}-replica-${number}`, zone: service.zone === 'spread' ? number % 2 ? 'A' : 'B' : service.zone, state: ready ? 'ready' : 'starting', readyAt: ready ? time : time + 3 });
+  }
   // Retire newest slots first. Frozen outage identities never transfer.
   service.replicas.splice(count);
   service.desired = service.replicas.length;
@@ -59,15 +63,16 @@ export function slotMaintenance(run, id, slotId, time, events) {
 export function snapshot(run, id, events, catalog) {
   const service = run.services[id];
   if (!service) return null;
-  const slots = service.replicas.map(slot => ({ ...slot, maintenanceRemaining: slotMaintenance(run, id, slot.id, run.time, events) }));
-  const ready = slots.filter(slot => slot.state === 'ready' && !slot.maintenanceRemaining).length;
+  const slots = service.replicas.map(slot => ({ ...slot, zone: slot.zone ?? nodeZone(run.nodes.find(n => n.id === id)), zoneRemaining: zoneRemaining(run, slot.zone ?? service.zone), maintenanceRemaining: slotMaintenance(run, id, slot.id, run.time, events) }));
+  const ready = slots.filter(slot => slot.state === 'ready' && !slot.maintenanceRemaining && !slot.zoneRemaining).length;
   const starting = slots.filter(slot => slot.state === 'starting').length;
   const replacing = slots.filter(slot => slot.state === 'replacing').length;
   const maintenance = slots.filter(slot => slot.maintenanceRemaining > 0).length;
   const capacity = ready * 22;
   const load = run.last.nodes[id]?.load ?? 0;
   const status = !ready ? replacing ? 'recovering' : starting ? 'starting' : 'degraded' : load > capacity + 1e-9 ? 'throttled' : ready < service.desired ? 'degraded' : 'healthy';
-  return { desired: service.desired, ready, starting, replacing, maintenance, capacity, config: { ...service.config }, allocation: service.desired * catalog[run.nodes.find(n => n.id === id).kind].cost, blockedReason: service.blockedReason, status, metric: service.metric ? { ...service.metric } : null, replicas: slots, highFor: service.highFor, lowFor: service.lowFor, cooldownUntil: service.cooldownUntil };
+  const zoneUnavailable = slots.filter(slot => slot.zoneRemaining > 0).length;
+  return { desired: service.desired, ready, starting, replacing, maintenance, zoneUnavailable, capacity, config: { ...service.config }, allocation: service.desired * catalog[run.nodes.find(n => n.id === id).kind].cost, blockedReason: service.blockedReason, status, metric: service.metric ? { ...service.metric } : null, replicas: slots, highFor: service.highFor, lowFor: service.lowFor, cooldownUntil: service.cooldownUntil };
 }
 
 export function completeServices(run, time) {

@@ -2,6 +2,8 @@
 // costs are game credits, and metrics count legitimate requests only. Malicious
 // traffic consumes serving capacity but is never counted as a customer request.
 import { MANAGED_KINDS, validateServiceSettings, allocation, newService, resizeService, serviceEvent, snapshot, completeServices, scaleServices } from './services.js';
+import { ZONAL_KINDS, nodeZone, validateResilience, cloneResilienceNode, zoneRemaining, initializeResilience, resilienceBoundary, resilienceEvent, terminalCheckout, dependencyEvidence, blockedQueueEvidence, resilienceSnapshot } from './resilience.js';
+export { ZONAL_KINDS, nodeZone, validateResilience, configureRelease, resilienceSnapshot } from './resilience.js';
 export { MANAGED_KINDS, validateServiceSettings } from './services.js';
 const spec = [
   ['shield', 'Traffic shield', 'WAF', '◇', 'security', 15, 400, 'Blocks malicious traffic within its capacity.', '#a78bfa'],
@@ -72,6 +74,7 @@ export const ARCADE = {
     { type: 'outage', at: 52, until: 60, targetKinds: ['compute', 'fargate'], targetOffset: 1, label: 'Maintenance during surge', description: 'The second eligible worker (or the only worker) is offline during Black Friday and cold cache.' },
     { type: 'outage', at: 72, until: 82, targetKinds: ['compute', 'fargate'], targetOffset: 0, label: 'Maintenance under attack', description: 'One virtual-machine or app-container worker is offline during the DDoS attack.' },
     { type: 'outage', at: 55, until: 62, targetKinds: ['rds'], targetOffset: 0, label: 'SQL node maintenance during surge', description: 'One SQL database node is offline during the demand surge, cold cache and worker maintenance, continuing after the surge ends.' },
+    { type: 'zone', at: 10, until: 18, zone: 'A', label: 'AZ A loss', description: 'All A-zone resources are unavailable; regional abstractions remain outside this incident.' },
   ],
 };
 
@@ -107,7 +110,7 @@ const healthyRuntime = () => ({ state: 'healthy', overloadS: 0, recoverAt: 0, sh
 function cloneNodeSettings(node) {
   const result = validateServiceSettings(node.kind, node.settings);
   if (!result.ok) throw new TypeError(result.reason);
-  return { ...node, ...(node.settings !== undefined ? { settings: { ...result.settings } } : {}) };
+  return { ...cloneResilienceNode(node), ...(node.settings !== undefined ? { settings: { ...result.settings } } : {}) };
 }
 
 export function getAllocation(nodes, services = {}) { return allocation(nodes, services, CATALOG); }
@@ -162,7 +165,7 @@ export function failServiceReplica(run, id) {
   if (!['running', 'paused'].includes(run.status)) return reject('Round must be running or paused.');
   const service = serviceSnapshot(run, id);
   if (!service) return reject('Managed service does not exist.');
-  const eligible = service.replicas.find(s => s.state === 'ready' && !s.maintenanceRemaining);
+  const eligible = service.replicas.find(s => s.state === 'ready' && !s.maintenanceRemaining && !s.zoneRemaining);
   if (!eligible) return reject('No available ready replica.');
   const slot = run.services[id].replicas.find(s => s.id === eligible.id);
   slot.state = 'replacing'; slot.readyAt = run.time + 3;
@@ -180,6 +183,7 @@ function recoveryEvent(run, nodeId, type, at = run.time) {
 
 function completeReboots(run, time) {
   for (const [id, runtime] of Object.entries(run.nodeRuntime)) {
+    if (runtime.state === 'starting' && runtime.readyAt <= time + EPS) runtime.state = 'healthy';
     if (runtime.state !== 'rebooting' || runtime.recoverAt > time + EPS) continue;
     recoveryEvent(run, id, 'reboot-complete', runtime.recoverAt);
     runtime.state = 'healthy';
@@ -206,7 +210,6 @@ function freezeOutageTargets(run, time) {
 // Read-only lookup also protects calls made exactly at maintenance start, before
 // the next tick has frozen the event target. A frozen null must remain null.
 function maintenanceRemaining(run, id, time) {
-  if (run.scenarioId !== 'arcade') return 0;
   const events = SCENARIOS.find(s => s.id === run.scenarioId).events;
   let remaining = 0;
   for (const [index, event] of events.entries()) {
@@ -216,6 +219,34 @@ function maintenanceRemaining(run, id, time) {
     if (target === id) remaining = Math.max(remaining, event.until - time);
   }
   return remaining;
+}
+
+// One effective predicate composes lifecycle, maintenance and failure domain.
+export function nodeInfrastructure(run, id) {
+  const node = run.nodes.find(n => n.id === id);
+  if (!node) return { state: 'missing', down: true, zone: null, zoneRemaining: 0, startupRemaining: 0, maintenanceRemaining: 0 };
+  const zone = nodeZone(node), runtime = run.nodeRuntime[id];
+  const service = serviceSnapshot(run, id);
+  if (service) {
+    const remaining = Math.max(0, ...service.replicas.map(s => s.zoneRemaining));
+    const startupRemaining = Math.max(0, ...service.replicas.filter(s => s.state !== 'ready').map(s => s.readyAt - run.time));
+    return { state: service.status, down: !service.ready, zone, zoneRemaining: remaining, startupRemaining,
+      zoneUnavailable: service.zoneUnavailable, maintenanceRemaining: Math.max(0, ...service.replicas.map(s => s.maintenanceRemaining)) };
+  }
+  const remaining = zoneRemaining(run, zone), maintenance = maintenanceRemaining(run, id, run.time);
+  const startupRemaining = run.scenarioId === 'arcade' ? Math.max(0, (runtime?.readyAt ?? 0) - run.time) : 0;
+  const state = run.scenarioId === 'arcade' ? runtime?.state ?? 'healthy' : 'healthy';
+  const rebootRemaining = state === 'rebooting' ? Math.max(0, runtime.recoverAt - run.time) : 0;
+  const down = !!(remaining || maintenance || startupRemaining || ['down', 'rebooting'].includes(state));
+  return { state: maintenance ? 'maintenance' : remaining ? 'zone-unavailable' : startupRemaining ? 'starting' : state === 'overloaded' && CATALOG[node.kind]?.overloadMode === 'throttle' ? 'throttled' : state,
+    down, zone, zoneRemaining: remaining, startupRemaining, maintenanceRemaining: maintenance, rebootRemaining };
+}
+
+function blockedDependencies(run, node) {
+  return (node.requiredDependencyIds ?? []).flatMap(dependencyId => {
+    const infrastructure = nodeInfrastructure(run, dependencyId);
+    return infrastructure.down ? [{ dependencyId, zone: infrastructure.zone, reason: infrastructure.zoneRemaining ? 'zone' : infrastructure.state }] : [];
+  });
 }
 
 export function rebootNode(run, id) {
@@ -336,7 +367,7 @@ export function analyzeTopology(nodes, edges, services = {}) {
   for (const n of nodes.filter(n => REMOVAL_TESTED.includes(n.kind) || MANAGED_KINDS.includes(n.kind))) {
     if (MANAGED_KINDS.includes(n.kind)) {
       const runtime = services[n.id];
-      const ready = runtime ? runtime.replicas.filter(s => s.state === 'ready' && !s.maintenanceRemaining).length : validateServiceSettings(n.kind, n.settings).settings?.replicas ?? 0;
+      const ready = runtime ? runtime.replicas.filter(s => s.state === 'ready' && !s.maintenanceRemaining && !s.zoneRemaining).length : validateServiceSettings(n.kind, n.settings).settings?.replicas ?? 0;
       if (ready >= 2) continue;
     }
     const remaining = graph(nodes.filter(other => other.id !== n.id), edges.filter(e => e.from !== n.id && e.to !== n.id));
@@ -352,12 +383,14 @@ export function analyzeTopology(nodes, edges, services = {}) {
 export function createRun(scenarioId, nodes, edges) {
   const scenario = SCENARIOS.find(s => s.id === scenarioId);
   if (!scenario) throw new RangeError(`Unknown scenario: ${scenarioId}`);
+  const resilience = validateResilience(nodes);
+  if (!resilience.ok) throw new TypeError(resilience.reason);
   const copy = nodes.map(cloneNodeSettings);
   if (!copy.some(n => n.id === 'internet')) copy.unshift({ ...ROOT });
   // Historical capacity stress fixtures may start over budget; new managed
   // allocations must always fit the scenario ledger.
   if (copy.some(n => MANAGED_KINDS.includes(n.kind)) && getAllocation(copy) > scenario.budget) throw new RangeError('Credit budget exceeded.');
-  return {
+  return initializeResilience({
     scenarioId, time: 0, duration: scenario.duration, status: 'ready',
     nodes: copy, edges: edges.map(e => ({ ...e })),
     metrics: { arrived: 0, completed: 0, failed: 0, pending: 0, attacksBlocked: 0 },
@@ -365,13 +398,13 @@ export function createRun(scenarioId, nodes, edges) {
     last: { rps: 0, attackRps: 0, event: null, events: [], edges: {}, nodes: {}, completed: 0, failed: 0 },
     history: [], queues: Object.fromEntries(copy.filter(n => n.kind === 'queue').map(n => [n.id, 0])),
     dropped: {}, failureEvidence: [], _remainder: 0, _outstandingAtFinish: 0,
-    nodeHistory: Object.fromEntries(copy.map(n => [n.id, { ...n, name: CATALOG[n.kind]?.name ?? n.id }])),
+    nodeHistory: Object.fromEntries(copy.map(n => [n.id, { ...cloneNodeSettings(n), name: CATALOG[n.kind]?.name ?? n.id }])),
     edits: [], editsTotal: 0, discardedQueuedWork: 0, outageTargets: {}, outageReplicas: {},
-    services: Object.fromEntries(copy.filter(n => MANAGED_KINDS.includes(n.kind)).map(n => [n.id, newService(n.id, validateServiceSettings(n.kind, n.settings).settings, 0, true)])),
+    services: Object.fromEntries(copy.filter(n => MANAGED_KINDS.includes(n.kind)).map(n => [n.id, newService(n.id, validateServiceSettings(n.kind, n.settings).settings, 0, true, nodeZone(n))])),
     serviceLog: [], serviceLogTotal: 0, managedFailures: 0, replacements: 0, scaleOuts: 0, scaleIns: 0, budgetBlocks: 0,
     nodeRuntime: Object.fromEntries(copy.map(n => [n.id, healthyRuntime()])),
     recoveryLog: [], recoveryLogTotal: 0, shutdowns: 0, reboots: 0,
-  };
+  });
 }
 
 // Validate and prepare everything before committing: failed edits are pure.
@@ -379,6 +412,8 @@ export function applyTopology(run, nextNodes, nextEdges) {
   const reject = reason => ({ ok: false, reason });
   if (!['ready', 'running', 'paused'].includes(run.status)) return reject('Round is not editable.');
   if (!Array.isArray(nextNodes) || !Array.isArray(nextEdges)) return reject('Nodes and edges must be arrays.');
+  const resilience = validateResilience(nextNodes);
+  if (!resilience.ok) return resilience;
   if (nextNodes.length > 30 || nextEdges.length > 100) return reject('Limit is 30 nodes and 100 connections.');
   const ids = new Set();
   const current = new Map(run.nodes.map(n => [n.id, n]));
@@ -388,6 +423,7 @@ export function applyTopology(run, nextNodes, nextEdges) {
     if (typeof n.kind !== 'string' || !Object.hasOwn(ALLOWED, n.kind)) return reject('Unknown service kind.');
     if ((n.id === 'internet') !== (n.kind === 'internet')) return reject('Exactly one internet source is required.');
     if (current.has(n.id) && current.get(n.id).kind !== n.kind) return reject('Existing node kinds cannot change.');
+    if (run.status !== 'ready' && current.has(n.id) && nodeZone(current.get(n.id)) !== nodeZone(n)) return reject('Live placement cannot change; provision a new resource.');
     if (!current.has(n.id) && Object.hasOwn(run.nodeHistory, n.id)) return reject('Removed IDs cannot be reused.');
     const settings = validateServiceSettings(n.kind, n.settings);
     if (!settings.ok) return reject(settings.reason);
@@ -403,8 +439,12 @@ export function applyTopology(run, nextNodes, nextEdges) {
       const explicitChange = n.settings !== undefined && Object.keys(config).some(k => config[k] !== old.config[k]);
       const count = explicitChange ? Math.max(config.minReplicas, Math.min(config.maxReplicas, config.replicas !== old.config.replicas ? config.replicas : old.desired)) : old.desired;
       services[n.id] = { ...old, config, replicas: old.replicas.map(s => ({ ...s })) };
+      if (run.status === 'ready' && nodeZone(n) !== old.zone) {
+        services[n.id].zone = nodeZone(n);
+        for (const slot of services[n.id].replicas) slot.zone = nodeZone(n) === 'spread' ? Number(slot.id.split('-').at(-1)) % 2 ? 'A' : 'B' : nodeZone(n);
+      }
       resizeService(services[n.id], n.id, count, run.time);
-    } else services[n.id] = newService(n.id, validateServiceSettings(n.kind, n.settings).settings, run.time, false);
+    } else services[n.id] = newService(n.id, validateServiceSettings(n.kind, n.settings).settings, run.time, false, nodeZone(n));
   }
   if (getAllocation(nextNodes, services) > scenario.budget) return reject('Credit budget exceeded.');
   const edges = [];
@@ -435,13 +475,24 @@ export function applyTopology(run, nextNodes, nextEdges) {
   run.editsTotal++;
   run.discardedQueuedWork += discardedQueued;
   run.metrics.failed += discardedQueued;
+  run.checkout.failed += discardedQueued;
+  run.checkout.infrastructureFailed += discardedQueued;
+  run.checkout.pending = Object.values(queues).reduce((sum, count) => sum + count, 0);
   run.metrics.pending = Object.values(queues).reduce((sum, count) => sum + count, 0);
-  for (const n of nodes) if (!Object.hasOwn(run.nodeHistory, n.id)) run.nodeHistory[n.id] = { ...n, name: CATALOG[n.kind]?.name ?? n.id };
+  for (const n of nodes) if (!Object.hasOwn(run.nodeHistory, n.id)) run.nodeHistory[n.id] = { ...cloneNodeSettings(n), name: CATALOG[n.kind]?.name ?? n.id };
+  for (const id of new Set([...run.nodes.map(n => n.id), ...nodes.map(n => n.id)])) {
+    const old = current.get(id), next = nodes.find(n => n.id === id);
+    const before = old?.requiredDependencyIds ?? [], after = next?.requiredDependencyIds ?? [];
+    if (JSON.stringify([...before].sort()) !== JSON.stringify([...after].sort())) {
+      run.requirementsChanged++;
+      resilienceEvent(run, 'requirements-changed', { workerId: id, before, after });
+    }
+  }
   run.nodes = nodes;
   run.services = services;
   run.edges = edges;
   run.queues = queues;
-  run.nodeRuntime = Object.fromEntries(nodes.map(n => [n.id, run.nodeRuntime[n.id] ?? healthyRuntime()]));
+  run.nodeRuntime = Object.fromEntries(nodes.map(n => [n.id, run.nodeRuntime[n.id] ?? { ...healthyRuntime(), ...(run.scenarioId === 'arcade' && run.status !== 'ready' && ZONAL_KINDS.includes(n.kind) && !MANAGED_KINDS.includes(n.kind) ? { state: 'starting', readyAt: run.time + 3 } : {}) }]));
   run.last.nodes = {};
   run.last.edges = {};
   for (const id of Object.keys(run.services)) refreshService(run, id);
@@ -451,6 +502,7 @@ export function applyTopology(run, nextNodes, nextEdges) {
 function tick(run, seconds) {
   const scenario = SCENARIOS.find(s => s.id === run.scenarioId);
   const t = run.time; // Event boundaries align with the fixed tick grid.
+  resilienceBoundary(run);
   const events = scenario.events.filter(e => t >= e.at && t < e.until);
   const cold = events.find(e => e.type === 'cache');
   const cdnHit = cold?.hitRate ?? 0.8;
@@ -468,7 +520,11 @@ function tick(run, seconds) {
   if (arcade) completeReboots(run, t);
   completeServices(run, t);
   const serviceCapacity = id => serviceSnapshot(run, id)?.capacity;
-  const offline = id => run.services[id] ? serviceCapacity(id) === 0 : downIds.has(id) || (arcade && ['down', 'rebooting'].includes(run.nodeRuntime[id].state));
+  // Serving and overload account the interval's start, while the published health
+  // below reflects its end boundary. Never charge strain to a maintenance interval
+  // just because its final boundary has recovered.
+  const intervalDown = new Map(run.nodes.map(n => [n.id, nodeInfrastructure(run, n.id).down]));
+  const offline = id => intervalDown.get(id) ?? true;
   // Time-based uptime is healthy end-to-end path availability, not the fraction
   // of requests served. Insufficient capacity may drop work while paths stay up.
   const healthy = run.nodes.filter(n => !offline(n.id));
@@ -479,6 +535,7 @@ function tick(run, seconds) {
   const stats = Object.fromEntries(run.nodes.map(n => [n.id, {
     load: 0, capacity: serviceCapacity(n.id) ?? (offline(n.id) ? 0 : (CATALOG[n.kind]?.capacity ?? 0)),
     utilization: 0, failed: 0, down: offline(n.id), queued: 0, maliciousIn: 0, blocked: 0,
+    dependencyBlocked: blockedDependencies(run, n),
   }]));
   const flows = {};
   const flow = (from, to, count, malicious = false) => {
@@ -489,22 +546,24 @@ function tick(run, seconds) {
   const used = Object.fromEntries(run.nodes.map(n => [n.id, 0]));
   let completed = 0;
   let failed = 0;
+  let businessFailed = 0;
   const available = id => Math.max(0, stats[id].capacity * seconds - used[id]);
-  const drop = (id, count) => {
+  const drop = (id, count, workload = 'api', reason = 'infrastructure') => {
     if (count <= 0) return;
     failed += count;
+    if (workload === 'api') { run.checkout.failed += count; run.checkout[`${reason}Failed`] += count; }
     if (stats[id]) stats[id].failed += count;
     run.dropped[id] = (run.dropped[id] ?? 0) + count;
   };
-  const take = (node, count, malicious = false) => {
+  const take = (node, count, malicious = false, workload = 'api') => {
     stats[node.id].load += count / seconds;
     const served = Math.min(count, available(node.id));
     used[node.id] += served;
-    if (!malicious) drop(node.id, count - served);
+    if (!malicious) drop(node.id, count - served, workload);
     return served;
   };
-  const split = (children, count, fn, owner) => {
-    if (!children.length) { drop(owner, count); return; }
+  const split = (children, count, fn, owner, workload) => {
+    if (!children.length) { drop(owner, count, workload); return; }
     children.forEach(child => fn(child, count / children.length));
   };
   // Routing is split at every fork, never multicast. Live replicas receive equal
@@ -542,20 +601,31 @@ function tick(run, seconds) {
     const children = servingChildren(node);
     forwardAttack(node, children, served);
   };
+  const finishCheckout = (id, count) => {
+    const outcome = terminalCheckout(run, count);
+    completed += outcome.succeeded; failed += outcome.failed;
+    businessFailed += outcome.failed;
+    stats[id].failed += outcome.failed;
+  };
+  const finishStatic = count => { completed += count; run.staticSucceeded += count; };
   const route = (node, count, workload) => {
     if (count <= EPS) return;
     if (node.kind === 'internet') {
       stats[node.id].load += count / seconds;
-    } else count = take(node, count);
+    } else count = take(node, count, false, workload);
     if (count <= EPS) return;
+    if (workload === 'api' && CONSUMERS.includes(node.kind)) {
+      const blocked = blockedDependencies(run, node);
+      if (blocked.length) { dependencyEvidence(run, node.id, blocked, count); drop(node.id, count, workload, 'dependency'); return; }
+    }
     if (node.kind === 'storage' && workload === 'web' || DATABASES.includes(node.kind) && workload === 'api') {
-      completed += count;
+      if (workload === 'web') finishStatic(count); else finishCheckout(node.id, count);
       return;
     }
     if (node.kind === 'cdn' && workload === 'web') {
       const origins = live(g.children(node.id).filter(n => n.kind === 'storage'));
-      if (!origins.length) { drop(node.id, count); return; }
-      completed += count * cdnHit;
+      if (!origins.length) { drop(node.id, count, workload); return; }
+      finishStatic(count * cdnHit);
       // Each origin receives only its fraction of misses.
       origins.forEach(n => { const misses = count * (1 - cdnHit) / origins.length; flow(node.id, n.id, misses); route(n, misses, workload); });
       return;
@@ -563,7 +633,7 @@ function tick(run, seconds) {
     if (node.kind === 'cache' && workload === 'api') {
       const databases = live(g.children(node.id).filter(n => DATABASES.includes(n.kind)));
       if (!databases.length) { drop(node.id, count); return; }
-      completed += count * cacheHit;
+      finishCheckout(node.id, count * cacheHit);
       databases.forEach(n => { const misses = count * (1 - cacheHit) / databases.length; flow(node.id, n.id, misses); route(n, misses, workload); });
       return;
     }
@@ -581,28 +651,34 @@ function tick(run, seconds) {
     else if (node.kind === 'apigw') children = g.children(node.id).filter(n => [...WORKERS, 'alb', 'queue'].includes(n.kind));
     else children = servingChildren(node);
     children = live(children);
-    split(children, count, child => { flow(node.id, child.id, count / children.length); route(child, count / children.length, workload); }, node.id);
+    split(children, count, child => { flow(node.id, child.id, count / children.length); route(child, count / children.length, workload); }, node.id, workload);
   };
 
   // Queued work is reserved atomically along a consumer/data path. Work that
   // cannot fit stays pending without retries or partial upstream execution.
   // Cache demand uses expected miss fractions; conservative head-of-line
   // blocking can occur when its database is saturated. Nested queues stage work.
-  const plans = (node, path = []) => {
+  const plans = (node, path = [], blocked = new Map()) => {
     if (offline(node.id)) return [];
+    if (CONSUMERS.includes(node.kind)) {
+      const requirements = blockedDependencies(run, node);
+      if (requirements.length) { blocked.set(node.id, requirements); return []; }
+    }
     const next = [...path, { id: node.id, factor: 1 }];
     if (DATABASES.includes(node.kind)) return [{ path: next, destination: null }];
     if (node.kind === 'queue') return g.supports(node.id, 'api') ? [{ path: next, destination: node.id }] : [];
     if (node.kind === 'cache') return g.children(node.id).filter(n => DATABASES.includes(n.kind) && !offline(n.id)).map(n => ({ path: [...next, { id: n.id, factor: 1 - cacheHit }], destination: null }));
-    return g.children(node.id).flatMap(n => plans(n, next));
+    return g.children(node.id).flatMap(n => plans(n, next, blocked));
   };
 
   const root = g.byId.get('internet');
   if (root) attack(root, attackRps * seconds);
   const initialQueues = { ...run.queues };
   for (const node of run.nodes.filter(n => n.kind === 'queue')) {
-    const routes = g.children(node.id).flatMap(n => plans(n));
+    const blocked = new Map();
+    const routes = g.children(node.id).flatMap(n => plans(n, [], blocked));
     const budget = Math.min(initialQueues[node.id] ?? 0, CATALOG.queue.capacity * seconds);
+    if (budget > EPS) for (const [workerId, requirements] of blocked) blockedQueueEvidence(run, node.id, workerId, requirements, initialQueues[node.id], seconds);
     for (const plan of routes) {
       let count = budget / routes.length;
       for (const part of plan.path) count = Math.min(count, available(part.id) / part.factor);
@@ -617,20 +693,22 @@ function tick(run, seconds) {
       }
       run.queues[node.id] -= count;
       if (plan.destination) run.queues[plan.destination] += count;
-      else completed += count;
+      else finishCheckout(plan.path.at(-1).id, count);
     }
   }
   const arrivals = rps * seconds;
+  run.checkout.arrived += arrivals * .4;
   if (root) {
     route(root, arrivals * 0.6, 'web');
     route(root, arrivals * 0.4, 'api');
-  } else drop('internet', arrivals);
+  } else { drop('internet', arrivals * .6, 'web'); drop('internet', arrivals * .4); }
   run.availability.observedSeconds += seconds;
   if (pathsUp) run.availability.upSeconds += seconds;
   else run.availability.downtimeSeconds += seconds;
   run.time = Math.min(run.duration, run.time + seconds);
   // Freeze on arrival at the boundary, before callers can edit that topology.
   freezeOutageTargets(run, run.time);
+  resilienceBoundary(run);
   run.metrics.arrived += arrivals;
   let pending = Object.values(run.queues).reduce((sum, count) => sum + count, 0);
   if (run.time >= run.duration - EPS) {
@@ -646,9 +724,10 @@ function tick(run, seconds) {
   run.metrics.completed += completed;
   run.metrics.failed += failed;
   run.metrics.pending = pending;
+  run.checkout.pending = pending;
   // Roundoff only (all actual failures are attributed above).
   const error = run.metrics.arrived - run.metrics.completed - run.metrics.failed - pending;
-  if (Math.abs(error) < 1e-7) run.metrics.completed += error;
+  if (Math.abs(error) < 1e-7) { run.metrics.completed += error; run.staticSucceeded += error; }
   for (const [id, stat] of Object.entries(stats)) {
     stat.utilization = stat.capacity ? stat.load / stat.capacity : (stat.load ? 1 : 0);
     stat.queued = run.queues[id] ?? 0;
@@ -661,7 +740,7 @@ function tick(run, seconds) {
       // Only serving attempts accrue strain. Capacity zero due to downtime is
       // not itself overload; queued reservations are work actually dispatched.
       if (offline(node.id)) {
-        if (downIds.has(node.id) && ['healthy', 'overloaded'].includes(runtime.state)) {
+        if ((downIds.has(node.id) || zoneRemaining(run, nodeZone(node), t)) && ['healthy', 'overloaded'].includes(runtime.state)) {
           runtime.state = 'healthy';
           runtime.overloadS = 0;
         }
@@ -683,12 +762,10 @@ function tick(run, seconds) {
       if (run.services[node.id]) continue;
       const runtime = run.nodeRuntime[node.id];
       const stat = stats[node.id];
-      const maintenance = maintenanceRemaining(run, node.id, run.time);
-      stat.state = maintenance ? 'maintenance' : runtime.state === 'overloaded' && CATALOG[node.kind]?.overloadMode === 'throttle' ? 'throttled' : runtime.state;
+      const infrastructure = nodeInfrastructure(run, node.id);
+      Object.assign(stat, infrastructure);
       stat.overloadS = runtime.overloadS;
       stat.rebootRemaining = runtime.state === 'rebooting' ? Math.max(0, runtime.recoverAt - run.time) : 0;
-      stat.maintenanceRemaining = maintenance;
-      stat.down = maintenance > 0 || ['down', 'rebooting'].includes(runtime.state);
       stat.capacity = stat.down ? 0 : (CATALOG[node.kind]?.capacity ?? 0);
     }
   }
@@ -705,11 +782,15 @@ function tick(run, seconds) {
   }
   // events are detached event objects; event is the legacy joined-label view.
   run.last = { rps, attackRps, cdnHit, cacheHit, events: events.map(e => ({ ...e, ...(e.targetKinds ? { targetKinds: [...e.targetKinds] } : {}) })),
-    event: events.length ? events.map(e => e.label).join(' + ') : null, nodes: stats, edges: flows, completed, failed };
+    event: events.length ? events.map(e => e.label).join(' + ') : null, nodes: stats, edges: flows, completed, failed, businessFailed };
   completeServices(run, run.time);
   if (run.status !== 'finished') scaleServices(run, seconds, CATALOG, scenario.budget, id => serviceSnapshot(run, id).maintenance,
     id => run.nodes.filter(n => n.kind === 'queue' && g.children(n.id).some(child => child.id === id)).map(n => n.id));
   for (const id of Object.keys(run.services)) refreshService(run, id);
+  for (const node of run.nodes) {
+    if (arcade) Object.assign(run.last.nodes[node.id], nodeInfrastructure(run, node.id));
+    run.last.nodes[node.id].dependencyBlocked = blockedDependencies(run, node);
+  }
   run.history.push({ time: run.time, success: run.metrics.arrived ? run.metrics.completed / run.metrics.arrived : 0, rps, event: run.last.event });
   if (run.history.length > 1200) run.history.splice(0, run.history.length - 1200);
 }
@@ -752,10 +833,17 @@ export function summarizeRun(run) {
     .sort((a, b) => b.dropped - a.dropped), notes, topology, failureEvidence: run.failureEvidence.map(e => ({ ...e })),
     outstandingQueued: outstanding, outstandingAtFinish: run._outstandingAtFinish, editsTotal: run.editsTotal, discardedQueuedWork: run.discardedQueuedWork,
     shutdowns: run.shutdowns, reboots: run.reboots, managedFailures: run.managedFailures, replacements: run.replacements, scaleOuts: run.scaleOuts, scaleIns: run.scaleIns, budgetBlocks: run.budgetBlocks,
-    services: Object.fromEntries(Object.keys(run.services).map(id => [id, serviceSnapshot(run, id)])) };
+    services: Object.fromEntries(Object.keys(run.services).map(id => [id, serviceSnapshot(run, id)])), resilienceSnapshot: resilienceSnapshot(run) };
 }
 
 export function starterTopology(mode = 'balanced') {
+  if (mode === 'shared') {
+    const topology = starterTopology('managed');
+    topology.nodes.push({ id: 'required-cache', kind: 'cache', zone: 'A', x: 72, y: 82 });
+    const service = topology.nodes.find(n => n.kind === 'containers');
+    Object.assign(service, { zone: 'spread', requiredDependencyIds: ['required-cache'], settings: { ...service.settings, autoScale: false, replicas: 2, minReplicas: 2, maxReplicas: 2 } });
+    return topology;
+  }
   if (mode === 'basic') return {
     nodes: [{ ...ROOT }, { id: 'compute-1', kind: 'compute', x: 48, y: 50 }, { id: 'rds', kind: 'rds', x: 83, y: 50 }],
     edges: [{ from: 'internet', to: 'compute-1' }, { from: 'compute-1', to: 'rds' }],

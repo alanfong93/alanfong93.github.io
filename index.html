@@ -308,7 +308,7 @@ flowchart LR
       <div class="work selected" id="cloud-architect-lab">
         <h3>Cloud Architect Lab</h3>
         <p class="project-purpose">Build a cloud topology, run live traffic, and recover from failures.</p>
-        <p>A browser-based architecture arcade with live topology edits, demand surges, DDoS traffic, maintenance, and separate uptime and request-success measures. Managed container replicas and queue workers demonstrate delayed replacement, bounded autoscaling, and resource allocation.</p>
+        <p>A browser-based architecture arcade with live topology edits, demand surges, DDoS traffic, maintenance, and separate uptime and request-success measures. Managed container replicas and queue workers demonstrate delayed replacement, bounded autoscaling, and resource allocation. Two resilience lessons: an AZ outage that fails checkout on surviving, healthy app instances until a shared dependency is repaired, and a defective new release that stays green until it is paused, shifted back or rolled back.</p>
         <figure class="shot">
           <img src="assets/cloud-architect-lab-demo.png" width="1366" height="768" loading="lazy" alt="Cloud Architect Lab's minimal starting canvas: Internet connected to a virtual machine and SQL database, with the service catalog and persistent simulation controls.">
           <figcaption><b>Screenshot</b> — the basic Internet → VM → SQL starting point; players build the architecture from here.</figcaption>

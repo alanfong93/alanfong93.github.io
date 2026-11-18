@@ -8,9 +8,9 @@ Everything committed here, including HTML source, is public.
 ## Reading order and actions
 
 The hero contains the introduction and existing portrait. **View projects** is
-the primary action; LinkedIn, GitHub, and X are quieter social links. Navigation
-targets Projects, Experience, Skills, and Contact in reading order. At 760 px
-and below the hero uses a smaller portrait and reduced padding.
+the primary action. Navigation targets Projects, Experience, Skills, and the
+hero's `#contact` links. At 760 px and below the hero uses a smaller portrait
+and reduced padding.
 
 Education and How I work appear once in a compact supporting section after
 Skills. Retain `#education` and `#how-i-work` for deep links. The portrait and
@@ -18,9 +18,11 @@ supporting content must not dominate the introduction or delay selected work.
 The supporting columns have no separate top borders; the final Skills row
 already supplies the divider above this section.
 
-The introduction and Contact include the confirmed X profile,
-`https://x.com/AlanFong93`, with an inline decorative SVG, visible X text, and
-an accessible X profile label. All social icons inherit link color.
+Contact appears once, in the hero: email, LinkedIn, GitHub, and X. Links use
+16 px decorative icons that inherit link color and a minimum 44 px hit area.
+The confirmed X profile, `https://x.com/AlanFong93`, has visible X text and an
+accessible X profile label. The introduction describes the MZM first-hire
+experience in past tense, consistent with the experience timeline.
 
 ## Selected Work and visual evidence
 
@@ -87,6 +89,9 @@ Well Chip Sdn. Bhd., with Well Chip Group for recognition.
 The newest appointment has a small accent-coloured briefcase icon before its
 title. The icon is decorative; the visible status badge and dates communicate
 whether the appointment is upcoming or current.
+Every role uses a bulleted list for its descriptions and achievements, below
+the scope (where present) and employer/tenure line. Keep each distinct MZM
+contribution in its own bullet for scanning.
 
 Employer work leads with the project board and asset-management service; do not
 duplicate the asset case in internal systems. The asset case describes the

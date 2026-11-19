@@ -79,6 +79,12 @@ export function activeSituations(run, scenario) {
 export function describeSituation(run, scenario) {
   if (!run) return { key: 'ready', tone: 'idle', title: 'READY TO BUILD', message: 'Build now or adapt live. Black Friday, DDoS and maintenance arrive automatically.' };
   if (run.status === 'finished') return { key: 'finished', tone: 'complete', title: 'ROUND COMPLETE', message: 'Inspect your debrief, then improve the design. Earlier failures remain in your totals.' };
+  // Scheduled strategic breaks are deliberate planning pauses, not incidents.
+  if (run.mode === 'strategic' && run.status === 'paused' && run.strategicPausedFor) {
+    const f = run.strategicPausedFor;
+    return { key: `strategic-${f.at}`, tone: 'paused', title: 'STRATEGIC BREAK',
+      message: `Up next in ${Math.max(0, f.at - run.time).toFixed(0)}s: ${f.labels.join(' + ')} at ${f.at}s. Unlimited planning time; Resume continues the clock.`, eventTypes: [] };
+  }
   // Use current simulation boundaries, not last tick's event labels. At an end
   // boundary an incident must disappear even if no next tick has run yet.
   const events = activeSituations(run, scenario);

@@ -2,7 +2,7 @@
 // costs are game credits, and metrics count legitimate requests only. Malicious
 // traffic consumes serving capacity but is never counted as a customer request.
 import { MANAGED_KINDS, validateServiceSettings, allocation, newService, resizeService, serviceEvent, snapshot, completeServices, scaleServices } from './services.js';
-import { ZONAL_KINDS, nodeZone, validateResilience, cloneResilienceNode, zoneRemaining, initializeResilience, resilienceBoundary, resilienceEvent, terminalCheckout, dependencyEvidence, blockedQueueEvidence, resilienceSnapshot } from './resilience.js';
+import { ZONAL_KINDS, RELEASE_STAGES, nodeZone, validateResilience, cloneResilienceNode, zoneRemaining, initializeResilience, resilienceBoundary, resilienceEvent, terminalCheckout, dependencyEvidence, blockedQueueEvidence, resilienceSnapshot } from './resilience.js';
 export { ZONAL_KINDS, nodeZone, validateResilience, configureRelease, resilienceSnapshot } from './resilience.js';
 export { MANAGED_KINDS, validateServiceSettings } from './services.js';
 const spec = [
@@ -380,7 +380,8 @@ export function analyzeTopology(nodes, edges, services = {}) {
   return { warnings, spofs, hasWeb, hasApi };
 }
 
-export function createRun(scenarioId, nodes, edges) {
+export function createRun(scenarioId, nodes, edges, mode = 'realtime') {
+  if (!['realtime', 'strategic'].includes(mode)) throw new RangeError(`Unknown play mode: ${mode}`);
   const scenario = SCENARIOS.find(s => s.id === scenarioId);
   if (!scenario) throw new RangeError(`Unknown scenario: ${scenarioId}`);
   const resilience = validateResilience(nodes);
@@ -391,7 +392,7 @@ export function createRun(scenarioId, nodes, edges) {
   // allocations must always fit the scenario ledger.
   if (copy.some(n => MANAGED_KINDS.includes(n.kind)) && getAllocation(copy) > scenario.budget) throw new RangeError('Credit budget exceeded.');
   return initializeResilience({
-    scenarioId, time: 0, duration: scenario.duration, status: 'ready',
+    scenarioId, time: 0, duration: scenario.duration, status: 'ready', mode,
     nodes: copy, edges: edges.map(e => ({ ...e })),
     metrics: { arrived: 0, completed: 0, failed: 0, pending: 0, attacksBlocked: 0 },
     availability: { observedSeconds: 0, upSeconds: 0, downtimeSeconds: 0 },
@@ -404,6 +405,36 @@ export function createRun(scenarioId, nodes, edges) {
     serviceLog: [], serviceLogTotal: 0, managedFailures: 0, replacements: 0, scaleOuts: 0, scaleIns: 0, budgetBlocks: 0,
     nodeRuntime: Object.fromEntries(copy.map(n => [n.id, healthyRuntime()])),
     recoveryLog: [], recoveryLogTotal: 0, shutdowns: 0, reboots: 0,
+    ...(mode === 'strategic' ? { strategicPausedFor: null, _strategicConsumed: [] } : {}),
+  });
+}
+
+// Strategic mode pauses five seconds before every event start and before the
+// round end, on the fixed 0.25s grid so checkpoints are dt-partition exact.
+const STRATEGIC_LEAD = 5;
+function strategicEvents(scenario) {
+  const events = [...scenario.events, ...(scenario.id === 'arcade' ? RELEASE_STAGES : []), { at: scenario.duration, label: 'Round end' }];
+  return [...new Set(events.map(e => e.at))].sort((a, b) => a - b)
+    .map(at => ({ at, labels: [...new Set(events.filter(e => e.at === at).map(e => e.label))] }));
+}
+function strategicCheckpoints(scenario) {
+  return strategicEvents(scenario).map(e => e.at - STRATEGIC_LEAD).filter(c => c >= 0);
+}
+function pauseForStrategy(run, scenario, checkpoint) {
+  run._strategicConsumed.push(checkpoint);
+  run.strategicPausedFor = strategicEvents(scenario).find(e => Math.abs(e.at - STRATEGIC_LEAD - checkpoint) < EPS);
+  run.status = 'paused';
+  // A break discards the remainder of this catch-up call, not future play time.
+  run._remainder = 0;
+}
+
+export function strategicInfo(run) {
+  if (run.mode !== 'strategic') return { mode: run.mode ?? 'realtime' };
+  const scenario = SCENARIOS.find(s => s.id === run.scenarioId);
+  return structuredClone({
+    mode: run.mode, pausedFor: run.status === 'paused' ? run.strategicPausedFor : null,
+    nextCheckpoint: strategicCheckpoints(scenario).find(c => !run._strategicConsumed.includes(c) && c >= run.time - EPS) ?? null,
+    upcoming: strategicEvents(scenario).filter(e => e.at > run.time + EPS),
   });
 }
 
@@ -793,10 +824,22 @@ function tick(run, seconds) {
   }
   run.history.push({ time: run.time, success: run.metrics.arrived ? run.metrics.completed / run.metrics.arrived : 0, rps, event: run.last.event });
   if (run.history.length > 1200) run.history.splice(0, run.history.length - 1200);
+  // Strategic breaks pause only while the round is still running; the tick that
+  // crosses a checkpoint completes first so pausing stays boundary-exact.
+  if (run.mode === 'strategic' && run.status === 'running') {
+    const crossed = strategicCheckpoints(scenario).find(c => !run._strategicConsumed.includes(c) && c > t + EPS && c <= run.time + EPS);
+    if (crossed !== undefined) pauseForStrategy(run, scenario, crossed);
+  }
 }
 
 export function stepRun(run, dt = TICK) {
   if (run.status !== 'running' || !Number.isFinite(dt) || dt <= 0) return run;
+  if (run.mode === 'strategic') {
+    const scenario = SCENARIOS.find(s => s.id === run.scenarioId);
+    const due = strategicCheckpoints(scenario).find(c => !run._strategicConsumed.includes(c) && Math.abs(c - run.time) < EPS);
+    if (due !== undefined) { pauseForStrategy(run, scenario, due); return run; }
+    run.strategicPausedFor = null;
+  }
   // Accumulate sub-tick calls; cap a single UI catch-up at five seconds.
   run._remainder += Math.min(dt, 5);
   while (run._remainder >= TICK - EPS && run.time < run.duration && run.status === 'running') {
@@ -828,7 +871,7 @@ export function summarizeRun(run) {
   for (const evidence of run.failureEvidence) notes.push(`Actual instance outage: ${evidence.nodeId}, ${evidence.at}–${evidence.until}s; ${evidence.completed.toFixed(2)} completed and ${evidence.failed.toFixed(2)} failed during the event.`);
   if (!run.metrics.arrived) notes.push('No traffic: success and resilience have not been tested.');
   const uptime = run.availability.observedSeconds ? run.availability.upSeconds / run.availability.observedSeconds : null;
-  return { grade, success, resilience, uptime, availability: { ...run.availability }, bottlenecks: Object.entries(run.dropped).filter(([, dropped]) => dropped > EPS)
+  return { grade, success, resilience, uptime, mode: run.mode, availability: { ...run.availability }, bottlenecks: Object.entries(run.dropped).filter(([, dropped]) => dropped > EPS)
     .map(([id, dropped]) => ({ id, name: run.nodeHistory[id]?.name ?? id, dropped }))
     .sort((a, b) => b.dropped - a.dropped), notes, topology, failureEvidence: run.failureEvidence.map(e => ({ ...e })),
     outstandingQueued: outstanding, outstandingAtFinish: run._outstandingAtFinish, editsTotal: run.editsTotal, discardedQueuedWork: run.discardedQueuedWork,

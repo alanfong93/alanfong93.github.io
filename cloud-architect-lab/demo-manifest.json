@@ -4,7 +4,7 @@
   "assets": [
     {
       "name": "index.html",
-      "sha256": "f67731ca62c6e08011db7ced506777df6c01afccf91dfb714942439604ef0a53"
+      "sha256": "487c9004866f284dc87bccc609a48c3e099b62ce6de56b609b6db0ce11c4bc01"
     },
     {
       "name": "style.css",
@@ -20,7 +20,7 @@
     },
     {
       "name": "theme.css",
-      "sha256": "a6a62b0e958160441e370af0c2e8057dd67e5b660861aa1e6297fc1277130988"
+      "sha256": "e0dfbb5ec74c16046b910ca6cb1bffe3cf3f0a0b1b03f0bef7085c14ac72f4c4"
     },
     {
       "name": "desktop.css",
@@ -28,11 +28,11 @@
     },
     {
       "name": "app.js",
-      "sha256": "3b8c60db27bf47b0930ee410087c79ec03b772eb539387d1da45c8dfc11431ea"
+      "sha256": "cf164c86d858cb8418cd4c77ad53bfd3c258a1a65e0666637673b5b28aa6a9ab"
     },
     {
       "name": "engine.js",
-      "sha256": "1d4cbc5bbd995acd0d8b04d186cdeb54cd8ce23f139276813907ef3dc28e05ff"
+      "sha256": "7b2556c91fa21cb14b5dae6a34a34e89228f5f798605f199844d4e9c9e492bc7"
     },
     {
       "name": "services.js",
@@ -40,11 +40,11 @@
     },
     {
       "name": "resilience.js",
-      "sha256": "8acee06979de14933687606f86b76bc190ea04ab6e9bc9ab9cdc13021a661142"
+      "sha256": "7ca67da3e201ec1d918d2b08c83cdda1d4d2def7ba160bfd03dba89de7ac3e0a"
     },
     {
       "name": "interaction.js",
-      "sha256": "11382a455a10f9ec0968eaf5bdca7f5653bb662967835cfa0121c9aa8a20dfc0"
+      "sha256": "7282787d6b9cec2158b8356489b0a93e5001cca46d41c5745c79c1dfd0aceab3"
     },
     {
       "name": "sound.js",

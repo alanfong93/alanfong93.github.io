@@ -10,6 +10,7 @@ const num = n => Math.round(n).toLocaleString();
 const percent = n => (n * 100).toFixed(1);
 const workCount = n => n.toLocaleString(undefined, { maximumFractionDigits: 2 });
 let { nodes, edges } = starterTopology('basic');
+let playMode = 'realtime';
 let run = null, selected = null, selectedEdge = null, wireFrom = null, placing = null, sequence = 10, speed = 1;
 let drag = null, toastTimer, lastFrame = 0, lastPaint = 0, finishedShown = false;
 const board = $('board');
@@ -303,6 +304,10 @@ for (const [id, action] of [['release-pause', 'pause'], ['release-shift', 'shift
   render();
 };
 $('catalog-zone').onchange = event => { catalogZone = event.target.value; };
+$('play-mode').onchange = event => {
+  playMode = event.target.value;
+  toast(playMode === 'strategic' ? 'Strategic mode: the round will pause five seconds before each event for planning. Resume is always explicit.' : 'Real-time mode: events arrive live, as before.');
+};
 function serviceForm(node, service) {
   const values = { ...service.config, replicas: service.desired };
   return `<section class="managed-settings"><h3>Replica management</h3><p id="service-live" class="service-live"></p><p id="service-policy-status" class="service-policy-status" role="status"></p><form id="service-settings" data-baseline="${escape(JSON.stringify(values))}"><label>Set desired replicas<input name="replicas" type="number" min="1" max="6" step="1" required value="${values.replicas}"></label><label class="policy-toggle"><input name="autoScale" type="checkbox" ${values.autoScale ? 'checked' : ''}> Enable autoscaler</label><label>Minimum replicas<input name="minReplicas" type="number" min="1" max="6" step="1" required value="${values.minReplicas}"></label><label>Maximum replicas<input name="maxReplicas" type="number" min="1" max="6" step="1" required value="${values.maxReplicas}"></label>${node.kind === 'containers' ? `<label>Target demand %<input name="targetUtilization" type="number" min="50" max="90" step="1" required value="${Math.round(values.targetUtilization * 100)}"></label>` : `<label>Backlog seconds / replica<input name="backlogSeconds" type="number" min="1" max="4" step="0.5" required value="${values.backlogSeconds}"></label>`}<button class="button primary" type="submit">Apply settings</button></form><p class="service-policy-help">${node.kind === 'containers' ? 'The autoscaler observes attempted load, including rejected/attack work. A load balancer or configured gateway integration still provides ingress.' : 'Workers pull queued jobs without an HTTP load balancer. The autoscaler observes connected queue backlog, not only completed throughput.'} Scale-out hold 2s, startup 3s, cooldown 4s; scale-in hold 8s. Paused time does not advance these timers. Unedited fields do not overwrite a live autoscaler’s changes. Saved designs keep settings, not live replica state.</p><button id="fail-replica" type="button" class="button fault-button" ${activeRound() && service.ready ? '' : 'disabled'}>Test one replica failure</button><p class="service-policy-help">Explicit fault injection: the service replaces that reserved slot after 3 simulated seconds. Overload alone does not inherently crash managed containers. Replacement is not autoscaling and requires no extra allocation.</p></section>`;
@@ -562,11 +567,11 @@ function renderMetrics() {
   if ($('event-name').textContent !== situation.title) $('event-name').textContent = situation.title;
   const resilience = run ? resilienceSnapshot(run) : null;
   const hint = resilience?.zoneIncident.active ? `AZ ${resilience.zoneIncident.zone} unavailable. Inspect named required dependencies in Details.` : run && run.time >= 85 ? 'Release outcomes & pause / shift back / rollback: Details.' : 'AZ loss 10–18s; new release 85s. Details shows checkout & release.';
-  $('event-copy').textContent = `${hint} ${situation.message}`;
+  $('event-copy').textContent = situation.title === 'STRATEGIC BREAK' ? situation.message : `${hint} ${situation.message}`;
   $('timeline-progress').style.width = `${elapsed / 1.2}%`; $('playhead').style.left = `${elapsed / 1.2}%`;
   $('event-markers').innerHTML = scenario().events.map(e => `<span style="left:${e.at / 1.2}%;width:${(e.until - e.at) / 1.2}%" title="${escape(`${e.label}: ${e.at}–${e.until}s`)}"></span>`).join('');
   $('chart-line').setAttribute('d', (run?.history ?? []).filter((_, i) => i % 4 === 0).map((p, i) => `${i ? 'L' : 'M'}${p.time / 120 * 800},${40 - p.success * 36}`).join(' '));
-  document.querySelectorAll('[data-template],#load').forEach(button => { button.disabled = !!activeRound(); });
+  document.querySelectorAll('[data-template],#load,#play-mode').forEach(button => { button.disabled = !!activeRound(); });
   board.classList.toggle('simulating', !!run && run.status !== 'ready'); board.classList.toggle('paused', run?.status !== 'running');
 }
 function render() {
@@ -581,8 +586,8 @@ function resetRound() { sound.silence(); run = null; selected = null; selectedEd
 function launch() {
   if (phoneState.blocked) return;
   if (run?.status === 'running') { run.status = 'paused'; sound.silence(); sound.play('pause'); render(); return; }
-  if (run?.status === 'paused') { run.status = 'running'; lastFrame = performance.now(); sound.play('start'); render(); return; }
-  run = createRun('arcade', nodes, edges); run.status = 'running'; nodes = run.nodes; edges = run.edges;
+  if (run?.status === 'paused') { run.status = 'running'; if (run.mode === 'strategic') run.strategicPausedFor = null; lastFrame = performance.now(); sound.play('start'); render(); return; }
+  run = createRun('arcade', nodes, edges, playMode); run.status = 'running'; nodes = run.nodes; edges = run.edges;
   placing = null; wireFrom = null; selected = null; finishedShown = false; lastFrame = performance.now(); rememberDesign(); sound.play('start'); render();
 }
 function finish() {
@@ -593,7 +598,7 @@ function finish() {
   const result = summarizeRun(run);
   $('grade').textContent = result.grade; $('grade').classList.toggle('bad', result.grade !== 'A');
   $('result-title').textContent = result.success >= .98 ? 'Your cloud held its ground.' : 'You found the pressure point.';
-  $('result-subtitle').textContent = `${scenario().name} · ${run.editsTotal} live edits · ${run.shutdowns} shutdowns · ${run.reboots} reboots`;
+  $('result-subtitle').textContent = `${scenario().name} · ${run.editsTotal} live edits · ${run.shutdowns} shutdowns · ${run.reboots} reboots · ${run.mode === 'strategic' ? 'Strategic' : 'Real-time'} mode`;
   const resilience = resilienceSnapshot(run), checkout = resilience.checkout;
   $('result-metrics').innerHTML = `<div><strong>${checkout.arrived ? `${percent(checkout.succeeded / checkout.arrived)}%` : 'N/A'}</strong><small>CHECKOUT SUCCESS / ARRIVALS</small></div><div><strong>${result.uptime === null ? 'N/A' : `${percent(result.uptime)}%`}</strong><small>GRAPH UPTIME</small></div><div><strong>${percent(result.success)}%</strong><small>ALL-WORK REQUEST SUCCESS</small></div><div><strong>${num(checkout.failed)}</strong><small>FAILED CHECKOUTS</small></div>`;
   const findings = buildAssessments(run, result);
@@ -604,7 +609,7 @@ function finish() {
     const old = JSON.parse(localStorage.getItem('cal.rounds.v1') ?? '[]');
     // Persist the detached bounded snapshot alongside the existing bounded logs.
     const historyEntry = { resilience, resilienceLog: resilience.events, resilienceLogTotal: resilience.eventsTotal };
-    localStorage.setItem('cal.rounds.v1', JSON.stringify([...Array.isArray(old) ? old : [], { ...historyEntry, at: new Date().toISOString(), scenario: run.scenarioId, credits: allocated(), grade: result.grade, metrics: run.metrics, uptime: result.uptime, availability: result.availability, bottlenecks: result.bottlenecks, spofs: result.topology.spofs, failureEvidence: result.failureEvidence, edits: run.edits, editsTotal: run.editsTotal, discardedQueuedWork: run.discardedQueuedWork, recoveryLog: run.recoveryLog, shutdowns: run.shutdowns, reboots: run.reboots, services: result.services, serviceLog: run.serviceLog, serviceLogTotal: run.serviceLogTotal, managedFailures: run.managedFailures, replacements: run.replacements, scaleOuts: run.scaleOuts, scaleIns: run.scaleIns, budgetBlocks: run.budgetBlocks }].slice(-20)));
+    localStorage.setItem('cal.rounds.v1', JSON.stringify([...Array.isArray(old) ? old : [], { ...historyEntry, at: new Date().toISOString(), scenario: run.scenarioId, mode: run.mode, credits: allocated(), grade: result.grade, metrics: run.metrics, uptime: result.uptime, availability: result.availability, bottlenecks: result.bottlenecks, spofs: result.topology.spofs, failureEvidence: result.failureEvidence, edits: run.edits, editsTotal: run.editsTotal, discardedQueuedWork: run.discardedQueuedWork, recoveryLog: run.recoveryLog, shutdowns: run.shutdowns, reboots: run.reboots, services: result.services, serviceLog: run.serviceLog, serviceLogTotal: run.serviceLogTotal, managedFailures: run.managedFailures, replacements: run.replacements, scaleOuts: run.scaleOuts, scaleIns: run.scaleIns, budgetBlocks: run.budgetBlocks }].slice(-20)));
   } catch { toast('Round complete. Browser storage is unavailable; this result was not saved.'); }
   $('results-dialog').showModal(); render();
 }
@@ -739,8 +744,10 @@ updatePhoneLayout(); render(); renderSoundControl();
 function frame(now) {
   const dt = lastFrame ? Math.min((now - lastFrame) / 1000, .25) : 0; lastFrame = now;
   if (run?.status === 'running' && !phoneState.blocked) {
+    const previousStatus = run.status;
     stepRun(run, dt * speed);
-    if (now - lastPaint > 120 || run.status === 'finished') { renderNodes(); renderMetrics(); renderInspector(); renderSoundControl(); renderPhoneControls(); lastPaint = now; }
+    if (run.status === 'paused') { cancelDrag(); sound.silence(); sound.play('pause'); }
+    if (now - lastPaint > 120 || run.status !== previousStatus) { renderNodes(); renderMetrics(); renderInspector(); renderSoundControl(); renderPhoneControls(); lastPaint = now; }
     if (run.status === 'finished') finish();
   }
   updateSoundSignals();

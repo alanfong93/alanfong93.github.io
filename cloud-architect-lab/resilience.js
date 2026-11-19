@@ -1,5 +1,11 @@
 // Illustrative failure domains and execution cohorts, not a deployment scheduler.
 export const ZONAL_KINDS = ['compute', 'fargate', 'rds', 'cache', 'containers', 'queueworker'];
+// One schedule feeds release transitions and the strategic planning breaks.
+export const RELEASE_STAGES = [
+  { at: 85, share: .1, label: 'New release 10%' },
+  { at: 90, share: .25, label: 'Release promotion 25%' },
+  { at: 95, share: .5, label: 'Release promotion 50%' },
+];
 const managed = ['containers', 'queueworker'];
 const workers = ['compute', 'fargate', 'serverless', ...managed];
 const data = ['database', 'rds', 'aurora', 'cache'];
@@ -52,7 +58,7 @@ export function resilienceEvent(run, type, extra = {}) {
 
 export function resilienceBoundary(run) {
   if (run.scenarioId !== 'arcade') return;
-  for (const [at, type, share] of [[10, 'zone-start'], [18, 'zone-end'], [85, 'release-promotion', .1], [90, 'release-promotion', .25], [95, 'release-promotion', .5]]) {
+  for (const [at, type, share] of [[10, 'zone-start'], [18, 'zone-end'], ...RELEASE_STAGES.map(stage => [stage.at, 'release-promotion', stage.share])]) {
     if (run.time < at || run._resilienceBoundaries.includes(at)) continue;
     run._resilienceBoundaries.push(at);
     if (share !== undefined) {

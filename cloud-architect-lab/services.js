@@ -30,6 +30,9 @@ export function allocation(nodes, services, catalog) {
   return total;
 }
 
+// One spread formula serves fresh slots and pre-run placement rewrites.
+export const spreadZone = (placement, slotNumber) => placement === 'spread' ? slotNumber % 2 ? 'A' : 'B' : placement;
+
 export function newService(id, config, time, ready, zone = 'A') {
   const service = { replicas: [], desired: 0, nextReplicaId: 1, zone, config: { ...config }, highFor: 0, lowFor: 0, cooldownUntil: 0, blockedReason: '', metric: null };
   resizeService(service, id, config.replicas, time, ready);
@@ -39,7 +42,7 @@ export function newService(id, config, time, ready, zone = 'A') {
 export function resizeService(service, id, count, time, ready = false) {
   while (service.replicas.length < count) {
     const number = service.nextReplicaId++;
-    service.replicas.push({ id: `${id}-replica-${number}`, zone: service.zone === 'spread' ? number % 2 ? 'A' : 'B' : service.zone, state: ready ? 'ready' : 'starting', readyAt: ready ? time : time + 3 });
+    service.replicas.push({ id: `${id}-replica-${number}`, zone: spreadZone(service.zone, number), state: ready ? 'ready' : 'starting', readyAt: ready ? time : time + 3 });
   }
   // Retire newest slots first. Frozen outage identities never transfer.
   service.replicas.splice(count);
@@ -106,7 +109,7 @@ export function scaleServices(run, seconds, catalog, budget, maintenanceCount, i
         run.scaleOuts++; serviceEvent(run, node.id, 'scale-out', { desired: service.desired });
         service.highFor = service.lowFor = 0; service.cooldownUntil = run.time + 4;
       }
-    } else if (service.lowFor >= 8 - 1e-9 && run.time >= service.cooldownUntil && service.replicas.every(slot => slot.state === 'ready')) {
+    } else if (service.lowFor >= 8 - 1e-9 && run.time >= service.cooldownUntil && service.replicas.every(slot => slot.state === 'ready' && !zoneRemaining(run, slot.zone))) {
       resizeService(service, node.id, service.desired - 1, run.time);
       run.scaleIns++; serviceEvent(run, node.id, 'scale-in', { desired: service.desired });
       service.highFor = service.lowFor = 0; service.cooldownUntil = run.time + 4;

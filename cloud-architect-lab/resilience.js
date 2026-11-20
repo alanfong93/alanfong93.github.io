@@ -10,7 +10,11 @@ const managed = ['containers', 'queueworker'];
 const workers = ['compute', 'fargate', 'serverless', ...managed];
 const data = ['database', 'rds', 'aurora', 'cache'];
 export const nodeZone = node => ZONAL_KINDS.includes(node?.kind) ? node.zone ?? 'A' : null;
-export const zoneRemaining = (run, zone, time = run.time) => run.scenarioId === 'arcade' && zone === 'A' && time >= 10 && time < 18 ? 18 - time : 0;
+export const zoneRemaining = (run, zone, time = run.time) => {
+  // The AZ window follows the run's frozen zone events; no duplicated constants.
+  for (const event of run._zoneEvents ?? []) if (event.zone === zone && time >= event.at && time < event.until) return event.until - time;
+  return 0;
+};
 
 export function validateResilience(nodes) {
   const reject = reason => ({ ok: false, reason });
@@ -58,14 +62,19 @@ export function resilienceEvent(run, type, extra = {}) {
 
 export function resilienceBoundary(run) {
   if (run.scenarioId !== 'arcade') return;
-  for (const [at, type, share] of [[10, 'zone-start'], [18, 'zone-end'], ...RELEASE_STAGES.map(stage => [stage.at, 'release-promotion', stage.share])]) {
-    if (run.time < at || run._resilienceBoundaries.includes(at)) continue;
-    run._resilienceBoundaries.push(at);
-    if (share !== undefined) {
+  const boundaries = [
+    ...(run._zoneEvents ?? []).flatMap(event => [[event.at, 'zone-start', { zone: event.zone }], [event.until, 'zone-end', { zone: event.zone }]]),
+    ...RELEASE_STAGES.map(stage => [stage.at, 'release-promotion', { share: stage.share }]),
+  ];
+  for (const [at, type, payload] of boundaries) {
+    const key = `${type}:${at}`;
+    if (run.time < at || run._resilienceBoundaries.includes(key)) continue;
+    run._resilienceBoundaries.push(key);
+    if (payload.share !== undefined) {
       if (!run.release.automatic) continue;
-      run.release.share = share; run.release.phase = 'promoting';
+      run.release.share = payload.share; run.release.phase = 'promoting';
     }
-    resilienceEvent(run, type, { at, ...(share === undefined ? { zone: 'A' } : { share }) });
+    resilienceEvent(run, type, { at, ...payload });
   }
 }
 
@@ -124,6 +133,7 @@ export function blockedQueueEvidence(run, queueId, workerId, blocked, pending, s
 }
 
 export function resilienceSnapshot(run) {
-  return structuredClone({ zoneIncident: { active: !!zoneRemaining(run, 'A'), zone: 'A', until: 18 }, checkout: run.checkout, staticSucceeded: run.staticSucceeded,
+  const incident = (run._zoneEvents ?? []).find(event => run.time >= event.at && run.time < event.until) ?? null;
+  return structuredClone({ zoneIncident: { active: !!incident, zone: incident?.zone ?? null, until: incident?.until ?? null }, checkout: run.checkout, staticSucceeded: run.staticSucceeded,
     release: run.release, events: run.resilienceLog, eventsTotal: run.resilienceLogTotal, requirementsChanged: run.requirementsChanged, evidence: run.resilienceEvidence });
 }

@@ -32,15 +32,15 @@
     },
     {
       "name": "engine.js",
-      "sha256": "b9675f9000e68d429d891856d02a6d8489e884ce60991d655b26169bb66eb7b2"
+      "sha256": "84048eabc8ac4c2ba7f4da82fe9888ccd13cc1a35d0555dd3b95c16d73c67142"
     },
     {
       "name": "services.js",
-      "sha256": "ef968143071569b239270031fdae9f8f3cf89891a88f8287a43ba693db74f21f"
+      "sha256": "196413bc33cf16204463cdb687166f844c859db8f5dc4cae633698de56ada029"
     },
     {
       "name": "resilience.js",
-      "sha256": "41f80a3584a9d6908e2f1da283634a4af566ccbb43e7fc51c095d81aaf3895da"
+      "sha256": "b88cd2ffe1bd077dfea98669f434b71b0fc1ff47ba76127f55b8f7c8d517ad85"
     },
     {
       "name": "interaction.js",

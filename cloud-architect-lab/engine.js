@@ -1,7 +1,7 @@
 // Deterministic, fractional-request tutorial model. Capacities are requests/second,
 // costs are game credits, and metrics count legitimate requests only. Malicious
 // traffic consumes serving capacity but is never counted as a customer request.
-import { MANAGED_KINDS, validateServiceSettings, allocation, newService, resizeService, serviceEvent, snapshot, completeServices, scaleServices } from './services.js';
+import { MANAGED_KINDS, validateServiceSettings, allocation, newService, resizeService, serviceEvent, snapshot, completeServices, scaleServices, spreadZone } from './services.js';
 import { ZONAL_KINDS, RELEASE_STAGES, nodeZone, validateResilience, cloneResilienceNode, zoneRemaining, initializeResilience, resilienceBoundary, resilienceEvent, terminalCheckout, dependencyEvidence, blockedQueueEvidence, resilienceSnapshot } from './resilience.js';
 export { ZONAL_KINDS, nodeZone, validateResilience, configureRelease, resilienceSnapshot } from './resilience.js';
 export { MANAGED_KINDS, validateServiceSettings } from './services.js';
@@ -405,6 +405,10 @@ export function createRun(scenarioId, nodes, edges, mode = 'realtime') {
     serviceLog: [], serviceLogTotal: 0, managedFailures: 0, replacements: 0, scaleOuts: 0, scaleIns: 0, budgetBlocks: 0,
     nodeRuntime: Object.fromEntries(copy.map(n => [n.id, healthyRuntime()])),
     recoveryLog: [], recoveryLogTotal: 0, shutdowns: 0, reboots: 0,
+    // Frozen copy: availability/boundaries read this, never the live event array.
+    // create-time immutability of scenario.events keeps strategic checkpoints
+    // (which read the live list) aligned with this window.
+    _zoneEvents: scenario.events.filter(e => e.type === 'zone').map(e => ({ zone: e.zone ?? 'A', at: e.at, until: e.until })),
     ...(mode === 'strategic' ? { strategicPausedFor: null, _strategicConsumed: [] } : {}),
   });
 }
@@ -472,7 +476,7 @@ export function applyTopology(run, nextNodes, nextEdges) {
       services[n.id] = { ...old, config, replicas: old.replicas.map(s => ({ ...s })) };
       if (run.status === 'ready' && nodeZone(n) !== old.zone) {
         services[n.id].zone = nodeZone(n);
-        for (const slot of services[n.id].replicas) slot.zone = nodeZone(n) === 'spread' ? Number(slot.id.split('-').at(-1)) % 2 ? 'A' : 'B' : nodeZone(n);
+        for (const slot of services[n.id].replicas) slot.zone = spreadZone(nodeZone(n), Number(slot.id.split('-').at(-1)));
       }
       resizeService(services[n.id], n.id, count, run.time);
     } else services[n.id] = newService(n.id, validateServiceSettings(n.kind, n.settings).settings, run.time, false, nodeZone(n));

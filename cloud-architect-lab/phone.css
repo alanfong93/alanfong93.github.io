@@ -177,7 +177,7 @@ body.phone-layout #game-shell .center-column {
 
 body.phone-layout #game-shell .event-strip {
   display: grid;
-  grid-template-columns: 5px minmax(0, 1fr);
+  grid-template-columns: 5px minmax(0, 1fr) auto;
   grid-template-rows: repeat(2, minmax(0, 1fr));
   align-content: center;
   align-items: center;
@@ -191,6 +191,28 @@ body.phone-layout #game-shell .event-strip {
 
 body.phone-layout .event-strip .pulse-dot {
   grid-row: 1 / -1;
+}
+
+/* The strip cannot host a 44px target at 36px height, so phones use the
+ * persistent 44px action row instead; the strip chip is desktop/fallback only. */
+body.phone-layout #game-shell #release-chip {
+  display: none;
+}
+
+body.phone-layout #game-shell #phone-release-chip {
+  flex: 0 0 auto;
+  min-width: 0;
+  font-size: 11px;
+  padding: 0 8px;
+  background: var(--warning-bg);
+  border-color: #87693b;
+  color: var(--warning);
+}
+
+body.phone-layout #game-shell #phone-release-chip.attention {
+  border-color: #b58900;
+  color: #ffd489;
+  box-shadow: 0 0 9px #f3c77b44;
 }
 
 body.phone-layout .event-strip :is(#event-name, #event-copy) {

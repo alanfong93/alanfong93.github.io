@@ -1,4 +1,28 @@
-import { validateEdge, resilienceSnapshot } from './engine.js';
+import { validateEdge, resilienceSnapshot, RELEASE_STAGES } from './engine.js';
+
+// Release affordances: one schedule source (RELEASE_STAGES) feeds all three.
+const pct = share => `${Math.round((share ?? 0) * 100)}%`;
+export function releaseChip(release) {
+  if (!release || release.phase === 'pending') return null;
+  if (release.phase === 'promoting') return { text: `RELEASE ${pct(release.share)}`, attention: true };
+  if (release.phase === 'paused') return { text: `PAUSED ${pct(release.share)}`, attention: false };
+  return { text: 'ROLLED BACK', attention: false };
+}
+export function releaseMarkers() {
+  return RELEASE_STAGES.map(stage => ({
+    left: stage.at / 1.2, width: .5, kind: 'release-marker',
+    title: `Release promotion ${stage.at}s → ${pct(stage.share)}`,
+  }));
+}
+export function releaseHint(snapshot, time) {
+  const release = snapshot?.release;
+  if (!release || release.phase === 'pending') return null;
+  if (release.phase === 'rolled-back') return 'Release rolled back; historical cohort outcomes remain. Details has checkout totals.';
+  if (release.phase === 'paused') return `Release paused at ${pct(release.share)} of eligible executions. Shift back or roll back in Details.`;
+  const next = release.automatic ? RELEASE_STAGES.find(stage => stage.at > time) : undefined;
+  if (next) return `Next promotion to ${pct(next.share)} in ${Math.ceil(next.at - time)}s. Pause or roll back in Details.`;
+  return `New release at ${pct(release.share)} of eligible executions. Pause / shift back / roll back in Details.`;
+}
 
 export const CATALOG_GROUPS = [
   { name: 'Compute', kinds: ['compute', 'fargate', 'serverless', 'containers', 'queueworker'] },

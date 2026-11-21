@@ -188,3 +188,10 @@ body.phone-layout .zone-badge { font-size:7px; left:-9px; top:-6px; }
 /* Play-mode selection travels inside the shared templates block. */
 .play-mode { display:flex; align-items:center; justify-content:space-between; gap:8px; min-height:44px; font-size:11px; color:var(--muted); flex:0 0 auto; }
 .play-mode select { min-height:44px; min-width:96px; padding:4px 8px; background:var(--panel); color:var(--text); border:1px solid var(--line); border-radius:6px; }
+/* Release affordances: chip on the strip, promotion instants on the timeline. */
+.release-chip { flex:0 0 auto; min-height:28px; padding:4px 10px; border:1px solid #87693b; border-radius:10px; background:var(--warning-bg); color:var(--warning); font:700 11px ui-monospace,monospace; letter-spacing:.5px; white-space:nowrap; }
+.release-chip.attention { border-color:#b58900; color:#ffd489; box-shadow:0 0 9px #f3c77b44; animation:release-pulse 2.2s ease-in-out infinite; }
+.release-chip:not(.attention) { opacity:.92; }
+@keyframes release-pulse { 0%,100% { box-shadow:0 0 4px #f3c77b22; } 50% { box-shadow:0 0 12px #f3c77b66; } }
+#event-markers>span.release-marker { top:-7px; height:21px; width:4px; background:var(--accent); border:0; border-radius:2px; box-shadow:0 0 6px #75a7ff88; }
+@media(prefers-reduced-motion:reduce) { .release-chip.attention { animation:none; } }

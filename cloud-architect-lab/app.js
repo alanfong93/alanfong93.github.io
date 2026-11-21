@@ -1,5 +1,5 @@
 import { CATALOG, ARCADE, MANAGED_KINDS, validateServiceSettings, getAllocation, serviceSnapshot, configureService, failServiceReplica, validateEdge, analyzeTopology, createRun, applyTopology, rebootNode, stepRun, summarizeRun, starterTopology } from './engine.js';
-import { CATALOG_GROUPS, buildAssessments, connectionClick, activeSituations, describeSituation, musicMood } from './interaction.js';
+import { CATALOG_GROUPS, buildAssessments, connectionClick, activeSituations, describeSituation, musicMood, releaseChip, releaseMarkers, releaseHint } from './interaction.js';
 import { SoundEffects } from './sound.js';
 import { phoneLayout, beginTap, moveTap, isTap, serviceHealth } from './phone.js';
 import { ZONAL_KINDS, nodeZone, validateResilience, configureRelease, resilienceSnapshot } from './engine.js';
@@ -566,10 +566,22 @@ function renderMetrics() {
   $('event-strip').className = `event-strip situation-${situation.tone}`;
   if ($('event-name').textContent !== situation.title) $('event-name').textContent = situation.title;
   const resilience = run ? resilienceSnapshot(run) : null;
-  const hint = resilience?.zoneIncident.active ? `AZ ${resilience.zoneIncident.zone} unavailable. Inspect named required dependencies in Details.` : run && run.time >= 85 ? 'Release outcomes & pause / shift back / rollback: Details.' : 'AZ loss 10–18s; new release 85s. Details shows checkout & release.';
+  // The chip advertises live actions only while the round can still act on them.
+  const chip = activeRound() ? releaseChip(resilience?.release) : null;
+  for (const element of [$('release-chip'), $('phone-release-chip')]) {
+    element.hidden = !chip;
+    if (chip) {
+      element.textContent = chip.text;
+      element.classList.toggle('attention', chip.attention);
+      element.setAttribute('aria-label', `${chip.text}. Open details for pause, shift back or rollback.`);
+    }
+  }
+  const hint = resilience?.zoneIncident.active ? `AZ ${resilience.zoneIncident.zone} unavailable. Inspect named required dependencies in Details.`
+    : activeRound() ? releaseHint(resilience, run?.time ?? 0) ?? 'AZ loss 10–18s; new release 85s. Details shows checkout & release.' : '';
   $('event-copy').textContent = situation.title === 'STRATEGIC BREAK' ? situation.message : `${hint} ${situation.message}`;
   $('timeline-progress').style.width = `${elapsed / 1.2}%`; $('playhead').style.left = `${elapsed / 1.2}%`;
-  $('event-markers').innerHTML = scenario().events.map(e => `<span style="left:${e.at / 1.2}%;width:${(e.until - e.at) / 1.2}%" title="${escape(`${e.label}: ${e.at}–${e.until}s`)}"></span>`).join('');
+  $('event-markers').innerHTML = scenario().events.map(e => `<span style="left:${e.at / 1.2}%;width:${(e.until - e.at) / 1.2}%" title="${escape(`${e.label}: ${e.at}–${e.until}s`)}"></span>`).join('')
+    + releaseMarkers().map(m => `<span class="${m.kind}" style="left:${m.left}%;width:${m.width}%" title="${escape(m.title)}"></span>`).join('');
   $('chart-line').setAttribute('d', (run?.history ?? []).filter((_, i) => i % 4 === 0).map((p, i) => `${i ? 'L' : 'M'}${p.time / 120 * 800},${40 - p.success * 36}`).join(' '));
   document.querySelectorAll('[data-template],#load,#play-mode').forEach(button => { button.disabled = !!activeRound(); });
   board.classList.toggle('simulating', !!run && run.status !== 'ready'); board.classList.toggle('paused', run?.status !== 'running');
@@ -693,6 +705,11 @@ $('phone-delete').onclick = () => { if (!phoneState.blocked) ($('remove-edge') ?
 $('phone-details-content').after($('phone-situation-copy'), $('phone-round-summary'));
 $('phone-details').onclick = () => showPhoneSheet('phone-details-dialog', 'phone-details-content', [document.querySelector('.inspector')]);
 $('selection-details').onclick = () => {
+  if (phoneState.phone || desktopLayout) $('phone-details').click();
+  else document.querySelector('.inspector').scrollIntoView({ block: 'start', behavior: 'smooth' });
+};
+$('release-chip').onclick = $('phone-release-chip').onclick = () => {
+  if (phoneState.blocked) return;
   if (phoneState.phone || desktopLayout) $('phone-details').click();
   else document.querySelector('.inspector').scrollIntoView({ block: 'start', behavior: 'smooth' });
 };

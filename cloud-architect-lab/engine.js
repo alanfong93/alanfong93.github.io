@@ -3,7 +3,7 @@
 // traffic consumes serving capacity but is never counted as a customer request.
 import { MANAGED_KINDS, validateServiceSettings, allocation, newService, resizeService, serviceEvent, snapshot, completeServices, scaleServices, spreadZone } from './services.js';
 import { ZONAL_KINDS, RELEASE_STAGES, nodeZone, validateResilience, cloneResilienceNode, zoneRemaining, initializeResilience, resilienceBoundary, resilienceEvent, terminalCheckout, dependencyEvidence, blockedQueueEvidence, resilienceSnapshot } from './resilience.js';
-export { ZONAL_KINDS, nodeZone, validateResilience, configureRelease, resilienceSnapshot } from './resilience.js';
+export { ZONAL_KINDS, RELEASE_STAGES, nodeZone, validateResilience, configureRelease, resilienceSnapshot } from './resilience.js';
 export { MANAGED_KINDS, validateServiceSettings } from './services.js';
 const spec = [
   ['shield', 'Traffic shield', 'WAF', '◇', 'security', 15, 400, 'Blocks malicious traffic within its capacity.', '#a78bfa'],

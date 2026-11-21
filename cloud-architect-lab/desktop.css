@@ -43,6 +43,8 @@ body.desktop-layout .node small { font-size:10px; }
 body.desktop-layout .canvas-legend span { font-size:10px; }
 body.desktop-layout .phone-actions { display:flex; align-items:center; gap:8px; min-width:0; padding:4px 8px; background:var(--panel); border:1px solid var(--line); border-top:0; border-radius:0 0 8px 8px; }
 body.desktop-layout #phone-selection { flex:1 1 auto; min-width:0; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; color:var(--muted); font-size:12px; }
+/* The desktop strip hosts the release chip; the action-row twin is phone-only. */
+body.desktop-layout #phone-release-chip { display:none; }
 body.desktop-layout #selection-details { border-color:var(--accent); color:var(--accent); }
 body.desktop-layout #phone-reboot { background:var(--warning-bg); border-color:#87693b; color:var(--warning); }
 body.desktop-layout #phone-delete { background:var(--danger-bg); border-color:#975166; color:var(--danger); }
